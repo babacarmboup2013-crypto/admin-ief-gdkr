@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IEF ADMIN — Maquette</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#16233d;
+    --ink-soft:#3c4a63;
+    --navy:#1b2a4a;
+    --navy-deep:#101c33;
+    --paper:#f2f4f7;
+    --card:#ffffff;
+    --line:#e1e5eb;
+    --teal:#2f6f62;
+    --teal-soft:#e5efec;
+    --gold:#c89b3c;
+    --gold-soft:#f7efdb;
+    --red:#b3462c;
+    --red-soft:#f8e9e4;
+    --radius-s:4px;
+    --radius-m:8px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:'Inter',sans-serif;
+    color:var(--ink);
+    background:var(--paper);
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.serif{
+    font-family:'Source Serif 4',serif;
+    font-weight:600;
+    margin:0;
+  }
+  .app{
+    display:grid;
+    grid-template-columns:264px 1fr;
+    min-height:100vh;
+  }
+
+  /* ---------- SIDEBAR ---------- */
+  .sidebar{
+    background:var(--navy);
+    color:#dfe6f2;
+    padding:28px 20px 20px;
+    display:flex;
+    flex-direction:column;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding-bottom:22px;
+    border-bottom:1px solid rgba(255,255,255,0.12);
+    margin-bottom:22px;
+  }
+  .brand-mark{
+    width:34px;height:34px;
+    border:1.5px solid var(--gold);
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Source Serif 4',serif;
+    font-size:15px;
+    color:var(--gold);
+    flex-shrink:0;
+  }
+  .brand-text{line-height:1.15;}
+  .brand-text .t1{font-family:'Source Serif 4',serif;font-size:15px;color:#fff;}
+  .brand-text .t2{font-size:11px;color:#96a5c2;letter-spacing:0.02em;}
+
+  .nav-label{
+    font-size:11px;
+    color:#7c8bab;
+    margin:18px 4px 8px;
+  }
+  .bureau-list{list-style:none;margin:0;padding:0;}
+  .bureau-list li{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:8px 10px;
+    border-radius:var(--radius-s);
+    font-size:13.5px;
+    color:#c3cde0;
+    cursor:default;
+    margin-bottom:1px;
+  }
+  .bureau-list li .n{
+    width:20px;height:20px;
+    border-radius:50%;
+    background:rgba(255,255,255,0.08);
+    display:flex;align-items:center;justify-content:center;
+    font-size:10.5px;
+    color:#96a5c2;
+    flex-shrink:0;
+  }
+  .bureau-list li.active{
+    background:rgba(255,255,255,0.09);
+    color:#fff;
+  }
+  .bureau-list li.active .n{
+    background:var(--gold);
+    color:var(--navy-deep);
+  }
+  .sidebar-foot{
+    margin-top:auto;
+    padding-top:16px;
+    border-top:1px solid rgba(255,255,255,0.12);
+    font-size:12px;
+    color:#7c8bab;
+    line-height:1.5;
+  }
+
+  /* ---------- MAIN ---------- */
+  .main{padding:30px 36px 60px;}
+  .topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    margin-bottom:26px;
+    gap:20px;
+    flex-wrap:wrap;
+  }
+  .topbar h1{font-size:26px;color:var(--navy);}
+  .topbar .sub{font-size:13.5px;color:var(--ink-soft);margin-top:5px;}
+
+  .role-switch{
+    display:flex;
+    flex-wrap:wrap;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:3px;
+    gap:2px;
+  }
+  .role-switch button{
+    font-family:'Inter',sans-serif;
+    font-size:12.5px;
+    font-weight:500;
+    padding:8px 16px;
+    border:none;
+    background:transparent;
+    color:var(--ink-soft);
+    border-radius:999px;
+    cursor:pointer;
+    transition:background .15s, color .15s;
+    white-space:nowrap;
+  }
+  .role-switch button.active{
+    background:var(--navy);
+    color:#fff;
+  }
+
+  .kpi-row{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:14px;
+    margin-bottom:26px;
+  }
+  .kpi{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius-m);
+    padding:18px 18px 16px;
+  }
+  .kpi .label{font-size:12px;color:var(--ink-soft);margin-bottom:10px;}
+  .kpi .value{font-family:'Source Serif 4',serif;font-size:28px;color:var(--navy);}
+  .kpi .delta{font-size:11.5px;margin-top:6px;color:var(--teal);}
+  .kpi .delta.warn{color:var(--red);}
+
+  .grid-2{
+    display:grid;
+    grid-template-columns:1.4fr 1fr;
+    gap:18px;
+    align-items:start;
+  }
+
+  .panel{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius-m);
+    overflow:hidden;
+  }
+  .panel-head{
+    padding:16px 20px;
+    border-bottom:1px solid var(--line);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+  .panel-head h2{font-size:15.5px;color:var(--navy);}
+  .panel-head .link{font-size:12px;color:var(--teal);font-weight:500;}
+
+  table{width:100%;border-collapse:collapse;}
+  th{
+    text-align:left;
+    font-size:11px;
+    font-weight:500;
+    color:var(--ink-soft);
+    padding:10px 20px;
+    border-bottom:1px solid var(--line);
+  }
+  td{
+    padding:12px 20px;
+    font-size:13px;
+    border-bottom:1px solid var(--line);
+    color:var(--ink);
+  }
+  tr:last-child td{border-bottom:none;}
+  .muted{color:var(--ink-soft);}
+
+  .tag{
+    display:inline-block;
+    font-size:11px;
+    font-weight:500;
+    padding:3px 9px;
+    border-radius:999px;
+  }
+  .tag.cours{background:var(--gold-soft);color:#8a6a1f;}
+  .tag.attente{background:var(--red-soft);color:var(--red);}
+  .tag.ok{background:var(--teal-soft);color:var(--teal);}
+
+  .list-simple{list-style:none;margin:0;padding:0;}
+  .list-simple li{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:12px 20px;
+    border-bottom:1px solid var(--line);
+    font-size:13px;
+  }
+  .list-simple li:last-child{border-bottom:none;}
+  .list-simple .name{font-weight:500;color:var(--ink);}
+  .list-simple .meta{font-size:11.5px;color:var(--ink-soft);margin-top:2px;}
+
+  .avatar{
+    width:26px;height:26px;
+    border-radius:50%;
+    background:var(--navy);
+    color:#fff;
+    font-size:11px;
+    display:flex;align-items:center;justify-content:center;
+    font-weight:600;
+    flex-shrink:0;
+  }
+  .row-flex{display:flex;align-items:center;gap:10px;}
+
+  .thread-item{cursor:pointer;transition:background .12s;}
+  .thread-item:hover{background:#f7f8fa;}
+  .thread-item.active{background:var(--teal-soft);}
+  .thread-item.active .name{color:var(--teal);}
+
+  .bubble{
+    max-width:75%;
+    padding:10px 14px;
+    border-radius:12px;
+    font-size:13px;
+    line-height:1.45;
+  }
+  .bubble .who{font-size:11px;font-weight:600;margin-bottom:3px;}
+  .bubble.other{
+    background:#f0f2f5;
+    color:var(--ink);
+    align-self:flex-start;
+    border-bottom-left-radius:3px;
+  }
+  .bubble.other .who{color:var(--ink-soft);}
+  .bubble.me{
+    background:var(--navy);
+    color:#fff;
+    align-self:flex-end;
+    border-bottom-right-radius:3px;
+  }
+  .bubble .time{font-size:10px;opacity:0.6;margin-top:4px;}
+
+  .empty{
+    padding:34px 20px;
+    text-align:center;
+    color:var(--ink-soft);
+    font-size:13px;
+  }
+
+  .view{display:none;}
+  .view.active{display:block;}
+
+  .banner{
+    background:var(--teal-soft);
+    border:1px solid #c7ddd6;
+    border-radius:var(--radius-m);
+    padding:14px 18px;
+    font-size:13px;
+    color:#245348;
+    margin-bottom:22px;
+    display:flex;
+    gap:10px;
+    align-items:flex-start;
+  }
+
+  .menu-toggle{
+    display:none;
+    background:var(--navy);
+    color:#fff;
+    border:none;
+    border-radius:8px;
+    width:38px;height:38px;
+    font-size:16px;
+    cursor:pointer;
+    flex-shrink:0;
+  }
+  .sidebar-backdrop{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(16,28,51,0.45);
+    z-index:40;
+  }
+  .sidebar-backdrop.open{display:block;}
+
+  @media (max-width:880px){
+    .app{grid-template-columns:1fr;}
+    .sidebar{
+      position:fixed;
+      top:0;left:0;
+      height:100vh;
+      width:250px;
+      z-index:50;
+      transform:translateX(-100%);
+      transition:transform .22s ease;
+      overflow-y:auto;
+    }
+    .sidebar.open{transform:translateX(0);}
+    .menu-toggle{display:block;}
+    .kpi-row{grid-template-columns:1fr 1fr;}
+    .grid-2{grid-template-columns:1fr;}
+    .main{padding:20px 16px 50px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">IA</div>
+      <div class="brand-text">
+        <div class="t1">IEF ADMIN</div>
+        <div class="t2">Plateforme des 11 bureaux</div>
+      </div>
+    </div>
+
+    <div class="nav-label">Bureaux</div>
+    <ul class="bureau-list" id="bureauList">
+      <li data-n="1"><span class="n">1</span> Gestion Financière</li>
+      <li data-n="2"><span class="n">2</span> Gestion Matérielle</li>
+      <li data-n="3"><span class="n">3</span> Secrétariat</li>
+      <li data-n="4"><span class="n">4</span> Suivi-Évaluation</li>
+      <li data-n="5"><span class="n">5</span> Planification &amp; Statistiques</li>
+      <li data-n="6"><span class="n">6</span> Correspondant Numérique</li>
+      <li data-n="7"><span class="n">7</span> Ressources Humaines</li>
+      <li data-n="8"><span class="n">8</span> Examens et Concours</li>
+      <li data-n="9"><span class="n">9</span> Bureau Genre</li>
+      <li data-n="10"><span class="n">10</span> Communication &amp; Partenariats</li>
+      <li data-n="11"><span class="n">11</span> Enseignement Arabe</li>
+    </ul>
+
+    <div class="nav-label">Modules</div>
+    <ul class="bureau-list" id="moduleList">
+      <li class="active" data-view="dashboard"><span class="n">▤</span> Tableau de bord</li>
+      <li data-view="discussions"><span class="n">◐</span> Discussions</li>
+      <li data-view="reunions"><span class="n">◷</span> Réunions</li>
+    </ul>
+
+    <div class="sidebar-foot">
+      Connecté en tant que<br>
+      <strong style="color:#dfe6f2" id="footRole">Super Admin</strong>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <div class="topbar">
+      <div style="display:flex;align-items:flex-start;gap:12px;">
+        <button class="menu-toggle" id="menuToggle" aria-label="Ouvrir le menu">☰</button>
+        <div>
+          <h1 id="pageTitle">Vue d'ensemble</h1>
+          <div class="sub" id="pageSub">Tous les bureaux — samedi 12 septembre 2026</div>
+        </div>
+      </div>
+      <div class="role-switch">
+        <button class="active" data-role="super">Super Admin</button>
+        <button data-role="chef">IEF (Chef Admin)</button>
+        <button data-role="secretaire">Secrétaire Général</button>
+        <button data-role="inspecteur">Inspecteur de district</button>
+        <button data-role="responsable">Responsable de bureau</button>
+        <button data-role="agent">Agent de bureau</button>
+        <button data-role="rh">RH</button>
+      </div>
+    </div>
+
+    <div id="dashboardViews">
+    <!-- ============ VUE SUPER ADMIN ============ -->
+    <section class="view active" id="view-super">
+
+      <div class="kpi-row">
+        <div class="kpi">
+          <div class="label">Bureaux actifs</div>
+          <div class="value">11 / 11</div>
+          <div class="delta">Tous opérationnels</div>
+        </div>
+        <div class="kpi">
+          <div class="label">Dossiers en cours</div>
+          <div class="value">128</div>
+          <div class="delta">+6 cette semaine</div>
+        </div>
+        <div class="kpi">
+          <div class="label">Rapports en attente</div>
+          <div class="value">14</div>
+          <div class="delta warn">4 en retard</div>
+        </div>
+        <div class="kpi">
+          <div class="label">Agents actifs</div>
+          <div class="value">96</div>
+          <div class="delta">Sur 11 bureaux</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Rapports en attente de validation</h2>
+            <span class="link">Tout voir</span>
+          </div>
+          <table>
+            <thead>
+              <tr><th>Rapport</th><th>Bureau</th><th>Soumis par</th><th>Statut</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Bilan trimestriel Q3</td>
+                <td class="muted">Gestion Financière</td>
+                <td class="muted">A. Diallo</td>
+                <td><span class="tag attente">En attente</span></td>
+              </tr>
+              <tr>
+                <td>Session concours — clôture</td>
+                <td class="muted">Examens et Concours</td>
+                <td class="muted">M. Cissé</td>
+                <td><span class="tag attente">En attente</span></td>
+              </tr>
+              <tr>
+                <td>Rapport de mission — zone Nord</td>
+                <td class="muted">Suivi-Évaluation</td>
+                <td class="muted">F. Bah</td>
+                <td><span class="tag cours">En révision</span></td>
+              </tr>
+              <tr>
+                <td>Inventaire matériel annuel</td>
+                <td class="muted">Gestion Matérielle</td>
+                <td class="muted">S. Kane</td>
+                <td><span class="tag ok">Validé</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Inspecteurs de district</h2>
+          </div>
+          <ul class="list-simple">
+            <li>
+              <div class="row-flex">
+                <div class="avatar">MB</div>
+                <div>
+                  <div class="name">Moussa Barry</div>
+                  <div class="meta">3 bureaux assignés</div>
+                </div>
+              </div>
+            </li>
+            <li>
+              <div class="row-flex">
+                <div class="avatar">AC</div>
+                <div>
+                  <div class="name">Aïcha Camara</div>
+                  <div class="meta">4 bureaux assignés</div>
+                </div>
+              </div>
+            </li>
+            <li>
+              <div class="row-flex">
+                <div class="avatar">OS</div>
+                <div>
+                  <div class="name">Oumar Sylla</div>
+                  <div class="meta">2 bureaux assignés</div>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ VUE CHEF ADMIN ============ -->
+    <section class="view" id="view-chef">
+
+      <div class="banner">
+        Vue élargie sur les <strong>&nbsp;11 bureaux&nbsp;</strong> — droits de validation transversale, en tant qu'IEF (Inspecteur/trice de l'Éducation et de la Formation). Pas de gestion des comptes/rôles (réservée au Super Admin).
+      </div>
+
+      <div class="kpi-row">
+        <div class="kpi">
+          <div class="label">Rapports à valider</div>
+          <div class="value">14</div>
+          <div class="delta warn">4 en retard</div>
+        </div>
+        <div class="kpi">
+          <div class="label">Validations ce mois</div>
+          <div class="value">37</div>
+          <div class="delta">Sur 11 bureaux</div>
+        </div>
+        <div class="kpi">
+          <div class="label">Bureaux en alerte</div>
+          <div class="value">2</div>
+          <div class="delta warn">Retards répétés</div>
+        </div>
+        <div class="kpi">
+          <div class="label">Inspecteurs actifs</div>
+          <div class="value">3</div>
+          <div class="delta">2 à 5 prévus</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-head">
+            <h2>File de validation transversale</h2>
+            <span class="link">Tout voir</span>
+          </div>
+          <table>
+            <thead>
+              <tr><th>Rapport</th><th>Bureau</th><th>Statut</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Bilan trimestriel Q3</td><td class="muted">Gestion Financière</td><td><span class="tag attente">À valider</span></td></tr>
+              <tr><td>Session concours — clôture</td><td class="muted">Examens et Concours</td><td><span class="tag attente">À valider</span></td></tr>
+              <tr><td>Rapport de mission — zone Nord</td><td class="muted">Suivi-Évaluation</td><td><span class="tag cours">En révision</span></td></tr>
+              <tr><td>Bilan communication trimestriel</td><td class="muted">Communication &amp; Partenariats</td><td><span class="tag ok">Validé</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Performance par bureau</h2>
+          </div>
+          <ul class="list-simple">
+            <li><div><div class="name">Gestion Financière</div><div class="meta">3 rapports en retard</div></div></li>
+            <li><div><div class="name">Examens et Concours</div><div class="meta">1 rapport en retard</div></div></li>
+            <li><div><div class="name">Ressources Humaines</div><div class="meta">À jour</div></div></li>
+            <li><div><div class="name">Bureau Genre</div><div class="meta">À jour</div></div></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ VUE SECRÉTAIRE GÉNÉRAL ============ -->
+    <section class="view" id="view-secretaire">
+
+      <!-- État sans délégation -->
+      <div id="sg-inactive">
+        <div class="banner" style="background:var(--gold-soft);border-color:#e5d3a3;color:#7a5b17;">
+          Aucune délégation active. En tant qu'adjoint du Chef Admin, vous conservez vos droits habituels tant qu'aucune délégation ne vous est accordée.
+        </div>
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Délégation de pouvoir</h2>
+          </div>
+          <div class="empty" style="padding:48px 20px;">
+            <div style="font-size:14px;color:var(--ink);margin-bottom:14px;">Le Chef Admin ne vous a délégué aucun pouvoir pour le moment.</div>
+            <button id="btnActivateDelegation" style="background:var(--navy);color:#fff;border:none;border-radius:8px;padding:11px 22px;font-size:13px;font-weight:600;cursor:pointer;">Simuler l'activation d'une délégation</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- État avec délégation active -->
+      <div id="sg-active" style="display:none;">
+        <div class="banner" style="background:var(--red-soft);border-color:#e6bfae;color:var(--red);">
+          Délégation active — vous agissez avec les droits de l'IEF (Chef Admin) <strong>Ibrahima Sow</strong> jusqu'au 19 septembre 2026.
+          <span style="margin-left:auto;">
+            <button id="btnDeactivateDelegation" style="background:transparent;border:1px solid var(--red);color:var(--red);border-radius:6px;padding:5px 12px;font-size:11.5px;font-weight:600;cursor:pointer;">Mettre fin</button>
+          </span>
+        </div>
+
+        <div class="kpi-row">
+          <div class="kpi">
+            <div class="label">Rapports à valider</div>
+            <div class="value">14</div>
+            <div class="delta warn">4 en retard</div>
+          </div>
+          <div class="kpi">
+            <div class="label">Validations ce mois</div>
+            <div class="value">37</div>
+            <div class="delta">Sur 11 bureaux</div>
+          </div>
+          <div class="kpi">
+            <div class="label">Bureaux en alerte</div>
+            <div class="value">2</div>
+            <div class="delta warn">Retards répétés</div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h2>File de validation transversale</h2>
+          </div>
+          <table>
+            <thead>
+              <tr><th>Rapport</th><th>Bureau</th><th>Statut</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Bilan trimestriel Q3</td><td class="muted">Gestion Financière</td><td><span class="tag attente">À valider</span></td></tr>
+              <tr><td>Session concours — clôture</td><td class="muted">Examens et Concours</td><td><span class="tag attente">À valider</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ VUE INSPECTEUR DE DISTRICT ============ -->
+    <section class="view" id="view-inspecteur">
+
+      <div class="banner">
+        Vous supervisez <strong>&nbsp;3 bureaux assignés&nbsp;</strong> : Gestion Financière, Examens et Concours, Bureau Genre.
+      </div>
+
+      <div class="kpi-row">
+        <div class="kpi">
+          <div class="label">Bureaux supervisés</div>
+          <div class="value">3</div>
+          <div class="delta">Sur 11 au total</div>
+        </div>
+        <div class="kpi">
+          <div class="label">Dossiers à contrôler</div>
+          <div class="value">9</div>
+          <div class="delta">Répartis sur 3 bureaux</div>
+        </div>
+        <div class="kpi">
+          <div class="label">Rapports en attente</div>
+          <div class="value">4</div>
+          <div class="delta warn">2 en retard</div>
+        </div>
+        <div class="kpi">
+          <div class="label">Contrôles effectués ce mois</div>
+          <div class="value">11</div>
+          <div class="delta">Bon rythme</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Activité des bureaux assignés</h2>
+        </div>
+        <table>
+          <thead>
+            <tr><th>Bureau</th><th>Dossiers en cours</th><th>Rapports en attente</th><th>Dernier contrôle</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Gestion Financière</td><td class="muted">12</td><td class="muted">3</td><td class="muted">5 sept.</td></tr>
+            <tr><td>Examens et Concours</td><td class="muted">8</td><td class="muted">1</td><td class="muted">2 sept.</td></tr>
+            <tr><td>Bureau Genre</td><td class="muted">4</td><td class="muted">0</td><td class="muted">10 sept.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ============ VUE RESPONSABLE DE BUREAU ============ -->
+    <section class="view" id="view-responsable">
+
+      <div class="banner">
+        Vous consultez le bureau <strong>&nbsp;Ressources Humaines&nbsp;</strong> — les données sont limitées à ce périmètre.
+      </div>
+
+      <div class="kpi-row">
+        <div class="kpi">
+          <div class="label">Agents du bureau</div>
+          <div class="value">7</div>
+          <div class="delta">Tous actifs</div>
+        </div>
+        <div class="kpi">
+          <div class="label">Dossiers en cours</div>
+          <div class="value">19</div>
+          <div class="delta">+2 cette semaine</div>
+        </div>
+        <div class="kpi">
+          <div class="label">Rapports à valider</div>
+          <div class="value">3</div>
+          <div class="delta warn">1 en retard</div>
+        </div>
+        <div class="kpi">
+          <div class="label">Échéance la plus proche</div>
+          <div class="value">4&nbsp;j</div>
+          <div class="delta">Bilan mensuel</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Dossiers du bureau</h2>
+            <span class="link">+ Nouveau dossier</span>
+          </div>
+          <table>
+            <thead>
+              <tr><th>Dossier</th><th>Responsable</th><th>Statut</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Recrutement — poste comptable</td><td class="muted">N. Touré</td><td><span class="tag cours">En cours</span></td></tr>
+              <tr><td>Renouvellement contrats saisonniers</td><td class="muted">H. Diakité</td><td><span class="tag attente">À traiter</span></td></tr>
+              <tr><td>Dossier disciplinaire #12</td><td class="muted">Vous</td><td><span class="tag cours">En cours</span></td></tr>
+              <tr><td>Formation continue — module Q3</td><td class="muted">N. Touré</td><td><span class="tag ok">Clôturé</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Agents du bureau</h2>
+          </div>
+          <ul class="list-simple">
+            <li>
+              <div class="row-flex">
+                <div class="avatar">NT</div>
+                <div>
+                  <div class="name">Nafi Touré</div>
+                  <div class="meta">Saisie &amp; validation partielle</div>
+                </div>
+              </div>
+            </li>
+            <li>
+              <div class="row-flex">
+                <div class="avatar">HD</div>
+                <div>
+                  <div class="name">Hawa Diakité</div>
+                  <div class="meta">Saisie</div>
+                </div>
+              </div>
+            </li>
+            <li>
+              <div class="row-flex">
+                <div class="avatar">IK</div>
+                <div>
+                  <div class="name">Ibrahima Konaté</div>
+                  <div class="meta">Lecture seule</div>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ VUE AGENT DE BUREAU ============ -->
+    <section class="view" id="view-agent">
+
+      <div class="banner">
+        Vous consultez vos tâches dans <strong>&nbsp;Examens et Concours&nbsp;</strong> — droits : saisie.
+      </div>
+
+      <div class="kpi-row">
+        <div class="kpi">
+          <div class="label">Dossiers qui vous sont assignés</div>
+          <div class="value">5</div>
+          <div class="delta">Aucun retard</div>
+        </div>
+        <div class="kpi">
+          <div class="label">Rapports à rédiger</div>
+          <div class="value">1</div>
+          <div class="delta warn">Échéance : 15 sept.</div>
+        </div>
+        <div class="kpi">
+          <div class="label">Tâches terminées ce mois</div>
+          <div class="value">12</div>
+          <div class="delta">Bon rythme</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Mes dossiers</h2>
+        </div>
+        <table>
+          <thead>
+            <tr><th>Dossier</th><th>Échéance</th><th>Statut</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Candidats session Octobre — vérification pièces</td><td class="muted">18 sept.</td><td><span class="tag cours">En cours</span></td></tr>
+            <tr><td>Mise à jour liste des jurys</td><td class="muted">22 sept.</td><td><span class="tag attente">À faire</span></td></tr>
+            <tr><td>Archivage session Juin</td><td class="muted">—</td><td><span class="tag ok">Terminé</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ============ VUE RH (TRANSVERSALE) ============ -->
+    <section class="view" id="view-rh">
+
+      <div class="banner">
+        Vue transversale <strong>&nbsp;personnel&nbsp;</strong> — lecture sur les 11 bureaux <strong>et toutes les écoles de la circonscription</strong>, écriture limitée au bureau Ressources Humaines.
+      </div>
+
+      <div class="kpi-row">
+        <div class="kpi">
+          <div class="label">Personnel bureaux IEF</div>
+          <div class="value">96</div>
+          <div class="delta">11 bureaux</div>
+        </div>
+        <div class="kpi">
+          <div class="label">Personnel écoles</div>
+          <div class="value">612</div>
+          <div class="delta">38 écoles</div>
+        </div>
+        <div class="kpi">
+          <div class="label">Postes vacants</div>
+          <div class="value">17</div>
+          <div class="delta warn">Dont 14 en écoles</div>
+        </div>
+        <div class="kpi">
+          <div class="label">Dossiers RH en cours</div>
+          <div class="value">19</div>
+          <div class="delta">Bureau RH uniquement</div>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-bottom:18px;">
+        <div class="panel-head">
+          <h2>Personnel — bureaux IEF</h2>
+          <span class="link">Exporter</span>
+        </div>
+        <table>
+          <thead>
+            <tr><th>Bureau</th><th>Effectif</th><th>Postes vacants</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Gestion Financière</td><td class="muted">9</td><td class="muted">1</td></tr>
+            <tr><td>Ressources Humaines</td><td class="muted">7</td><td class="muted">0</td></tr>
+            <tr><td>Examens et Concours</td><td class="muted">11</td><td class="muted">0</td></tr>
+            <tr><td>Bureau Genre</td><td class="muted">4</td><td class="muted">1</td></tr>
+            <tr><td>Enseignement Arabe</td><td class="muted">8</td><td class="muted">0</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Personnel — écoles de la circonscription</h2>
+          <span class="link">Voir les 38 écoles</span>
+        </div>
+        <table>
+          <thead>
+            <tr><th>École</th><th>Cycle</th><th>Effectif enseignant</th><th>Postes vacants</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>École primaire de Sabalibougou</td><td class="muted">Élémentaire</td><td class="muted">14</td><td class="muted">2</td></tr>
+            <tr><td>Collège de Kalaban-Coro</td><td class="muted">Collège</td><td class="muted">22</td><td class="muted">0</td></tr>
+            <tr><td>Préscolaire Niamakoro</td><td class="muted">Préscolaire</td><td class="muted">6</td><td class="muted">1</td></tr>
+            <tr><td>Daara Moderne Centre</td><td class="muted">Daara Moderne</td><td class="muted">9</td><td class="muted">0</td></tr>
+            <tr><td>EFA Régional</td><td class="muted">EFA</td><td class="muted">17</td><td class="muted">1</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    </div>
+
+    <!-- ============ MODULE DISCUSSIONS ============ -->
+    <section class="view" id="view-discussions">
+
+      <div class="topbar" style="margin-bottom:20px;">
+        <div>
+          <h1 style="font-size:22px;">Discussions</h1>
+          <div class="sub">Chat et fils de discussion thématiques</div>
+        </div>
+      </div>
+
+      <div class="grid-2" style="grid-template-columns:280px 1fr;">
+
+        <div class="panel">
+          <div class="panel-head">
+            <h2 style="font-size:14px;">Fils &amp; conversations</h2>
+          </div>
+          <ul class="list-simple" id="discussionThreadList">
+            <li class="thread-item active" data-thread="0">
+              <div>
+                <div class="name">Session concours Octobre</div>
+                <div class="meta">Examens et Concours · 14 messages</div>
+              </div>
+            </li>
+            <li class="thread-item" data-thread="1">
+              <div>
+                <div class="name">Budget Q4</div>
+                <div class="meta">Gestion Financière · 6 messages</div>
+              </div>
+            </li>
+            <li class="thread-item" data-thread="2">
+              <div>
+                <div class="name">Coordination RH ↔ Examens</div>
+                <div class="meta">Fil transversal · 9 messages</div>
+              </div>
+            </li>
+            <li class="thread-item" data-thread="3">
+              <div>
+                <div class="name">Nafi Touré</div>
+                <div class="meta">Message direct · en ligne</div>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="panel" style="display:flex;flex-direction:column;height:480px;">
+          <div class="panel-head">
+            <h2 style="font-size:14px;" id="threadTitle">Session concours Octobre</h2>
+            <span class="tag ok">Fil de discussion</span>
+          </div>
+          <div id="chatMessages" style="flex:1;overflow-y:auto;padding:18px 20px;display:flex;flex-direction:column;gap:14px;">
+            <!-- rempli par JS -->
+          </div>
+          <div style="border-top:1px solid var(--line);padding:12px 16px;display:flex;gap:10px;">
+            <input type="text" placeholder="Écrire un message…" style="flex:1;border:1px solid var(--line);border-radius:999px;padding:9px 16px;font-family:'Inter',sans-serif;font-size:13px;outline:none;">
+            <button style="background:var(--navy);color:#fff;border:none;border-radius:999px;padding:9px 18px;font-size:13px;font-weight:500;cursor:pointer;">Envoyer</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ MODULE RÉUNIONS ============ -->
+    <section class="view" id="view-reunions">
+
+      <div class="topbar" style="margin-bottom:20px;">
+        <div>
+          <h1 style="font-size:22px;">Réunions</h1>
+          <div class="sub">Planification, ordre du jour, compte-rendu et visioconférence</div>
+        </div>
+        <div class="role-switch" style="border-radius:8px;">
+          <button class="active" style="border-radius:6px;">+ Planifier une réunion</button>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-bottom:18px;">
+        <div class="panel-head">
+          <h2>Réunion en cours</h2>
+          <span class="tag attente">En direct</span>
+        </div>
+        <div style="padding:18px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;">
+          <div>
+            <div style="font-weight:600;font-size:14.5px;margin-bottom:4px;">Coordination sessions Octobre</div>
+            <div class="meta muted" style="font-size:12.5px;">Bureau Examens et Concours · commencée à 10h00</div>
+            <div style="display:flex;gap:6px;margin-top:10px;">
+              <div class="avatar">MB</div><div class="avatar">AC</div><div class="avatar">NT</div>
+              <div class="avatar" style="background:var(--teal-soft);color:var(--teal);">+2</div>
+            </div>
+          </div>
+          <button style="background:var(--teal);color:#fff;border:none;border-radius:8px;padding:11px 22px;font-size:13px;font-weight:600;cursor:pointer;">Rejoindre la visioconférence</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Réunions planifiées</h2>
+        </div>
+        <table>
+          <thead>
+            <tr><th>Réunion</th><th>Bureau</th><th>Date</th><th>Ordre du jour</th><th>Statut</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Bilan mensuel RH</td>
+              <td class="muted">Ressources Humaines</td>
+              <td class="muted">16 sept. — 9h00</td>
+              <td class="muted">3 points</td>
+              <td><span class="tag cours">Planifiée</span></td>
+            </tr>
+            <tr>
+              <td>Revue budgétaire Q4</td>
+              <td class="muted">Gestion Financière</td>
+              <td class="muted">18 sept. — 14h30</td>
+              <td class="muted">5 points</td>
+              <td><span class="tag cours">Planifiée</span></td>
+            </tr>
+            <tr>
+              <td>Point hebdomadaire Communication</td>
+              <td class="muted">Communication &amp; Partenariats</td>
+              <td class="muted">9 sept. — 10h00</td>
+              <td class="muted">2 points</td>
+              <td><span class="tag ok">Compte-rendu disponible</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  const roleData = {
+    super: {
+      title: "Vue d'ensemble",
+      sub: "Tous les bureaux — samedi 12 septembre 2026",
+      foot: "Super Admin",
+      activeBureau: null
+    },
+    chef: {
+      title: "Validation transversale",
+      sub: "Tous les bureaux — samedi 12 septembre 2026",
+      foot: "IEF — Chef Admin",
+      activeBureau: null
+    },
+    secretaire: {
+      title: "Espace Secrétaire Général",
+      sub: "Adjoint du Chef Admin — samedi 12 septembre 2026",
+      foot: "Secrétaire Général",
+      activeBureau: null
+    },
+    inspecteur: {
+      title: "Supervision des bureaux assignés",
+      sub: "3 bureaux — samedi 12 septembre 2026",
+      foot: "Inspecteur de district",
+      activeBureau: ["1","8","9"]
+    },
+    responsable: {
+      title: "Tableau de bord — Ressources Humaines",
+      sub: "Bureau n°7 — samedi 12 septembre 2026",
+      foot: "Responsable de bureau",
+      activeBureau: "7"
+    },
+    agent: {
+      title: "Mes tâches",
+      sub: "Examens et Concours — samedi 12 septembre 2026",
+      foot: "Agent de bureau",
+      activeBureau: "8"
+    },
+    rh: {
+      title: "Personnel — vue transversale",
+      sub: "Lecture sur 11 bureaux — samedi 12 septembre 2026",
+      foot: "Ressources Humaines",
+      activeBureau: "7"
+    }
+  };
+
+  // ---- Menu mobile (sidebar en tiroir) ----
+  const sidebarEl = document.querySelector('.sidebar');
+  const backdropEl = document.getElementById('sidebarBackdrop');
+  const menuToggle = document.getElementById('menuToggle');
+
+  function openSidebar(){
+    sidebarEl.classList.add('open');
+    backdropEl.classList.add('open');
+  }
+  function closeSidebar(){
+    sidebarEl.classList.remove('open');
+    backdropEl.classList.remove('open');
+  }
+  menuToggle.addEventListener('click', openSidebar);
+  backdropEl.addEventListener('click', closeSidebar);
+
+  const buttons = document.querySelectorAll('.role-switch button[data-role]');
+  const views = document.querySelectorAll('.view');
+  const bureauItems = document.querySelectorAll('#bureauList li');
+  const moduleItems = document.querySelectorAll('#moduleList li');
+  let currentRole = 'super';
+
+  function showDashboardForRole(role){
+    document.getElementById('dashboardViews').style.display = 'block';
+    document.getElementById('view-discussions').classList.remove('active');
+    document.getElementById('view-reunions').classList.remove('active');
+    document.querySelectorAll('#dashboardViews .view').forEach(v => v.classList.remove('active'));
+    document.getElementById('view-' + role).classList.add('active');
+
+    const d = roleData[role];
+    document.getElementById('pageTitle').textContent = d.title;
+    document.getElementById('pageSub').textContent = d.sub;
+    document.getElementById('footRole').textContent = d.foot;
+
+    bureauItems.forEach(li => {
+      const active = Array.isArray(d.activeBureau)
+        ? d.activeBureau.includes(li.dataset.n)
+        : d.activeBureau === li.dataset.n;
+      li.classList.toggle('active', active);
+    });
+  }
+
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      currentRole = btn.dataset.role;
+      buttons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      moduleItems.forEach(li => li.classList.remove('active'));
+      document.querySelector('#moduleList li[data-view="dashboard"]').classList.add('active');
+
+      showDashboardForRole(currentRole);
+    });
+  });
+
+  moduleItems.forEach(item => {
+    item.addEventListener('click', () => {
+      moduleItems.forEach(li => li.classList.remove('active'));
+      item.classList.add('active');
+      closeSidebar();
+
+      const target = item.dataset.view;
+
+      if(target === 'dashboard'){
+        showDashboardForRole(currentRole);
+        return;
+      }
+
+      document.querySelectorAll('#dashboardViews .view').forEach(v => v.classList.remove('active'));
+      document.getElementById('view-discussions').classList.remove('active');
+      document.getElementById('view-reunions').classList.remove('active');
+      document.getElementById('view-' + target).classList.add('active');
+
+      bureauItems.forEach(li => li.classList.remove('active'));
+
+      if(target === 'discussions'){
+        document.getElementById('pageTitle').textContent = 'Discussions';
+        document.getElementById('pageSub').textContent = 'Chat et fils de discussion thématiques';
+      } else if(target === 'reunions'){
+        document.getElementById('pageTitle').textContent = 'Réunions';
+        document.getElementById('pageSub').textContent = 'Planification, ordre du jour et visioconférence';
+      }
+    });
+  });
+
+  // ---- Contenu des fils de discussion (mock) ----
+  const threads = {
+    0: {
+      title: "Session concours Octobre",
+      messages: [
+        {who:"Mariam Cissé", side:"other", text:"On a validé la liste des jurys pour la session d'octobre.", time:"09:12"},
+        {who:"Moussa Barry", side:"other", text:"Parfait, il reste combien de candidats à vérifier ?", time:"09:15"},
+        {who:"Vous", side:"me", text:"23 dossiers restants, je les termine demain matin.", time:"09:20"}
+      ]
+    },
+    1: {
+      title: "Budget Q4",
+      messages: [
+        {who:"Awa Diallo", side:"other", text:"Le bilan trimestriel est en retard de 2 jours, on peut décaler la réunion ?", time:"08:40"},
+        {who:"Vous", side:"me", text:"On garde la date, j'envoie les chiffres ce soir.", time:"08:55"}
+      ]
+    },
+    2: {
+      title: "Coordination RH ↔ Examens",
+      messages: [
+        {who:"Ibrahima Konaté", side:"other", text:"On aura besoin de 3 surveillants supplémentaires pour la session.", time:"11:02"},
+        {who:"Vous", side:"me", text:"Je regarde les disponibilités et je reviens vers vous demain.", time:"11:10"}
+      ]
+    },
+    3: {
+      title: "Nafi Touré",
+      messages: [
+        {who:"Nafi Touré", side:"other", text:"Le dossier de recrutement comptable est prêt pour relecture.", time:"14:02"},
+        {who:"Vous", side:"me", text:"Je le regarde cet après-midi, merci !", time:"14:05"}
+      ]
+    }
+  };
+
+  function renderThread(id){
+    const t = threads[id];
+    document.getElementById('threadTitle').textContent = t.title;
+    const box = document.getElementById('chatMessages');
+    box.innerHTML = '';
+    t.messages.forEach(m => {
+      const div = document.createElement('div');
+      div.className = 'bubble ' + m.side;
+      div.innerHTML = (m.side === 'other' ? `<div class="who">${m.who}</div>` : '') +
+                       `${m.text}<div class="time">${m.time}</div>`;
+      box.appendChild(div);
+    });
+  }
+
+  document.querySelectorAll('.thread-item').forEach(item => {
+    item.addEventListener('click', () => {
+      document.querySelectorAll('.thread-item').forEach(t => t.classList.remove('active'));
+      item.classList.add('active');
+      renderThread(item.dataset.thread);
+    });
+  });
+
+  renderThread(0);
+
+  // ---- Simulation de la délégation Chef Admin -> Secrétaire Général ----
+  const btnActivate = document.getElementById('btnActivateDelegation');
+  const btnDeactivate = document.getElementById('btnDeactivateDelegation');
+  if(btnActivate){
+    btnActivate.addEventListener('click', () => {
+      document.getElementById('sg-inactive').style.display = 'none';
+      document.getElementById('sg-active').style.display = 'block';
+    });
+  }
+  if(btnDeactivate){
+    btnDeactivate.addEventListener('click', () => {
+      document.getElementById('sg-active').style.display = 'none';
+      document.getElementById('sg-inactive').style.display = 'block';
+    });
+  }
+</script>
+
+</body>
+</html>
