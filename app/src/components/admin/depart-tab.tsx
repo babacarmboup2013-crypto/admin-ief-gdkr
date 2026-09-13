@@ -14,9 +14,8 @@ export function DepartTab() {
     async () => {
       if (!supabase) return [];
       const { data, error } = await supabase
-        .from("personnel")
+        .from("personnel_archive")
         .select(SELECT)
-        .eq("statut", "inactif")
         .order("nom_complet", { ascending: true });
       return error || !data ? [] : (data as unknown as PersonnelRow[]);
     },
