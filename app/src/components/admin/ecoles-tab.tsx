@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { supabase } from "@/lib/supabase/client";
 import { adminPerms } from "@/lib/admin-perms";
 import { CYCLE_LABELS, CYCLE_VALUES, type EcoleRow } from "@/lib/admin-types";
@@ -12,6 +12,7 @@ import { StatusBadge } from "./status";
 import { sbThrow } from "./sb";
 import { useRows } from "./use-rows";
 import Link from "next/link";
+import { SearchBar } from "./search-bar";
 
 export function EcolesTab() {
   const { role, profile } = useRole();
@@ -22,6 +23,7 @@ export function EcolesTab() {
   const [cycle, setCycle] = useState("élémentaire");
   const [localisation, setLocalisation] = useState("");
   const [effectif, setEffectif] = useState("");
+  const [search, setSearch] = useState("");
   const { rows, loading, refresh } = useRows<EcoleRow>(
     async () => {
       if (!supabase) return [];
@@ -85,11 +87,22 @@ export function EcolesTab() {
     else refresh();
   }
 
+  const filteredRows = useMemo(() => {
+    if (!search.trim()) return rows;
+    const q = search.toLowerCase();
+    return rows.filter((r) =>
+      r.nom?.toLowerCase().includes(q) ||
+      r.localisation?.toLowerCase().includes(q) ||
+      r.cycle?.toLowerCase().includes(q)
+    );
+  }, [rows, search]);
+
   return (
     <>
+      <SearchBar value={search} onChange={setSearch} placeholder="Rechercher par nom, cycle, district..." />
       <AdminTable
         title="Écoles de la circonscription"
-        subtitle="Établissements rattachés à l'IEF — cycle, localisation, effectifs."
+        subtitle={`${filteredRows.length} école(s) sur ${rows.length}.`}
         columns={[
           { header: "École/Etablissement", cell: (r) => <Link href={`/ecole/${r.id}`} className="font-medium text-primary hover:underline">{r.nom}</Link> },
           {
@@ -99,7 +112,7 @@ export function EcolesTab() {
           { header: "District", cell: (r) => <span className="text-ink-soft">{r.localisation ?? "—"}</span> },
           { header: "Effectif élèves", cell: (r) => <span className="text-ink-soft">{r.effectif_eleves ?? "—"}</span> },
         ]}
-        rows={rows}
+        rows={filteredRows}
         keyOf={(r) => r.id}
         loading={loading}
         canAdd={perms.add}

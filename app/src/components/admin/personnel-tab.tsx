@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase/client";
 import { adminPerms } from "@/lib/admin-perms";
@@ -20,6 +20,7 @@ import { StatusBadge } from "./status";
 import { sbThrow } from "./sb";
 import { useRows } from "./use-rows";
 import { useBureauxRef, useEcolesRef } from "./use-refs";
+import { SearchBar } from "./search-bar";
 
 const SELECT = [
   "id",
@@ -71,6 +72,7 @@ export function PersonnelTab() {
   const [lieuNaissance, setLieuNaissance] = useState("");
   const [corps, setCorps] = useState("");
   const [grade, setGrade] = useState("");
+  const [search, setSearch] = useState("");
   const [discipline, setDiscipline] = useState("");
   const [diplAc, setDiplAc] = useState("");
   const [diplProf, setDiplProf] = useState("");
@@ -224,11 +226,28 @@ export function PersonnelTab() {
     else refresh();
   }
 
+  const filteredRows = useMemo(() => {
+    if (!search.trim()) return rows;
+    const q = search.toLowerCase();
+    return rows.filter((r) => {
+      const ecole = ecoles.rows.find((e) => e.id === r.ecole_id);
+      const eName = ecole?.nom?.toLowerCase() ?? "";
+      return (
+        r.nom_complet?.toLowerCase().includes(q) ||
+        r.matricule?.toLowerCase().includes(q) ||
+        r.email?.toLowerCase().includes(q) ||
+        r.fonction?.toLowerCase().includes(q) ||
+        eName.includes(q)
+      );
+    });
+  }, [rows, search, ecoles.rows]);
+
   return (
     <>
+      <SearchBar value={search} onChange={setSearch} placeholder="Rechercher par nom, matricule, email, fonction, école..." />
       <AdminTable
         title="Personnel"
-        subtitle="Agents des bureaux IEF et personnels des écoles (effectifs importés)."
+        subtitle={`${filteredRows.length} agent(s) sur ${rows.length}.`}
         columns={[
           { header: "Nom complet", cell: (r) => <Link href={`/agent/${r.id}`} className="font-medium text-primary hover:underline">{r.nom_complet}</Link> },
           { header: "Affectation", cell: (r) => <span className="text-ink-soft">{affectation(r).label}</span> },
@@ -276,7 +295,7 @@ export function PersonnelTab() {
             },
           },
         ]}
-        rows={rows}
+        rows={filteredRows}
         keyOf={(r) => r.id}
         loading={loading}
         canAdd={perms.add}
