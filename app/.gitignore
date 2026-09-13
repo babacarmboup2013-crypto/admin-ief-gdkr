@@ -43,3 +43,10 @@ next-env.d.ts
 # local dev server artifacts
 dev-server.log
 dev-server.pid
+dev-server.err.log
+
+# supabase CLI local metadata
+supabase/.temp/
+
+.vercel
+.env*

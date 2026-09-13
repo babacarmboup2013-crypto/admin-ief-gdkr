@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, MessageSquare, CalendarClock, LogOut, LogIn } from "lucide-react";
+import { LayoutDashboard, MessageSquare, CalendarClock, Settings, LogOut, LogIn } from "lucide-react";
 import { DASHBOARDS } from "@/lib/data";
 import { useRole } from "@/lib/role-context";
 import { fetchBureaux } from "@/lib/queries";
@@ -16,6 +16,7 @@ const MODULES = [
   { view: "dashboard", label: "Tableau de bord", icon: LayoutDashboard, href: "/" },
   { view: "discussions", label: "Discussions", icon: MessageSquare, href: "/discussions" },
   { view: "reunions", label: "Réunions", icon: CalendarClock, href: "/reunions" },
+  { view: "administration", label: "Administration", icon: Settings, href: "/administration" },
 ];
 
 export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void }) {

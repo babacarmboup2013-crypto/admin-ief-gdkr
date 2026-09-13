@@ -64,6 +64,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   } else if (pathname === "/reunions") {
     title = "Réunions";
     sub = "Planification, ordre du jour et visioconférence";
+  } else if (pathname.startsWith("/administration")) {
+    title = "Administration";
+    sub = "Saisie et gestion des données réelles";
   }
 
   if (pathname === "/auth") {
