@@ -1,5 +1,6 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BureauxTab } from "./bureaux-tab";
 import { UtilisateursTab } from "./utilisateurs-tab";
@@ -10,9 +11,15 @@ import { RapportsTab } from "./rapports-tab";
 import { ReunionsTab } from "./reunions-tab";
 import { DepartTab } from "./depart-tab";
 
+const VALID_TABS = ["bureaux", "utilisateurs", "ecoles", "personnel", "dossiers", "rapports", "reunions", "depart"];
+
 export function AdminPage() {
+  const searchParams = useSearchParams();
+  const tabParam = searchParams.get("tab");
+  const defaultTab = VALID_TABS.includes(tabParam ?? "") ? tabParam! : "bureaux";
+
   return (
-    <Tabs defaultValue="bureaux">
+    <Tabs defaultValue={defaultTab}>
       <TabsList
         variant="line"
         className="mb-5 h-auto w-full flex-wrap gap-1"

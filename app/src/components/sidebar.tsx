@@ -161,32 +161,6 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
         </ul>
       </nav>
 
-      {canSeeAllBureaux(role) && (
-        <>
-          <div className="text-[11px] text-[#7c8bab] px-5 pt-5 pb-2">Départ</div>
-          <nav className="px-3">
-            <ul>
-              <li>
-                <Link
-                  href={`/bureau/24`}
-                  onClick={onClose}
-                  className={cn(
-                    "mb-0.5 flex items-center gap-2.5 rounded px-2.5 py-2 text-[13.5px] text-[#c3cde0] transition-colors hover:bg-white/[0.06]",
-                    pathname === "/bureau/24" && "bg-white/[0.09] text-white"
-                  )}
-                >
-                  <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-white/[0.08] text-[10.5px] text-[#96a5c2]">
-                    ✕
-                  </span>
-                  Anciens agents
-                  <span className="ml-auto text-[11px] text-[#7c8bab]">{bureauCounts[24] ?? 0}</span>
-                </Link>
-              </li>
-            </ul>
-          </nav>
-        </>
-      )}
-
       <div className="mt-2 px-5 pb-2 text-[11px] text-[#7c8bab]">Modules</div>
       <nav className="px-3">
         <ul>
@@ -217,6 +191,34 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
           })}
         </ul>
       </nav>
+
+      {canSeeAllBureaux(role) && (
+        <>
+          <div className="text-[11px] text-[#7c8bab] px-5 pt-4 pb-2">Personnel</div>
+          <nav className="px-3">
+            <ul>
+              <li>
+                <Link href="/administration?tab=ecoles" onClick={onClose} className={cn("mb-0.5 flex items-center gap-2.5 rounded px-2.5 py-2 text-[13.5px] text-[#c3cde0] transition-colors hover:bg-white/[0.06]", pathname === "/administration" && "bg-white/[0.09] text-white")}>
+                  <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-white/[0.08] text-[10.5px] text-[#96a5c2]">69</span>
+                  Écoles
+                </Link>
+              </li>
+              <li>
+                <Link href="/administration?tab=personnel" onClick={onClose} className={cn("mb-0.5 flex items-center gap-2.5 rounded px-2.5 py-2 text-[13.5px] text-[#c3cde0] transition-colors hover:bg-white/[0.06]", pathname === "/administration" && "bg-white/[0.09] text-white")}>
+                  <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-white/[0.08] text-[10.5px] text-[#96a5c2]">897</span>
+                  Personnel actif
+                </Link>
+              </li>
+              <li>
+                <Link href="/administration?tab=depart" onClick={onClose} className={cn("mb-0.5 flex items-center gap-2.5 rounded px-2.5 py-2 text-[13.5px] text-[#c3cde0] transition-colors hover:bg-white/[0.06]", pathname === "/administration" && "bg-white/[0.09] text-white")}>
+                  <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-white/[0.08] text-[10.5px] text-[#96a5c2]">220</span>
+                  Départ / mutés
+                </Link>
+              </li>
+            </ul>
+          </nav>
+        </>
+      )}
 
       <div className="mt-auto border-t border-sidebar-border px-5 pb-5 pt-4">
         {session ? (
