@@ -91,12 +91,12 @@ export function EcolesTab() {
         title="Écoles de la circonscription"
         subtitle="Établissements rattachés à l'IEF — cycle, localisation, effectifs."
         columns={[
-          { header: "École", cell: (r) => <Link href={`/ecole/${r.id}`} className="font-medium text-primary hover:underline">{r.nom}</Link> },
+          { header: "École/Etablissement", cell: (r) => <Link href={`/ecole/${r.id}`} className="font-medium text-primary hover:underline">{r.nom}</Link> },
           {
             header: "Cycle",
             cell: (r) => <StatusBadge label={CYCLE_LABELS[r.cycle] ?? r.cycle} tone="ok" />,
           },
-          { header: "Localisation", cell: (r) => <span className="text-ink-soft">{r.localisation ?? "—"}</span> },
+          { header: "District", cell: (r) => <span className="text-ink-soft">{r.localisation ?? "—"}</span> },
           { header: "Effectif élèves", cell: (r) => <span className="text-ink-soft">{r.effectif_eleves ?? "—"}</span> },
         ]}
         rows={rows}
