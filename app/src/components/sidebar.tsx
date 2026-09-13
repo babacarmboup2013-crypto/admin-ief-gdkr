@@ -12,8 +12,8 @@ import { supabase } from "@/lib/supabase/client";
 import type { Bureau } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
-const canSeeAllBureaux = (role: string, bureauId: number | null) =>
-  role === "super" || role === "chef" || (role === "responsable" && bureauId === 7);
+const canSeeAllBureaux = (role: string) =>
+  role === "super" || role === "chef";
 
 const MODULES = [
   { view: "dashboard", label: "Tableau de bord", icon: LayoutDashboard, href: "/" },
@@ -41,7 +41,7 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
     };
   }, []);
 
-  const visibleBureaux = canSeeAllBureaux(role, profile.bureauId)
+  const visibleBureaux = canSeeAllBureaux(role)
     ? allBureaux
     : allBureaux.filter((b) => profile.bureauId != null && b.id === profile.bureauId);
 

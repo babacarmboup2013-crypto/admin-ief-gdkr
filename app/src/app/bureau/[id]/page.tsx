@@ -16,7 +16,6 @@ const PERSONNEL_SELECT = "id,bureau_id,ecole_id,nom_complet,fonction,date_entree
 
 function canAccessBureau(role: string, profileBureauId: number | null, targetId: number): boolean {
   if (role === "super" || role === "chef") return true;
-  if (role === "responsable" && profileBureauId === 7) return true;
   return profileBureauId === targetId;
 }
 
