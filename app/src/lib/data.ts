@@ -299,6 +299,18 @@ export const DASHBOARDS: Record<RoleId, RoleDashboard> = {
     panels: [
       {
         type: "table",
+        title: "Répartition des écoles par cycle",
+        headers: ["Cycle", "Nombre d'écoles"],
+        rows: [
+          [{ text: "Élémentaire" }, { text: "46" }],
+          [{ text: "Collège" }, { text: "12" }],
+          [{ text: "Préscolaire" }, { text: "9" }],
+          [{ text: "Daara Moderne" }, { text: "1" }],
+          [{ text: "Total", muted: false }, { text: "68" }],
+        ],
+      },
+      {
+        type: "table",
         title: "Personnel — bureaux IEF",
         link: "Exporter",
         headers: ["Bureau", "Effectif", "Postes vacants"],
