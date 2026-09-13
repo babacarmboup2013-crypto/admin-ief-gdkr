@@ -12,6 +12,9 @@ import { supabase } from "@/lib/supabase/client";
 import type { Bureau } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
+const canSeeAllBureaux = (role: string, bureauId: number | null) =>
+  role === "super" || role === "chef" || (role === "responsable" && bureauId === 7);
+
 const MODULES = [
   { view: "dashboard", label: "Tableau de bord", icon: LayoutDashboard, href: "/" },
   { view: "discussions", label: "Discussions", icon: MessageSquare, href: "/discussions" },
@@ -22,21 +25,25 @@ const MODULES = [
 export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { role } = useRole();
+  const { role, profile } = useRole();
   const config = DASHBOARDS[role];
   const activeBureaux = config.activeBureaux;
-  const [bureaux, setBureaux] = useState<Bureau[]>([]);
+  const [allBureaux, setAllBureaux] = useState<Bureau[]>([]);
   const { session } = useSession();
 
   useEffect(() => {
     let active = true;
     fetchBureaux().then((b) => {
-      if (active) setBureaux(b);
+      if (active) setAllBureaux(b);
     });
     return () => {
       active = false;
     };
   }, []);
+
+  const visibleBureaux = canSeeAllBureaux(role, profile.bureauId)
+    ? allBureaux
+    : allBureaux.filter((b) => profile.bureauId != null && b.id === profile.bureauId);
 
   async function signOut() {
     await supabase?.auth.signOut();
@@ -63,30 +70,36 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
         </div>
       </div>
 
-      <div className="text-[11px] text-[#7c8bab] px-5 pt-5 pb-2">Bureaux</div>
+      <div className="text-[11px] text-[#7c8bab] px-5 pt-5 pb-2">
+        {visibleBureaux.length > 1 ? "Bureaux" : "Mon bureau"}
+      </div>
       <nav className="px-3">
         <ul>
-          {bureaux.map((b) => {
+          {visibleBureaux.map((b) => {
+            const onThisBureau = pathname === `/bureau/${b.id}`;
             const active = activeBureaux
               ? activeBureaux.includes(String(b.id))
-              : false;
+              : onThisBureau;
             return (
-              <li
-                key={b.id}
-                className={cn(
-                  "mb-0.5 flex cursor-default items-center gap-2.5 rounded px-2.5 py-2 text-[13.5px] text-[#c3cde0]",
-                  active && "bg-white/[0.09] text-white"
-                )}
-              >
-                <span
+              <li key={b.id}>
+                <Link
+                  href={`/bureau/${b.id}`}
+                  onClick={onClose}
                   className={cn(
-                    "flex size-5 shrink-0 items-center justify-center rounded-full bg-white/[0.08] text-[10.5px] text-[#96a5c2]",
-                    active && "bg-sidebar-primary text-sidebar-primary-foreground"
+                    "mb-0.5 flex items-center gap-2.5 rounded px-2.5 py-2 text-[13.5px] text-[#c3cde0] transition-colors hover:bg-white/[0.06]",
+                    active && "bg-white/[0.09] text-white"
                   )}
                 >
-                  {b.id}
-                </span>
-                {b.nom}
+                  <span
+                    className={cn(
+                      "flex size-5 shrink-0 items-center justify-center rounded-full bg-white/[0.08] text-[10.5px] text-[#96a5c2]",
+                      active && "bg-sidebar-primary text-sidebar-primary-foreground"
+                    )}
+                  >
+                    {b.id}
+                  </span>
+                  {b.nom}
+                </Link>
               </li>
             );
           })}
