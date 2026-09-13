@@ -26,7 +26,7 @@ export function DepartTab() {
   return (
     <AdminTable
       title="Personnel départ / muté"
-      subtitle={`${rows.length} agent(s) ne faisant plus partie du personnel actif de l'IEF.``}
+      subtitle={`${rows.length} agent(s) ne faisant plus partie du personnel actif de l'IEF.`}
       columns={[
         {
           header: "Nom complet",
