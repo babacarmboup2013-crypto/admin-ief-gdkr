@@ -45,11 +45,11 @@ function genEcolesSql(schoolsArr) {
 }
 
 function genPersonnelSql(finalRecs) {
-  const bureauRH = `(select id from public.bureaux where nom = 'Ressources Humaines')`;
-  const fallback = (cycle) => `(select id from public.ecoles where nom = ${sqlVal(`(Non precisee - ${cycle})`)})`;
+  const bureauRH = `(select id from public.bureaux where nom = 'Ressources Humaines' order by id limit 1)`;
+  const fallback = (cycle) => `(select id from public.ecoles where nom = ${sqlVal(`(Non precisee - ${cycle})`)} order by id limit 1)`;
   const ecoleExpr = (r) => {
     if (!r.ecole) return 'NULL';
-    const direct = `(select id from public.ecoles where nom = ${sqlVal(r.ecole)})`;
+    const direct = `(select id from public.ecoles where nom = ${sqlVal(r.ecole)} order by id limit 1)`;
     return `coalesce(${direct}, ${fallback(r.cycle || cycleFromName(r.ecole))})`;
   };
   const values = finalRecs
