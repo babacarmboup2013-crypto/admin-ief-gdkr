@@ -47,7 +47,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         const row = data as ProfileRow;
         const mapped = DB_ROLE_TO_UI[row.role];
         if (mapped) setRole(mapped);
-        else if (row.fonction === "RH") setRole("rh");
+        if (row.bureau_id === 7) setRole("rh");
+        else if (!mapped && row.fonction === "RH") setRole("rh");
         setProfile({ nom: row.nom_complet, bureauId: row.bureau_id, fonction: row.fonction });
       });
     return () => {
