@@ -11,6 +11,7 @@ import { Field, SelectInput, TextInput } from "./fields";
 import { StatusBadge } from "./status";
 import { sbThrow } from "./sb";
 import { useRows } from "./use-rows";
+import Link from "next/link";
 
 export function EcolesTab() {
   const { role, profile } = useRole();
@@ -90,7 +91,7 @@ export function EcolesTab() {
         title="Écoles de la circonscription"
         subtitle="Établissements rattachés à l'IEF — cycle, localisation, effectifs."
         columns={[
-          { header: "École", cell: (r) => <span className="font-medium text-ink">{r.nom}</span> },
+          { header: "École", cell: (r) => <Link href={`/ecole/${r.id}`} className="font-medium text-primary hover:underline">{r.nom}</Link> },
           {
             header: "Cycle",
             cell: (r) => <StatusBadge label={CYCLE_LABELS[r.cycle] ?? r.cycle} tone="ok" />,
