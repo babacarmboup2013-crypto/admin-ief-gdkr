@@ -287,7 +287,7 @@ export const DASHBOARDS: Record<RoleId, RoleDashboard> = {
   },
   rh: {
     title: "Personnel — vue transversale",
-    sub: "Lecture sur 11 bureaux — samedi 12 septembre 2026",
+    sub: "",
     foot: "Ressources Humaines",
     activeBureaux: ["7"],
     kpis: [

@@ -69,6 +69,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     title = "Administration";
     sub = "Saisie et gestion des données réelles";
   }
+  if (role === "rh" && !pathname.startsWith("/administration") && pathname !== "/discussions" && pathname !== "/reunions") {
+    sub = "";
+  }
 
   if (pathname === "/auth") {
     return (
@@ -91,6 +94,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         )}
         <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
         <main className="min-w-0 flex-1 px-4 pb-14 pt-5 sm:px-6 lg:px-9 lg:pt-8">
+          {role === "rh" && !pathname.startsWith("/administration") && pathname !== "/discussions" && pathname !== "/reunions" && (
+            <div className="mb-2 text-right text-[12px] text-ink-soft">
+              {new Date().toLocaleString("fr-SN", { dateStyle: "full", timeStyle: "short" })}
+            </div>
+          )}
           <div className="mb-7 flex flex-wrap items-start justify-between gap-5">
             <div className="flex items-start gap-3">
               <button
