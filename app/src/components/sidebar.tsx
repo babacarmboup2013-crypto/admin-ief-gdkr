@@ -49,7 +49,7 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
       if (!active || !pers) return;
       const counts: Record<number, number> = {};
       for (const p of pers as { bureau_id: number | null }[]) {
-        if (p.bureau_id) counts[p.bureau_id] = (counts[p.bureau_id] ?? 0) + 1;
+        if (p.bureau_id && p.bureau_id !== 24) counts[p.bureau_id] = (counts[p.bureau_id] ?? 0) + 1;
       }
       setBureauCounts(counts);
     })();

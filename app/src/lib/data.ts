@@ -291,9 +291,9 @@ export const DASHBOARDS: Record<RoleId, RoleDashboard> = {
     foot: "Ressources Humaines",
     activeBureaux: ["7"],
     kpis: [
-      { label: "Personnel bureaux IEF", value: "96", delta: "11 bureaux" },
-      { label: "Personnel écoles", value: "612", delta: "38 écoles" },
-      { label: "Postes vacants", value: "17", delta: "Dont 14 en écoles", warn: true },
+      { label: "Personnel bureaux IEF", value: "22", delta: "12 bureaux" },
+      { label: "Personnel écoles", value: "772", delta: "51 écoles" },
+      { label: "Départs / mutés", value: "206", delta: "Hors personnel actif" },
       { label: "Dossiers RH en cours", value: "19", delta: "Bureau RH uniquement" },
     ],
     panels: [
