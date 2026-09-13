@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-09-13T12:48:04.031Z",
-  "totalRecords": 1112,
+  "generatedAt": "2026-09-13T13:17:13.545Z",
+  "totalRecords": 1119,
   "preDedup": 1122,
   "counts": {
     "IEF": 22,
@@ -12,5 +12,5 @@
     "DEPART 2022-2023": 65,
     "DEPART 2023-2024-2025": 160
   },
-  "duplicataMatricule": 10
+  "duplicataMatricule": 17
 }

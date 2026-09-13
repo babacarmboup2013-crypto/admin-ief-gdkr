@@ -1,6 +1,6 @@
 -- ============================================================
 -- IEF ADMIN - Import des ecoles (genere automatiquement)
--- 2026-09-13T12:48:04.053Z
+-- 2026-09-13T13:17:13.566Z
 -- ============================================================
 
 insert into public.ecoles (nom, cycle, localisation)
@@ -23,7 +23,7 @@ values
   ('CEM EL H.B.M.KABA', 'collège', 'SICAP LIBERTE'),
   ('CEM HANN MARISTES', 'collège', 'SICAP LIBERTE'),
   ('CEM HLM4/C', 'collège', 'SICAP LIBERTE'),
-  ('CEM LIBERTE 6/C', 'collège', 'SICAP LIBERTE'),
+  ('CEM LIBERTE 6/C', 'collège', 'HLM'),
   ('CEM O.SOCE DIOP', 'collège', 'GRAND DAKAR'),
   ('CEM SAMBA GUEYE', 'collège', 'HLM'),
   ('CHEIKH M SAKHO/A', 'élémentaire', 'BISCUITERIE'),
@@ -31,11 +31,11 @@ values
   ('COUMBA NDOFFENE DIOUF/A', 'élémentaire', 'HLM'),
   ('COUMBA NDOFFENE DIOUF/B', 'élémentaire', 'HLM'),
   ('CROIX ROUGE HANN', 'préscolaire', NULL),
-  ('CROIX ROUGE LIBERTE 5', 'préscolaire', NULL),
+  ('CROIX ROUGE LIBERTE 5', 'préscolaire', 'GRAND DAKAR'),
   ('CTP/ABDOU DIASSE', 'préscolaire', NULL),
   ('CTP/HANN BEL AIR', 'préscolaire', 'GRAND DAKAR'),
   ('CTP/HLM', 'préscolaire', 'BISCUITERIE'),
-  ('DAARA MODERNE PUBLIC', 'daara_moderne', NULL),
+  ('DAARA MODERNE PUBLIC', 'daara_moderne', 'SICAP LIBERTE'),
   ('DERKLE 2/A', 'élémentaire', 'DIEUPPEUL DERKLE'),
   ('DERKLE 2/B', 'élémentaire', 'DIEUPPEUL DERKLE'),
   ('DERKLE III', 'élémentaire', 'DIEUPPEUL DERKLE'),

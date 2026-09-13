@@ -115,25 +115,48 @@ for (const id of SHEETS) {
 
 records = records.filter((r) => r.prenom);
 
-/* dédup par matricule (préférer actif) */
+/* dédup par matricule :
+   - 'NI' (placeholder) => matricule nullé : chaque personne est conservée
+   - même nom au sein du groupe => même agent : préférer 'actif', les départ
+     verse leurs champs départ sur la ligne conservée
+   - noms différents => individus distincts : tous conservés, seul le premier
+     (ordre des feuilles) garde le matricule, les autres le voient nullé */
+const normName = (r) => ((r.prenom || '') + ' ' + (r.nom || '')).toUpperCase().replace(/[^A-ZÀ-Ý0-9 ]/g, '').replace(/\s+/g, ' ').trim();
+const isNI = (m) => !!m && /^N\s*I\s*$/i.test(m);
+const keyOf = (r) => (!r.matricule ? null : isNI(r.matricule) ? '__NI__' : r.matricule.toUpperCase().replace(/\s+/g, ''));
+
 const groups = new Map();
 for (const r of records) {
-  if (r.matricule) {
-    const k = r.matricule.toUpperCase().replace(/\s+/g, '');
-    if (!groups.has(k)) groups.set(k, []);
-    groups.get(k).push(r);
-  }
+  const k = keyOf(r);
+  if (!k) continue;
+  if (!groups.has(k)) groups.set(k, []);
+  groups.get(k).push(r);
 }
 const finalRecs = [];
 const seen = new Set();
 let dupCount = 0;
 for (const r of records) {
-  const k = r.matricule ? r.matricule.toUpperCase().replace(/\s+/g, '') : null;
+  const k = keyOf(r);
   if (!k) { finalRecs.push(r); continue; }
   if (seen.has(k)) { dupCount++; continue; }
-  const arr = groups.get(k).slice().sort((a, b) => (a.statut === 'actif' ? -1 : 1) - (b.statut === 'actif' ? -1 : 1));
-  finalRecs.push(arr[0]);
   seen.add(k);
+  const arr = groups.get(k);
+  const sameName = normName(arr[0]) === normName(arr[arr.length - 1]);
+  if (arr.length === 1 || sameName) {
+    const best = arr.slice().sort((a, b) => (a.statut === 'actif' ? -1 : 1) - (b.statut === 'actif' ? -1 : 1))[0];
+    if (best.statut === 'actif') {
+      const dep = arr.find((x) => x.statut === 'inactif');
+      if (dep) { best.motif_depart = best.motif_depart ?? dep.motif_depart; best.depart_annee = best.depart_annee ?? dep.depart_annee; }
+    }
+    finalRecs.push(best);
+  } else {
+    /* individus distincts partageant un matricule : tous conservés,
+       seul le premier (ordre des feuilles) garde le matricule */
+    arr.forEach((member, i) => {
+      finalRecs.push(i === 0 ? member : { ...member, matricule: null });
+      if (i > 0) dupCount++;
+    });
+  }
 }
 
 /* recensement des écoles */

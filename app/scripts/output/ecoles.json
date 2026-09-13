@@ -169,11 +169,11 @@
   {
     "nom": "CEM LIBERTE 6/C",
     "cycle": "collège",
-    "localisation": "SICAP LIBERTE",
+    "localisation": "HLM",
     "sources": [
       "COLLEGE",
-      "DEPART 2022-2023",
-      "DEPART 2023-2024-2025"
+      "DEPART 2023-2024-2025",
+      "DEPART 2022-2023"
     ]
   },
   {
@@ -245,9 +245,10 @@
   {
     "nom": "CROIX ROUGE LIBERTE 5",
     "cycle": "préscolaire",
-    "localisation": null,
+    "localisation": "GRAND DAKAR",
     "sources": [
-      "ORT"
+      "ORT",
+      "DEPART 2023-2024-2025"
     ]
   },
   {
@@ -280,8 +281,9 @@
   {
     "nom": "DAARA MODERNE PUBLIC",
     "cycle": "daara_moderne",
-    "localisation": null,
+    "localisation": "SICAP LIBERTE",
     "sources": [
+      "DEPART 2023-2024-2025",
       "DAARA MODERNE"
     ]
   },
