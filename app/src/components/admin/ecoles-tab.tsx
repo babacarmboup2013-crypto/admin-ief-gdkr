@@ -70,7 +70,15 @@ export function EcolesTab() {
 
   async function remove(row: EcoleRow) {
     if (!supabase) return;
-    if (!window.confirm(`Supprimer l'école « ${row.nom} » ?`)) return;
+    const { count } = await supabase
+      .from("personnel")
+      .select("id", { count: "exact", head: true })
+      .eq("ecole_id", row.id);
+    const n = count ?? 0;
+    const warn = n > 0
+      ? `\n\n⚠ ${n} agent(s) rattaché(s) seront également supprimés !`
+      : "";
+    if (!window.confirm(`Supprimer l'école « ${row.nom} » ?${warn}`)) return;
     const { error } = await supabase.from("ecoles").delete().eq("id", row.id);
     if (error) window.alert(error.message);
     else refresh();
