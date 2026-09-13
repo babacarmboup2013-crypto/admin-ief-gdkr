@@ -142,7 +142,7 @@ export default function BureauPage() {
               <tbody>
                 {personnel.map((p) => (
                   <tr key={p.id} className="border-b border-border last:border-0 hover:bg-muted/20">
-                    <td className="px-5 py-2.5 font-medium text-ink">{p.nom_complet}</td>
+                    <td className="px-5 py-2.5 font-medium text-ink"><Link href={`/agent/${p.id}`} className="text-primary hover:underline">{p.nom_complet}</Link></td>
                     <td className="px-5 py-2.5 text-ink-soft">{p.fonction ?? "—"}</td>
                     <td className="px-5 py-2.5 font-mono text-[12px] text-ink-soft">{p.matricule ?? "—"}</td>
                     <td className="px-5 py-2.5 text-ink-soft">{p.telephone ?? "—"}</td>

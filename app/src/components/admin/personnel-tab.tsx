@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { supabase } from "@/lib/supabase/client";
 import { adminPerms } from "@/lib/admin-perms";
 import {
@@ -229,7 +230,7 @@ export function PersonnelTab() {
         title="Personnel"
         subtitle="Agents des bureaux IEF et personnels des écoles (effectifs importés)."
         columns={[
-          { header: "Nom complet", cell: (r) => <span className="font-medium text-ink">{r.nom_complet}</span> },
+          { header: "Nom complet", cell: (r) => <Link href={`/agent/${r.id}`} className="font-medium text-primary hover:underline">{r.nom_complet}</Link> },
           { header: "Affectation", cell: (r) => <span className="text-ink-soft">{affectation(r).label}</span> },
           { header: "Fonction", cell: (r) => <span className="text-ink-soft">{r.fonction ?? "—"}</span> },
           { header: "Matricule", cell: (r) => <span className="font-mono text-[12px] text-ink-soft">{r.matricule ?? "—"}</span> },
