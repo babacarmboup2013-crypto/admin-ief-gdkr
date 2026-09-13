@@ -83,7 +83,52 @@ export interface PersonnelRow {
   fonction: string | null;
   date_entree: string | null;
   statut: string;
+  matricule: string | null;
+  sexe: "M" | "F" | null;
+  date_naissance: string | null;
+  lieu_naissance: string | null;
+  corps: string | null;
+  grade: string | null;
+  discipline: string | null;
+  diplome_academique: string | null;
+  diplome_professionnel: string | null;
+  anciennete_enseignement: string | null;
+  anciennete_poste: string | null;
+  telephone: string | null;
+  email: string | null;
+  n_cni: string | null;
+  sit_matrimoniale: string | null;
+  nb_enfants: number | null;
+  os_arrivee: string | null;
+  motif_depart: string | null;
+  depart_annee: string | null;
+  source_feuille: string | null;
 }
+
+export const SEXE_LABELS: Record<string, string> = {
+  M: "Masculin",
+  F: "Féminin",
+};
+
+export const MOTIFS_DEPART = [
+  "Retraite",
+  "Mouvement National",
+  "Permutation",
+  "Disponibilité",
+  "Détachement",
+  "Décès",
+  "Abandon de poste",
+  "Démission",
+  "Maintien",
+  "Redéploiement",
+  "Reconversion",
+  "Congé",
+  "Cadi",
+  "Examens Prof",
+  "Absent",
+];
+
+export const SIT_MAT_OPTIONS = ["Marié(e)", "Célibataire", "Divorcé(e)"];
 
 export interface DossierRow {
   id: number;

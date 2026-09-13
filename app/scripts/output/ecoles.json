@@ -1,0 +1,635 @@
+[
+  {
+    "nom": "ABDOU DIASSE",
+    "cycle": "élémentaire",
+    "localisation": "HANN BEL AIR",
+    "sources": [
+      "ELEMENTAIRE",
+      "DEPART 2023-2024-2025"
+    ]
+  },
+  {
+    "nom": "AMADOU DIAGNE WORE",
+    "cycle": "élémentaire",
+    "localisation": "BISCUITERIE",
+    "sources": [
+      "ELEMENTAIRE",
+      "DEPART 2023-2024-2025"
+    ]
+  },
+  {
+    "nom": "AMADOU IB",
+    "cycle": "élémentaire",
+    "localisation": "DIEUPPEUL DERKLE",
+    "sources": [
+      "DEPART 2022-2023"
+    ]
+  },
+  {
+    "nom": "AMADOU IB. SECK/A",
+    "cycle": "élémentaire",
+    "localisation": "DIEUPPEUL DERKLE",
+    "sources": [
+      "ELEMENTAIRE",
+      "DEPART 2023-2024-2025"
+    ]
+  },
+  {
+    "nom": "AMADOU IB. SECK/B",
+    "cycle": "élémentaire",
+    "localisation": "DIEUPPEUL DERKLE",
+    "sources": [
+      "ELEMENTAIRE",
+      "DEPART 2022-2023"
+    ]
+  },
+  {
+    "nom": "BISCUITERIE/A",
+    "cycle": "élémentaire",
+    "localisation": "BISCUITERIE",
+    "sources": [
+      "ELEMENTAIRE",
+      "DEPART 2022-2023",
+      "DEPART 2023-2024-2025"
+    ]
+  },
+  {
+    "nom": "BISCUITERIE/B",
+    "cycle": "élémentaire",
+    "localisation": "BISCUITERIE",
+    "sources": [
+      "ELEMENTAIRE",
+      "DEPART 2023-2024-2025"
+    ]
+  },
+  {
+    "nom": "BST DIEUPPEUL",
+    "cycle": "élémentaire",
+    "localisation": "SICAP LIBERTE",
+    "sources": [
+      "DEPART 2022-2023",
+      "DEPART 2023-2024-2025"
+    ]
+  },
+  {
+    "nom": "BST LIBERTE 3",
+    "cycle": "collège",
+    "localisation": null,
+    "sources": [
+      "COLLEGE"
+    ]
+  },
+  {
+    "nom": "CASA ESPAÑA",
+    "cycle": "élémentaire",
+    "localisation": "HANN BEL AIR",
+    "sources": [
+      "ELEMENTAIRE",
+      "DEPART 2023-2024-2025"
+    ]
+  },
+  {
+    "nom": "CEM ADAMA NDIAYE",
+    "cycle": "collège",
+    "localisation": "SICAP LIBERTE",
+    "sources": [
+      "COLLEGE",
+      "DEPART 2022-2023",
+      "DEPART 2023-2024-2025"
+    ]
+  },
+  {
+    "nom": "CEM ALIOUNE DIOP",
+    "cycle": "collège",
+    "localisation": "SICAP LIBERTE",
+    "sources": [
+      "COLLEGE",
+      "DEPART 2022-2023",
+      "DEPART 2023-2024-2025"
+    ]
+  },
+  {
+    "nom": "CEM AM. TRAWARE",
+    "cycle": "collège",
+    "localisation": "HLM",
+    "sources": [
+      "COLLEGE",
+      "DEPART 2022-2023",
+      "DEPART 2023-2024-2025"
+    ]
+  },
+  {
+    "nom": "CEM DAVID DIOP",
+    "cycle": "collège",
+    "localisation": "SICAP LIBERTE",
+    "sources": [
+      "COLLEGE",
+      "DEPART 2022-2023",
+      "DEPART 2023-2024-2025"
+    ]
+  },
+  {
+    "nom": "CEM DE HANN",
+    "cycle": "collège",
+    "localisation": "BISCUITERIE",
+    "sources": [
+      "DEPART 2022-2023"
+    ]
+  },
+  {
+    "nom": "CEM EL H.B.M.KABA",
+    "cycle": "collège",
+    "localisation": "SICAP LIBERTE",
+    "sources": [
+      "COLLEGE",
+      "DEPART 2022-2023",
+      "DEPART 2023-2024-2025"
+    ]
+  },
+  {
+    "nom": "CEM HANN MARISTES",
+    "cycle": "collège",
+    "localisation": "SICAP LIBERTE",
+    "sources": [
+      "COLLEGE",
+      "DEPART 2022-2023",
+      "DEPART 2023-2024-2025"
+    ]
+  },
+  {
+    "nom": "CEM HLM4/C",
+    "cycle": "collège",
+    "localisation": "SICAP LIBERTE",
+    "sources": [
+      "COLLEGE",
+      "DEPART 2022-2023",
+      "DEPART 2023-2024-2025"
+    ]
+  },
+  {
+    "nom": "CEM LIBERTE 6/C",
+    "cycle": "collège",
+    "localisation": "SICAP LIBERTE",
+    "sources": [
+      "COLLEGE",
+      "DEPART 2022-2023",
+      "DEPART 2023-2024-2025"
+    ]
+  },
+  {
+    "nom": "CEM O.SOCE DIOP",
+    "cycle": "collège",
+    "localisation": "GRAND DAKAR",
+    "sources": [
+      "COLLEGE",
+      "DEPART 2022-2023",
+      "DEPART 2023-2024-2025"
+    ]
+  },
+  {
+    "nom": "CEM SAMBA GUEYE",
+    "cycle": "collège",
+    "localisation": "HLM",
+    "sources": [
+      "COLLEGE",
+      "DEPART 2022-2023",
+      "DEPART 2023-2024-2025"
+    ]
+  },
+  {
+    "nom": "CHEIKH M SAKHO/A",
+    "cycle": "élémentaire",
+    "localisation": "BISCUITERIE",
+    "sources": [
+      "ELEMENTAIRE",
+      "DEPART 2022-2023"
+    ]
+  },
+  {
+    "nom": "CHEIKH M.SAKHO/B",
+    "cycle": "élémentaire",
+    "localisation": "BISCUITERIE",
+    "sources": [
+      "ELEMENTAIRE",
+      "DEPART 2022-2023",
+      "DEPART 2023-2024-2025"
+    ]
+  },
+  {
+    "nom": "COUMBA NDOFFENE DIOUF/A",
+    "cycle": "élémentaire",
+    "localisation": "HLM",
+    "sources": [
+      "ELEMENTAIRE",
+      "DEPART 2022-2023",
+      "DEPART 2023-2024-2025"
+    ]
+  },
+  {
+    "nom": "COUMBA NDOFFENE DIOUF/B",
+    "cycle": "élémentaire",
+    "localisation": "HLM",
+    "sources": [
+      "ELEMENTAIRE",
+      "DEPART 2023-2024-2025"
+    ]
+  },
+  {
+    "nom": "CROIX ROUGE HANN",
+    "cycle": "préscolaire",
+    "localisation": null,
+    "sources": [
+      "ORT"
+    ]
+  },
+  {
+    "nom": "CROIX ROUGE LIBERTE 5",
+    "cycle": "préscolaire",
+    "localisation": null,
+    "sources": [
+      "ORT"
+    ]
+  },
+  {
+    "nom": "CTP/ABDOU DIASSE",
+    "cycle": "préscolaire",
+    "localisation": null,
+    "sources": [
+      "CTP"
+    ]
+  },
+  {
+    "nom": "CTP/HANN BEL AIR",
+    "cycle": "préscolaire",
+    "localisation": "GRAND DAKAR",
+    "sources": [
+      "CTP",
+      "DEPART 2022-2023",
+      "DEPART 2023-2024-2025"
+    ]
+  },
+  {
+    "nom": "CTP/HLM",
+    "cycle": "préscolaire",
+    "localisation": "BISCUITERIE",
+    "sources": [
+      "CTP",
+      "DEPART 2023-2024-2025"
+    ]
+  },
+  {
+    "nom": "DAARA MODERNE PUBLIC",
+    "cycle": "daara_moderne",
+    "localisation": null,
+    "sources": [
+      "DAARA MODERNE"
+    ]
+  },
+  {
+    "nom": "DERKLE 2/A",
+    "cycle": "élémentaire",
+    "localisation": "DIEUPPEUL DERKLE",
+    "sources": [
+      "ELEMENTAIRE"
+    ]
+  },
+  {
+    "nom": "DERKLE 2/B",
+    "cycle": "élémentaire",
+    "localisation": "DIEUPPEUL DERKLE",
+    "sources": [
+      "ELEMENTAIRE",
+      "DEPART 2022-2023",
+      "DEPART 2023-2024-2025"
+    ]
+  },
+  {
+    "nom": "DERKLE III",
+    "cycle": "élémentaire",
+    "localisation": "DIEUPPEUL DERKLE",
+    "sources": [
+      "ELEMENTAIRE",
+      "DEPART 2022-2023",
+      "DEPART 2023-2024-2025"
+    ]
+  },
+  {
+    "nom": "DERKLE3",
+    "cycle": "élémentaire",
+    "localisation": "DIEUPPEUL DERKLE",
+    "sources": [
+      "DEPART 2023-2024-2025"
+    ]
+  },
+  {
+    "nom": "ELH BARA GUEYE/A",
+    "cycle": "élémentaire",
+    "localisation": "HANN BEL AIR",
+    "sources": [
+      "ELEMENTAIRE",
+      "DEPART 2023-2024-2025"
+    ]
+  },
+  {
+    "nom": "ELH BARA GUEYE/B",
+    "cycle": "élémentaire",
+    "localisation": "HANN BEL AIR",
+    "sources": [
+      "ELEMENTAIRE",
+      "DEPART 2022-2023",
+      "DEPART 2023-2024-2025"
+    ]
+  },
+  {
+    "nom": "ELH DOUDOU MBATHIE",
+    "cycle": "élémentaire",
+    "localisation": "HANN BEL AIR",
+    "sources": [
+      "ELEMENTAIRE",
+      "DEPART 2022-2023",
+      "DEPART 2023-2024-2025"
+    ]
+  },
+  {
+    "nom": "ELH MAG C.S.NDIAYE/A",
+    "cycle": "élémentaire",
+    "localisation": "GRAND DAKAR",
+    "sources": [
+      "ELEMENTAIRE",
+      "DEPART 2022-2023",
+      "DEPART 2023-2024-2025"
+    ]
+  },
+  {
+    "nom": "ELH MAG C.S.NDIAYE/B",
+    "cycle": "élémentaire",
+    "localisation": "GRAND DAKAR",
+    "sources": [
+      "ELEMENTAIRE",
+      "DEPART 2023-2024-2025"
+    ]
+  },
+  {
+    "nom": "ELH MASSIGA SENE",
+    "cycle": "élémentaire",
+    "localisation": "BISCUITERIE",
+    "sources": [
+      "ELEMENTAIRE",
+      "DEPART 2022-2023",
+      "DEPART 2023-2024-2025"
+    ]
+  },
+  {
+    "nom": "HANN MONTAGNE A",
+    "cycle": "élémentaire",
+    "localisation": "HANN BEL AIR",
+    "sources": [
+      "DEPART 2022-2023"
+    ]
+  },
+  {
+    "nom": "HANN MONTAGNE/A",
+    "cycle": "élémentaire",
+    "localisation": "HANN BEL AIR",
+    "sources": [
+      "ELEMENTAIRE",
+      "DEPART 2022-2023",
+      "DEPART 2023-2024-2025"
+    ]
+  },
+  {
+    "nom": "HANN MONTAGNE/B",
+    "cycle": "élémentaire",
+    "localisation": "HANN BEL AIR",
+    "sources": [
+      "ELEMENTAIRE",
+      "DEPART 2022-2023",
+      "DEPART 2023-2024-2025"
+    ]
+  },
+  {
+    "nom": "HLM4/A",
+    "cycle": "élémentaire",
+    "localisation": "HANN BEL AIR",
+    "sources": [
+      "ELEMENTAIRE",
+      "DEPART 2023-2024-2025"
+    ]
+  },
+  {
+    "nom": "HLM4/B",
+    "cycle": "élémentaire",
+    "localisation": "HLM",
+    "sources": [
+      "ELEMENTAIRE",
+      "DEPART 2022-2023",
+      "DEPART 2023-2024-2025"
+    ]
+  },
+  {
+    "nom": "HLM4/D",
+    "cycle": "élémentaire",
+    "localisation": "HLM",
+    "sources": [
+      "ELEMENTAIRE",
+      "DEPART 2023-2024-2025"
+    ]
+  },
+  {
+    "nom": "HLM4/E",
+    "cycle": "élémentaire",
+    "localisation": "HLM",
+    "sources": [
+      "ELEMENTAIRE",
+      "DEPART 2022-2023",
+      "DEPART 2023-2024-2025"
+    ]
+  },
+  {
+    "nom": "IBRAHIMA KOITE",
+    "cycle": "élémentaire",
+    "localisation": "DIEUPPEUL DERKLE",
+    "sources": [
+      "ELEMENTAIRE",
+      "DEPART 2023-2024-2025"
+    ]
+  },
+  {
+    "nom": "IMAM ABDOU NDIAYE I",
+    "cycle": "élémentaire",
+    "localisation": "GRAND DAKAR",
+    "sources": [
+      "DEPART 2022-2023",
+      "DEPART 2023-2024-2025"
+    ]
+  },
+  {
+    "nom": "IMAM ABDOU NDIAYE II",
+    "cycle": "élémentaire",
+    "localisation": "GRAND DAKAR",
+    "sources": [
+      "ELEMENTAIRE"
+    ]
+  },
+  {
+    "nom": "IMAM ABDOU NDIAYE III",
+    "cycle": "élémentaire",
+    "localisation": "GRAND DAKAR",
+    "sources": [
+      "ELEMENTAIRE",
+      "DEPART 2022-2023",
+      "DEPART 2023-2024-2025"
+    ]
+  },
+  {
+    "nom": "ISSA KANE",
+    "cycle": "élémentaire",
+    "localisation": "GRAND DAKAR",
+    "sources": [
+      "ELEMENTAIRE",
+      "DEPART 2022-2023",
+      "DEPART 2023-2024-2025"
+    ]
+  },
+  {
+    "nom": "KAWABATA",
+    "cycle": "élémentaire",
+    "localisation": "HANN BEL AIR",
+    "sources": [
+      "DEPART 2023-2024-2025"
+    ]
+  },
+  {
+    "nom": "KAWABATA YASUNARI",
+    "cycle": "élémentaire",
+    "localisation": "HANN BEL AIR",
+    "sources": [
+      "ELEMENTAIRE"
+    ]
+  },
+  {
+    "nom": "LIBERTE 6/A",
+    "cycle": "élémentaire",
+    "localisation": "SICAP LIBERTE",
+    "sources": [
+      "ELEMENTAIRE",
+      "DEPART 2022-2023",
+      "DEPART 2023-2024-2025"
+    ]
+  },
+  {
+    "nom": "LIBERTE 6/B",
+    "cycle": "élémentaire",
+    "localisation": "SICAP LIBERTE",
+    "sources": [
+      "ELEMENTAIRE",
+      "DEPART 2022-2023",
+      "DEPART 2023-2024-2025"
+    ]
+  },
+  {
+    "nom": "LIBERTE 6/BARAKA",
+    "cycle": "élémentaire",
+    "localisation": "SICAP LIBERTE",
+    "sources": [
+      "ELEMENTAIRE",
+      "DEPART 2023-2024-2025"
+    ]
+  },
+  {
+    "nom": "LIBERTE 6/BARAKA(MATERN)",
+    "cycle": "préscolaire",
+    "localisation": "HLM",
+    "sources": [
+      "CTP",
+      "DEPART 2023-2024-2025"
+    ]
+  },
+  {
+    "nom": "LIBERTE I",
+    "cycle": "élémentaire",
+    "localisation": "SICAP LIBERTE",
+    "sources": [
+      "ELEMENTAIRE",
+      "DEPART 2022-2023",
+      "DEPART 2023-2024-2025"
+    ]
+  },
+  {
+    "nom": "NDARY NIANG/A",
+    "cycle": "élémentaire",
+    "localisation": "BISCUITERIE",
+    "sources": [
+      "ELEMENTAIRE",
+      "DEPART 2023-2024-2025"
+    ]
+  },
+  {
+    "nom": "NDARY NIANG/B",
+    "cycle": "élémentaire",
+    "localisation": "BISCUITERIE",
+    "sources": [
+      "ELEMENTAIRE",
+      "DEPART 2023-2024-2025"
+    ]
+  },
+  {
+    "nom": "ORT/SEN US1",
+    "cycle": "préscolaire",
+    "localisation": null,
+    "sources": [
+      "ORT"
+    ]
+  },
+  {
+    "nom": "ORT/SEN US2",
+    "cycle": "préscolaire",
+    "localisation": null,
+    "sources": [
+      "ORT"
+    ]
+  },
+  {
+    "nom": "ORT/SEN US7",
+    "cycle": "préscolaire",
+    "localisation": "SICAP LIBERTE",
+    "sources": [
+      "ORT",
+      "DEPART 2022-2023"
+    ]
+  },
+  {
+    "nom": "ORT/SEN US8",
+    "cycle": "préscolaire",
+    "localisation": "BISCUITERIE",
+    "sources": [
+      "ORT",
+      "DEPART 2023-2024-2025"
+    ]
+  },
+  {
+    "nom": "OUAGOU NIAYES HLM",
+    "cycle": "élémentaire",
+    "localisation": "HLM",
+    "sources": [
+      "ELEMENTAIRE"
+    ]
+  },
+  {
+    "nom": "OUAGOU NIAYES/LIONS",
+    "cycle": "élémentaire",
+    "localisation": "HLM",
+    "sources": [
+      "ELEMENTAIRE"
+    ]
+  },
+  {
+    "nom": "ROUTE DES PUITS",
+    "cycle": "élémentaire",
+    "localisation": "GRAND DAKAR",
+    "sources": [
+      "ELEMENTAIRE",
+      "DEPART 2023-2024-2025"
+    ]
+  }
+]

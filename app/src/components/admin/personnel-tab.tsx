@@ -3,7 +3,14 @@
 import { useState } from "react";
 import { supabase } from "@/lib/supabase/client";
 import { adminPerms } from "@/lib/admin-perms";
-import { PERSONNEL_STATUTS, fmtDate, type PersonnelRow } from "@/lib/admin-types";
+import {
+  MOTIFS_DEPART,
+  PERSONNEL_STATUTS,
+  SEXE_LABELS,
+  SIT_MAT_OPTIONS,
+  fmtDate,
+  type PersonnelRow,
+} from "@/lib/admin-types";
 import { useRole } from "@/lib/role-context";
 import { AdminTable } from "./admin-table";
 import { FormDialog } from "./form-dialog";
@@ -13,6 +20,36 @@ import { sbThrow } from "./sb";
 import { useRows } from "./use-rows";
 import { useBureauxRef, useEcolesRef } from "./use-refs";
 
+const SELECT = [
+  "id",
+  "bureau_id",
+  "ecole_id",
+  "nom_complet",
+  "fonction",
+  "date_entree",
+  "statut",
+  "matricule",
+  "sexe",
+  "date_naissance",
+  "lieu_naissance",
+  "corps",
+  "grade",
+  "discipline",
+  "diplome_academique",
+  "diplome_professionnel",
+  "anciennete_enseignement",
+  "anciennete_poste",
+  "telephone",
+  "email",
+  "n_cni",
+  "sit_matrimoniale",
+  "nb_enfants",
+  "os_arrivee",
+  "motif_depart",
+  "depart_annee",
+  "source_feuille",
+].join(", ");
+
 export function PersonnelTab() {
   const { role, profile } = useRole();
   const perms = adminPerms(role, profile).personnel;
@@ -20,21 +57,42 @@ export function PersonnelTab() {
   const ecoles = useEcolesRef();
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<PersonnelRow | null>(null);
+
   const [nom, setNom] = useState("");
+  const [matricule, setMatricule] = useState("");
+  const [sexe, setSexe] = useState("");
   const [type, setType] = useState<"bureau" | "ecole">("bureau");
   const [bureauId, setBureauId] = useState("");
   const [ecoleId, setEcoleId] = useState("");
   const [fonction, setFonction] = useState("");
   const [dateEntree, setDateEntree] = useState("");
+  const [dateNaissance, setDateNaissance] = useState("");
+  const [lieuNaissance, setLieuNaissance] = useState("");
+  const [corps, setCorps] = useState("");
+  const [grade, setGrade] = useState("");
+  const [discipline, setDiscipline] = useState("");
+  const [diplAc, setDiplAc] = useState("");
+  const [diplProf, setDiplProf] = useState("");
+  const [ancEns, setAncEns] = useState("");
+  const [ancPoste, setAncPoste] = useState("");
+  const [telephone, setTelephone] = useState("");
+  const [email, setEmail] = useState("");
+  const [nCni, setNCni] = useState("");
+  const [sitMat, setSitMat] = useState("");
+  const [nbEnfants, setNbEnfants] = useState("");
+  const [osArrivee, setOsArrivee] = useState("");
   const [statut, setStatut] = useState("actif");
+  const [motif, setMotif] = useState("");
+  const [departAnnee, setDepartAnnee] = useState("");
+
   const { rows, loading, refresh } = useRows<PersonnelRow>(
     async () => {
       if (!supabase) return [];
       const { data, error } = await supabase
         .from("personnel")
-        .select("id, bureau_id, ecole_id, nom_complet, fonction, date_entree, statut")
+        .select(SELECT)
         .order("nom_complet", { ascending: true });
-      return error || !data ? [] : (data as PersonnelRow[]);
+      return error || !data ? [] : (data as unknown as PersonnelRow[]);
     },
     []
   );
@@ -51,36 +109,94 @@ export function PersonnelTab() {
   function openAdd() {
     setEditing(null);
     setNom("");
+    setMatricule("");
+    setSexe("");
     setType("bureau");
     setBureauId("");
     setEcoleId("");
     setFonction("");
     setDateEntree("");
+    setDateNaissance("");
+    setLieuNaissance("");
+    setCorps("");
+    setGrade("");
+    setDiscipline("");
+    setDiplAc("");
+    setDiplProf("");
+    setAncEns("");
+    setAncPoste("");
+    setTelephone("");
+    setEmail("");
+    setNCni("");
+    setSitMat("");
+    setNbEnfants("");
+    setOsArrivee("");
     setStatut("actif");
+    setMotif("");
+    setDepartAnnee("");
     setOpen(true);
   }
 
   function openEdit(row: PersonnelRow) {
     setEditing(row);
     setNom(row.nom_complet);
+    setMatricule(row.matricule ?? "");
+    setSexe(row.sexe ?? "");
     const isEcole = row.ecole_id != null;
     setType(isEcole ? "ecole" : "bureau");
     setBureauId(row.bureau_id == null ? "" : String(row.bureau_id));
     setEcoleId(row.ecole_id == null ? "" : String(row.ecole_id));
     setFonction(row.fonction ?? "");
     setDateEntree(row.date_entree ? row.date_entree.slice(0, 10) : "");
+    setDateNaissance(row.date_naissance ? row.date_naissance.slice(0, 10) : "");
+    setLieuNaissance(row.lieu_naissance ?? "");
+    setCorps(row.corps ?? "");
+    setGrade(row.grade ?? "");
+    setDiscipline(row.discipline ?? "");
+    setDiplAc(row.diplome_academique ?? "");
+    setDiplProf(row.diplome_professionnel ?? "");
+    setAncEns(row.anciennete_enseignement ?? "");
+    setAncPoste(row.anciennete_poste ?? "");
+    setTelephone(row.telephone ?? "");
+    setEmail(row.email ?? "");
+    setNCni(row.n_cni ?? "");
+    setSitMat(row.sit_matrimoniale ?? "");
+    setNbEnfants(row.nb_enfants == null ? "" : String(row.nb_enfants));
+    setOsArrivee(row.os_arrivee ?? "");
     setStatut(row.statut);
+    setMotif(row.motif_depart ?? "");
+    setDepartAnnee(row.depart_annee ?? "");
     setOpen(true);
   }
 
   async function save() {
     if (!supabase) throw new Error("Supabase non configuré.");
     if (!nom.trim()) throw new Error("Le nom complet est obligatoire.");
+    const inactif = statut === "inactif";
     const payload: Record<string, unknown> = {
       nom_complet: nom.trim(),
+      matricule: matricule.trim() || null,
+      sexe: sexe || null,
       fonction: fonction.trim() || null,
       date_entree: dateEntree || null,
+      date_naissance: dateNaissance || null,
+      lieu_naissance: lieuNaissance.trim() || null,
+      corps: corps.trim() || null,
+      grade: grade.trim() || null,
+      discipline: discipline.trim() || null,
+      diplome_academique: diplAc.trim() || null,
+      diplome_professionnel: diplProf.trim() || null,
+      anciennete_enseignement: ancEns.trim() || null,
+      anciennete_poste: ancPoste.trim() || null,
+      telephone: telephone.trim() || null,
+      email: email.trim() || null,
+      n_cni: nCni.trim() || null,
+      sit_matrimoniale: sitMat || null,
+      nb_enfants: nbEnfants === "" ? null : Number(nbEnfants),
+      os_arrivee: osArrivee.trim() || null,
       statut,
+      motif_depart: inactif ? motif.trim() || null : null,
+      depart_annee: inactif ? departAnnee.trim() || null : null,
     };
     if (type === "bureau") {
       if (!bureauId) throw new Error("Sélectionnez le bureau d'affectation.");
@@ -111,17 +227,51 @@ export function PersonnelTab() {
     <>
       <AdminTable
         title="Personnel"
-        subtitle="Agents des bureaux IEF et personnels des écoles."
+        subtitle="Agents des bureaux IEF et personnels des écoles (effectifs importés)."
         columns={[
           { header: "Nom complet", cell: (r) => <span className="font-medium text-ink">{r.nom_complet}</span> },
           { header: "Affectation", cell: (r) => <span className="text-ink-soft">{affectation(r).label}</span> },
           { header: "Fonction", cell: (r) => <span className="text-ink-soft">{r.fonction ?? "—"}</span> },
-          { header: "Date d'entrée", cell: (r) => <span className="text-ink-soft">{fmtDate(r.date_entree)}</span> },
+          { header: "Matricule", cell: (r) => <span className="font-mono text-[12px] text-ink-soft">{r.matricule ?? "—"}</span> },
+          {
+            header: "Sexe",
+            cell: (r) => (
+              <span className="text-ink-soft">{r.sexe ? SEXE_LABELS[r.sexe] ?? r.sexe : "—"}</span>
+            ),
+          },
+          {
+            header: "Naissance",
+            cell: (r) => (
+              <span className="text-ink-soft">
+                {fmtDate(r.date_naissance)}
+                {r.lieu_naissance ? ` · ${r.lieu_naissance}` : ""}
+              </span>
+            ),
+          },
+          {
+            header: "Corps / grade",
+            cell: (r) => (
+              <span className="text-ink-soft">
+                {[r.corps, r.grade].filter(Boolean).join(" · ") || "—"}
+              </span>
+            ),
+          },
+          { header: "Email", cell: (r) => <span className="text-ink-soft">{r.email ?? "—"}</span> },
           {
             header: "Statut",
             cell: (r) => {
               const s = PERSONNEL_STATUTS[r.statut] ?? { label: r.statut, tone: "attente" as const };
-              return <StatusBadge label={s.label} tone={s.tone} />;
+              return (
+                <span className="flex flex-col items-start gap-0.5">
+                  <StatusBadge label={s.label} tone={s.tone} />
+                  {r.statut === "inactif" && r.motif_depart ? (
+                    <span className="text-[11px] text-ink-soft">
+                      {r.motif_depart}
+                      {r.depart_annee ? ` · ${r.depart_annee}` : ""}
+                    </span>
+                  ) : null}
+                </span>
+              );
             },
           },
         ]}
@@ -134,6 +284,7 @@ export function PersonnelTab() {
         onAdd={openAdd}
         onEdit={openEdit}
         onDelete={remove}
+        empty="Aucun agent importé. Exécutez les migrations d'import ou ajoutez une personne."
         addLabel="Ajouter une personne"
       />
 
@@ -147,6 +298,18 @@ export function PersonnelTab() {
         <Field label="Nom complet">
           <TextInput value={nom} onChange={(e) => setNom(e.target.value)} autoFocus />
         </Field>
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="Matricule">
+            <TextInput value={matricule} onChange={(e) => setMatricule(e.target.value)} placeholder="Ex : 751 498/B" />
+          </Field>
+          <Field label="Sexe">
+            <SelectInput value={sexe} onChange={(e) => setSexe(e.target.value)}>
+              <option value="">— Non précisé —</option>
+              <option value="M">Masculin</option>
+              <option value="F">Féminin</option>
+            </SelectInput>
+          </Field>
+        </div>
         <Field label="Affectation">
           <SelectInput value={type} onChange={(e) => setType(e.target.value as "bureau" | "ecole")}>
             <option value="bureau">Bureau IEF</option>
@@ -188,12 +351,100 @@ export function PersonnelTab() {
             <DateInput value={dateEntree} onChange={(e) => setDateEntree(e.target.value)} />
           </Field>
         </div>
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="Date de naissance">
+            <DateInput value={dateNaissance} onChange={(e) => setDateNaissance(e.target.value)} />
+          </Field>
+          <Field label="Lieu de naissance">
+            <TextInput value={lieuNaissance} onChange={(e) => setLieuNaissance(e.target.value)} />
+          </Field>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="Corps">
+            <TextInput value={corps} onChange={(e) => setCorps(e.target.value)} placeholder="Ex : PEM, I…" />
+          </Field>
+          <Field label="Grade">
+            <TextInput value={grade} onChange={(e) => setGrade(e.target.value)} placeholder="Ex : 2CL/4, P1…" />
+          </Field>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="Discipline">
+            <TextInput value={discipline} onChange={(e) => setDiscipline(e.target.value)} />
+          </Field>
+          <Field label="Diplôme académique">
+            <TextInput value={diplAc} onChange={(e) => setDiplAc(e.target.value)} placeholder="Ex : BFEM, BAC…" />
+          </Field>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="Diplôme professionnel">
+            <TextInput value={diplProf} onChange={(e) => setDiplProf(e.target.value)} placeholder="Ex : CAP, CAECEM…" />
+          </Field>
+          <Field label="Ancienneté enseignement">
+            <TextInput value={ancEns} onChange={(e) => setAncEns(e.target.value)} />
+          </Field>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="Ancienneté poste">
+            <TextInput value={ancPoste} onChange={(e) => setAncPoste(e.target.value)} />
+          </Field>
+          <Field label="Téléphone">
+            <TextInput value={telephone} onChange={(e) => setTelephone(e.target.value)} placeholder="Ex : 77 123 45 67" />
+          </Field>
+        </div>
+        <Field label="Email">
+          <TextInput type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+        </Field>
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="N° CNI">
+            <TextInput value={nCni} onChange={(e) => setNCni(e.target.value)} />
+          </Field>
+          <Field label="Situation matrimoniale">
+            <SelectInput value={sitMat} onChange={(e) => setSitMat(e.target.value)}>
+              <option value="">— Non précisée —</option>
+              {SIT_MAT_OPTIONS.map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
+            </SelectInput>
+          </Field>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="Nombre d'enfants">
+            <TextInput
+              type="number"
+              min={0}
+              value={nbEnfants}
+              onChange={(e) => setNbEnfants(e.target.value)}
+            />
+          </Field>
+          <Field label="Ordre de service (arrivée)">
+            <TextInput value={osArrivee} onChange={(e) => setOsArrivee(e.target.value)} />
+          </Field>
+        </div>
         <Field label="Statut">
           <SelectInput value={statut} onChange={(e) => setStatut(e.target.value)}>
             <option value="actif">Actif</option>
             <option value="inactif">Inactif</option>
           </SelectInput>
         </Field>
+        {statut === "inactif" ? (
+          <>
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="Motif de départ">
+                <TextInput list="motifs-depart" value={motif} onChange={(e) => setMotif(e.target.value)} />
+                <datalist id="motifs-depart">
+                  {MOTIFS_DEPART.map((m) => (
+                    <option key={m} value={m} />
+                  ))}
+                </datalist>
+              </Field>
+              <Field label="Année de départ">
+                <TextInput value={departAnnee} onChange={(e) => setDepartAnnee(e.target.value)} placeholder="Ex : 2023-2024-2025" />
+              </Field>
+            </div>
+          </>
+        ) : null}
       </FormDialog>
     </>
   );

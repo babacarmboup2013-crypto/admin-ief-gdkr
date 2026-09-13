@@ -1,0 +1,16 @@
+{
+  "generatedAt": "2026-09-13T12:48:04.031Z",
+  "totalRecords": 1112,
+  "preDedup": 1122,
+  "counts": {
+    "IEF": 22,
+    "ELEMENTAIRE": 481,
+    "COLLEGE": 328,
+    "CTP": 29,
+    "DAARA MODERNE": 10,
+    "ORT": 27,
+    "DEPART 2022-2023": 65,
+    "DEPART 2023-2024-2025": 160
+  },
+  "duplicataMatricule": 10
+}

@@ -195,7 +195,7 @@ create table if not exists public.journal_activite (
 create or replace function public.auth_role()
 returns text
 language sql stable security definer set search_path = public
-as $
+as $$
   select coalesce(
     (select role from public.utilisateurs where id = auth.uid()),
     ''
@@ -205,28 +205,28 @@ $$;
 create or replace function public.auth_bureau()
 returns int
 language sql stable security definer set search_path = public
-as $
+as $$
   select bureau_id from public.utilisateurs where id = auth.uid();
 $$;
 
 create or replace function public.is_super_admin()
 returns boolean
 language sql stable security definer set search_path = public
-as $
+as $$
   select public.auth_role() = 'super_admin';
 $$;
 
 create or replace function public.is_chef_admin()
 returns boolean
 language sql stable security definer set search_path = public
-as $
+as $$
   select public.auth_role() = 'chef_admin';
 $$;
 
 create or replace function public.is_rh()
 returns boolean
 language sql stable security definer set search_path = public
-as $
+as $$
   select public.auth_role() in ('super_admin', 'chef_admin')
          or (select fonction from public.utilisateurs where id = auth.uid()) = 'RH';
 $$;
@@ -235,7 +235,7 @@ $$;
 create or replace function public.has_active_delegation()
 returns boolean
 language sql stable security definer set search_path = public
-as $
+as $$
   select exists (
     select 1 from public.delegations d
     where d.delegataire_id = auth.uid()
@@ -249,7 +249,7 @@ $$;
 create or replace function public.supervises_bureau(p_bureau_id int)
 returns boolean
 language sql stable security definer set search_path = public
-as $
+as $$
   select exists (
     select 1 from public.inspecteurs_bureaux ib
     where ib.inspecteur_id = auth.uid()
@@ -261,7 +261,7 @@ $$;
 create or replace function public.can_access_bureau(p_bureau_id int)
 returns boolean
 language sql stable security definer set search_path = public
-as $
+as $$
   select
     public.is_super_admin()
     or public.is_chef_admin()
@@ -291,16 +291,19 @@ alter table public.reunion_participants enable row level security;
 alter table public.journal_activite enable row level security;
 
 -- --- bureaux : lecture pour tous les authentifiés, écriture super_admin ---
+drop policy if exists "bureaux_select_all_auth" on public.bureaux;
 create policy "bureaux_select_all_auth"
   on public.bureaux for select
   using (auth.role() = 'authenticated');
 
+drop policy if exists "bureaux_write_super_admin" on public.bureaux;
 create policy "bureaux_write_super_admin"
   on public.bureaux for all
   using (public.is_super_admin())
   with check (public.is_super_admin());
 
 -- --- utilisateurs : son profil + son bureau ; super/chef voient tout ---
+drop policy if exists "utilisateurs_select_own" on public.utilisateurs;
 create policy "utilisateurs_select_own"
   on public.utilisateurs for select
   using (
@@ -311,20 +314,24 @@ create policy "utilisateurs_select_own"
     or bureau_id = public.auth_bureau()
   );
 
+drop policy if exists "utilisateurs_insert_super_admin" on public.utilisateurs;
 create policy "utilisateurs_insert_super_admin"
   on public.utilisateurs for insert
   with check (public.is_super_admin());
 
+drop policy if exists "utilisateurs_update_own_or_admin" on public.utilisateurs;
 create policy "utilisateurs_update_own_or_admin"
   on public.utilisateurs for update
   using (public.is_super_admin() or id = auth.uid())
   with check (public.is_super_admin() or id = auth.uid());
 
+drop policy if exists "utilisateurs_delete_super_admin" on public.utilisateurs;
 create policy "utilisateurs_delete_super_admin"
   on public.utilisateurs for delete
   using (public.is_super_admin());
 
 -- --- inspecteurs_bureaux : gestion super_admin ---
+drop policy if exists "inspecteurs_bureaux_read" on public.inspecteurs_bureaux;
 create policy "inspecteurs_bureaux_read"
   on public.inspecteurs_bureaux for select
   using (
@@ -333,16 +340,19 @@ create policy "inspecteurs_bureaux_read"
     or inspecteur_id = auth.uid()
   );
 
+drop policy if exists "inspecteurs_bureaux_write_super_admin" on public.inspecteurs_bureaux;
 create policy "inspecteurs_bureaux_write_super_admin"
   on public.inspecteurs_bureaux for all
   using (public.is_super_admin())
   with check (public.is_super_admin());
 
 -- --- dossiers / rapports : cloisonnement par bureau ---
+drop policy if exists "dossiers_select_bureau_scope" on public.dossiers;
 create policy "dossiers_select_bureau_scope"
   on public.dossiers for select
   using (public.can_access_bureau(bureau_id));
 
+drop policy if exists "dossiers_insert_bureau_scope" on public.dossiers;
 create policy "dossiers_insert_bureau_scope"
   on public.dossiers for insert
   with check (
@@ -350,19 +360,23 @@ create policy "dossiers_insert_bureau_scope"
     and (cree_par = auth.uid() or public.auth_role() in ('super_admin', 'chef_admin', 'responsable_bureau'))
   );
 
+drop policy if exists "dossiers_update_bureau_scope" on public.dossiers;
 create policy "dossiers_update_bureau_scope"
   on public.dossiers for update
   using (public.can_access_bureau(bureau_id))
   with check (public.can_access_bureau(bureau_id));
 
+drop policy if exists "dossiers_delete_bureau_scope" on public.dossiers;
 create policy "dossiers_delete_bureau_scope"
   on public.dossiers for delete
   using (public.can_access_bureau(bureau_id));
 
+drop policy if exists "rapports_select_bureau_scope" on public.rapports;
 create policy "rapports_select_bureau_scope"
   on public.rapports for select
   using (public.can_access_bureau(bureau_id));
 
+drop policy if exists "rapports_insert_bureau_scope" on public.rapports;
 create policy "rapports_insert_bureau_scope"
   on public.rapports for insert
   with check (
@@ -370,26 +384,31 @@ create policy "rapports_insert_bureau_scope"
     and (soumis_par = auth.uid() or public.auth_role() in ('super_admin', 'chef_admin', 'responsable_bureau'))
   );
 
+drop policy if exists "rapports_update_bureau_scope" on public.rapports;
 create policy "rapports_update_bureau_scope"
   on public.rapports for update
   using (public.can_access_bureau(bureau_id))
   with check (public.can_access_bureau(bureau_id));
 
+drop policy if exists "rapports_delete_bureau_scope" on public.rapports;
 create policy "rapports_delete_bureau_scope"
   on public.rapports for delete
   using (public.can_access_bureau(bureau_id));
 
 -- --- ecoles : lecture RH / super / chef ; écriture super et bureau RH ---
+drop policy if exists "ecoles_select_rh_scope" on public.ecoles;
 create policy "ecoles_select_rh_scope"
   on public.ecoles for select
   using (public.is_rh());
 
+drop policy if exists "ecoles_write_rh_scope" on public.ecoles;
 create policy "ecoles_write_rh_scope"
   on public.ecoles for all
   using (public.is_super_admin() or public.auth_bureau() = 7)
   with check (public.is_super_admin() or public.auth_bureau() = 7);
 
 -- --- personnel : cloisonnement + exception lecture RH transverse ---
+drop policy if exists "personnel_select_scope" on public.personnel;
 create policy "personnel_select_scope"
   on public.personnel for select
   using (
@@ -397,6 +416,7 @@ create policy "personnel_select_scope"
     or public.can_access_bureau(bureau_id)
   );
 
+drop policy if exists "personnel_insert_scope" on public.personnel;
 create policy "personnel_insert_scope"
   on public.personnel for insert
   with check (
@@ -408,6 +428,7 @@ create policy "personnel_insert_scope"
     )
   );
 
+drop policy if exists "personnel_update_scope" on public.personnel;
 create policy "personnel_update_scope"
   on public.personnel for update
   using (
@@ -421,6 +442,7 @@ create policy "personnel_update_scope"
     or (public.can_access_bureau(bureau_id) and public.auth_role() in ('chef_admin', 'responsable_bureau'))
   );
 
+drop policy if exists "personnel_delete_scope" on public.personnel;
 create policy "personnel_delete_scope"
   on public.personnel for delete
   using (
@@ -430,6 +452,7 @@ create policy "personnel_delete_scope"
   );
 
 -- --- droits_bureau : super_admin + responsable de son propre bureau ---
+drop policy if exists "droits_bureau_select" on public.droits_bureau;
 create policy "droits_bureau_select"
   on public.droits_bureau for select
   using (
@@ -438,6 +461,7 @@ create policy "droits_bureau_select"
     or utilisateur_id = auth.uid()
   );
 
+drop policy if exists "droits_bureau_write" on public.droits_bureau;
 create policy "droits_bureau_write"
   on public.droits_bureau for all
   using (
@@ -456,6 +480,7 @@ create policy "droits_bureau_write"
   );
 
 -- --- delegations : lecture rôles concernés ; écriture super + chef admin délégant ---
+drop policy if exists "delegations_select" on public.delegations;
 create policy "delegations_select"
   on public.delegations for select
   using (
@@ -465,6 +490,7 @@ create policy "delegations_select"
     or delegataire_id = auth.uid()
   );
 
+drop policy if exists "delegations_insert" on public.delegations;
 create policy "delegations_insert"
   on public.delegations for insert
   with check (
@@ -472,6 +498,7 @@ create policy "delegations_insert"
     or (public.is_chef_admin() and delegant_id = auth.uid())
   );
 
+drop policy if exists "delegations_update" on public.delegations;
 create policy "delegations_update"
   on public.delegations for update
   using (
@@ -484,6 +511,7 @@ create policy "delegations_update"
   );
 
 -- --- fils_discussion / messages : bureau OU participant transversal OU super/chef ---
+drop policy if exists "fils_discussion_select" on public.fils_discussion;
 create policy "fils_discussion_select"
   on public.fils_discussion for select
   using (
@@ -497,6 +525,7 @@ create policy "fils_discussion_select"
     )
   );
 
+drop policy if exists "fils_discussion_insert" on public.fils_discussion;
 create policy "fils_discussion_insert"
   on public.fils_discussion for insert
   with check (
@@ -507,6 +536,7 @@ create policy "fils_discussion_insert"
     )
   );
 
+drop policy if exists "fil_participants_select" on public.fil_participants;
 create policy "fil_participants_select"
   on public.fil_participants for select
   using (
@@ -515,6 +545,7 @@ create policy "fil_participants_select"
     or utilisateur_id = auth.uid()
   );
 
+drop policy if exists "fil_participants_write" on public.fil_participants;
 create policy "fil_participants_write"
   on public.fil_participants for all
   using (
@@ -532,6 +563,7 @@ create policy "fil_participants_write"
     )
   );
 
+drop policy if exists "messages_select" on public.messages;
 create policy "messages_select"
   on public.messages for select
   using (
@@ -548,11 +580,13 @@ create policy "messages_select"
     )
   );
 
+drop policy if exists "messages_insert" on public.messages;
 create policy "messages_insert"
   on public.messages for insert
   with check (auteur_id = auth.uid());
 
 -- --- reunions : visibles si bureau / participant / super-chef ; modification organisateur ---
+drop policy if exists "reunions_select" on public.reunions;
 create policy "reunions_select"
   on public.reunions for select
   using (
@@ -566,15 +600,18 @@ create policy "reunions_select"
     )
   );
 
+drop policy if exists "reunions_insert" on public.reunions;
 create policy "reunions_insert"
   on public.reunions for insert
   with check (organise_par = auth.uid());
 
+drop policy if exists "reunions_update_organizer" on public.reunions;
 create policy "reunions_update_organizer"
   on public.reunions for update
   using (organise_par = auth.uid() or public.is_super_admin())
   with check (organise_par = auth.uid() or public.is_super_admin());
 
+drop policy if exists "reunion_participants_select" on public.reunion_participants;
 create policy "reunion_participants_select"
   on public.reunion_participants for select
   using (
@@ -583,6 +620,7 @@ create policy "reunion_participants_select"
     or utilisateur_id = auth.uid()
   );
 
+drop policy if exists "reunion_participants_write" on public.reunion_participants;
 create policy "reunion_participants_write"
   on public.reunion_participants for all
   using (
@@ -599,10 +637,12 @@ create policy "reunion_participants_write"
   );
 
 -- --- journal_activite : lecture super/chef ; écriture automatique (voir triggers) ---
+drop policy if exists "journal_activite_select" on public.journal_activite;
 create policy "journal_activite_select"
   on public.journal_activite for select
   using (public.is_super_admin() or public.is_chef_admin());
 
+drop policy if exists "journal_activite_insert_auto" on public.journal_activite;
 create policy "journal_activite_insert_auto"
   on public.journal_activite for insert
   with check (utilisateur_id = auth.uid());
@@ -628,22 +668,27 @@ begin
 end;
 $$;
 
+drop trigger if exists trg_journal_dossiers on public.dossiers;
 create trigger trg_journal_dossiers
   after insert or update or delete on public.dossiers
   for each row execute function public.log_action();
 
+drop trigger if exists trg_journal_rapports on public.rapports;
 create trigger trg_journal_rapports
   after insert or update or delete on public.rapports
   for each row execute function public.log_action();
 
+drop trigger if exists trg_journal_personnel on public.personnel;
 create trigger trg_journal_personnel
   after insert or update or delete on public.personnel
   for each row execute function public.log_action();
 
+drop trigger if exists trg_journal_droits on public.droits_bureau;
 create trigger trg_journal_droits
   after insert or update or delete on public.droits_bureau
   for each row execute function public.log_action();
 
+drop trigger if exists trg_journal_delegations on public.delegations;
 create trigger trg_journal_delegations
   after insert or update or delete on public.delegations
   for each row execute function public.log_action();
