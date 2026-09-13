@@ -8,6 +8,7 @@ import { PersonnelTab } from "./personnel-tab";
 import { DossiersTab } from "./dossiers-tab";
 import { RapportsTab } from "./rapports-tab";
 import { ReunionsTab } from "./reunions-tab";
+import { DepartTab } from "./depart-tab";
 
 export function AdminPage() {
   return (
@@ -23,6 +24,7 @@ export function AdminPage() {
         <TabsTrigger value="dossiers">Dossiers</TabsTrigger>
         <TabsTrigger value="rapports">Rapports</TabsTrigger>
         <TabsTrigger value="reunions">Réunions</TabsTrigger>
+        <TabsTrigger value="depart">Départ</TabsTrigger>
       </TabsList>
 
       <TabsContent value="bureaux">
@@ -45,6 +47,9 @@ export function AdminPage() {
       </TabsContent>
       <TabsContent value="reunions">
         <ReunionsTab />
+      </TabsContent>
+      <TabsContent value="depart">
+        <DepartTab />
       </TabsContent>
     </Tabs>
   );
