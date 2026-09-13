@@ -151,7 +151,7 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
                     {b.id}
                   </span>
                   {b.nom}
-      {session && (
+                  {session && (
                     <span className="ml-auto text-[11px] text-[#7c8bab]">{bureauCounts[b.id] ?? 0}</span>
                   )}
                 </Link>
@@ -192,7 +192,7 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
         </ul>
       </nav>
 
-      {canSeeAllBureaux(role) && (
+      {session && (
         <>
           <div className="text-[11px] text-[#7c8bab] px-5 pt-4 pb-2">Personnel</div>
           <nav className="px-3">
