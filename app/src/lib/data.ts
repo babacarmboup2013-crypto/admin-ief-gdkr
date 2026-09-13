@@ -290,10 +290,6 @@ export const DASHBOARDS: Record<RoleId, RoleDashboard> = {
     sub: "Lecture sur 11 bureaux — samedi 12 septembre 2026",
     foot: "Ressources Humaines",
     activeBureaux: ["7"],
-    banner: {
-      tone: "teal",
-      text: "Vue transversale personnel — lecture sur les 11 bureaux et toutes les écoles de la circonscription, écriture limitée au bureau Ressources Humaines.",
-    },
     kpis: [
       { label: "Personnel bureaux IEF", value: "96", delta: "11 bureaux" },
       { label: "Personnel écoles", value: "612", delta: "38 écoles" },
