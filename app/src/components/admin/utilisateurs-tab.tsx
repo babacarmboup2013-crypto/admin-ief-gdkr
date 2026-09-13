@@ -79,11 +79,6 @@ export function UtilisateursTab() {
 
   return (
     <>
-      <div className="mb-4 rounded-lg border border-[#e5d3a3] bg-gold-soft px-4 py-3 text-[12.5px] leading-relaxed text-[#7a5b17]">
-        La création de nouveaux comptes de connexion nécessite la clé service_role de Supabase (intégration prévue).
-        Vous pouvez ici renseigner et désactiver les profils des agents existants.
-      </div>
-
       <AdminTable
         title="Utilisateurs"
         subtitle="Profils des agents et de la direction."
