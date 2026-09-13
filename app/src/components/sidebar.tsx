@@ -29,6 +29,8 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
   const config = DASHBOARDS[role];
   const activeBureaux = config.activeBureaux;
   const [allBureaux, setAllBureaux] = useState<Bureau[]>([]);
+  const [bureauCounts, setBureauCounts] = useState<Record<number, number>>({});
+  const [direction, setDirection] = useState<{ nom_complet: string; fonction: string; email: string }[]>([]);
   const { session } = useSession();
 
   useEffect(() => {
@@ -36,9 +38,36 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
     fetchBureaux().then((b) => {
       if (active) setAllBureaux(b);
     });
-    return () => {
-      active = false;
-    };
+    return () => { active = false; };
+  }, []);
+
+  useEffect(() => {
+    if (!supabase || !canSeeAllBureaux(role)) return;
+    let active = true;
+    (async () => {
+      const { data: pers } = await supabase.from("personnel").select("bureau_id,ecole_id");
+      if (!active || !pers) return;
+      const counts: Record<number, number> = {};
+      for (const p of pers as { bureau_id: number | null }[]) {
+        if (p.bureau_id) counts[p.bureau_id] = (counts[p.bureau_id] ?? 0) + 1;
+      }
+      setBureauCounts(counts);
+    })();
+    return () => { active = false; };
+  }, [role]);
+
+  useEffect(() => {
+    if (!supabase) return;
+    let active = true;
+    (async () => {
+      const { data } = await supabase
+        .from("utilisateurs")
+        .select("nom_complet,fonction,email")
+        .in("role", ["super_admin", "chef_admin", "secretaire_general", "inspecteur"])
+        .order("role");
+      if (active && data) setDirection(data as any[]);
+    })();
+    return () => { active = false; };
   }, []);
 
   const visibleBureaux = canSeeAllBureaux(role)
@@ -70,6 +99,29 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
         </div>
       </div>
 
+      {direction.length > 0 && (
+        <>
+          <div className="text-[11px] text-[#7c8bab] px-5 pt-5 pb-2">Direction</div>
+          <nav className="px-3">
+            <ul>
+              {direction.map((d) => (
+                <li key={d.email}>
+                  <div className="mb-0.5 flex items-center gap-2.5 rounded px-2.5 py-2 text-[13.5px] text-[#c3cde0]">
+                    <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-sidebar-primary/30 text-[10.5px] text-sidebar-primary">
+                      {d.nom_complet.split(" ").map((w: string) => w[0]).join("").slice(0, 2)}
+                    </span>
+                    <div className="min-w-0">
+                      <div className="truncate text-[12.5px] text-[#dfe6f2]">{d.nom_complet}</div>
+                      <div className="truncate text-[10.5px] text-[#7c8bab]">{d.fonction}</div>
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </>
+      )}
+
       <div className="text-[11px] text-[#7c8bab] px-5 pt-5 pb-2">
         {visibleBureaux.length > 1 ? "Bureaux" : "Mon bureau"}
       </div>
@@ -99,6 +151,9 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
                     {b.id}
                   </span>
                   {b.nom}
+                  {canSeeAllBureaux(role) && (
+                    <span className="ml-auto text-[11px] text-[#7c8bab]">{bureauCounts[b.id] ?? 0}</span>
+                  )}
                 </Link>
               </li>
             );
