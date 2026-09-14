@@ -69,6 +69,7 @@ export function AdminTable<T>({
       ) : rows.length === 0 ? (
         <div className="px-5 py-10 text-center text-[13px] text-ink-soft">{empty}</div>
       ) : (
+        <div className="overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
@@ -114,6 +115,7 @@ export function AdminTable<T>({
             ))}
           </TableBody>
         </Table>
+        </div>
       )}
     </div>
   );
