@@ -8,7 +8,7 @@ import { CYCLE_LABELS, MOTIFS_DEPART, PERSONNEL_STATUTS, SEXE_LABELS, SIT_MAT_OP
 import { StatusBadge } from "@/components/admin/status";
 import { FormDialog } from "@/components/admin/form-dialog";
 import { DateInput, Field, SelectInput, TextInput } from "@/components/admin/fields";
-import { ArrowLeft, User, MapPin, Briefcase, GraduationCap, Phone, AlertTriangle, Pencil, ArrowRightLeft, Archive, CircleUserRound } from "lucide-react";
+import { ArrowLeft, User, MapPin, Briefcase, GraduationCap, Phone, AlertTriangle, Pencil, ArrowRightLeft, Archive, CircleUserRound, Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { sbThrow } from "@/components/admin/sb";
 
@@ -53,6 +53,8 @@ export default function AgentPage() {
   const [editOpen, setEditOpen] = useState(false);
   const [muterOpen, setMuterOpen] = useState(false);
   const [archiverOpen, setArchiverOpen] = useState(false);
+  const [addBureauOpen, setAddBureauOpen] = useState(false);
+  const [extraBureaux, setExtraBureaux] = useState<{ id: number; nom: string }[]>([]);
 
   useEffect(() => {
     if (!supabase) return;
@@ -86,6 +88,15 @@ export default function AgentPage() {
         const { data: e } = await supabase.from("ecoles").select("nom,cycle,localisation").eq("id", a.ecole_id).maybeSingle();
         if (active && e) setEcoleInfo(e as any);
       }
+      const { data: pb } = await supabase
+        .from("personnel_bureaux")
+        .select("bureau_id")
+        .eq("personnel_id", agentId);
+      if (active && pb && pb.length > 0) {
+        const ids = pb.map((r: any) => r.bureau_id);
+        const { data: bs } = await supabase.from("bureaux").select("id,nom").in("id", ids);
+        if (active && bs) setExtraBureaux(bs as { id: number; nom: string }[]);
+      }
       setLoading(false);
     })();
     return () => { active = false; };
@@ -106,6 +117,17 @@ export default function AgentPage() {
     if (a.ecole_id) {
       const { data: e } = await supabase.from("ecoles").select("nom,cycle,localisation").eq("id", a.ecole_id).maybeSingle();
       if (e) setEcoleInfo(e as any);
+    }
+    const { data: pb } = await supabase
+      .from("personnel_bureaux")
+      .select("bureau_id")
+      .eq("personnel_id", agentId);
+    if (pb && pb.length > 0) {
+      const ids = pb.map((r: any) => r.bureau_id);
+      const { data: bs } = await supabase.from("bureaux").select("id,nom").in("id", ids);
+      if (bs) setExtraBureaux(bs as { id: number; nom: string }[]);
+    } else {
+      setExtraBureaux([]);
     }
   }
 
@@ -139,6 +161,9 @@ export default function AgentPage() {
           </Button>
           <Button variant="outline" size="sm" onClick={() => setMuterOpen(true)}>
             <ArrowRightLeft className="size-3.5" /> Muter
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => setAddBureauOpen(true)}>
+            <Plus className="size-3.5" /> Bureau
           </Button>
           <Button variant="outline" size="sm" className="text-orange-600 border-orange-300 hover:bg-orange-50" onClick={() => setArchiverOpen(true)}>
             <Archive className="size-3.5" /> Archiver
@@ -208,9 +233,41 @@ export default function AgentPage() {
         </Section>
       )}
 
+      {extraBureaux.length > 0 && (
+        <Section title="Bureaux supplémentaires" icon={Briefcase}>
+          {extraBureaux.map((b) => (
+            <div key={b.id} className="flex items-center justify-between border-b border-border/50 py-2 last:border-0">
+              <span className="text-[13px] font-medium text-ink">{b.nom}</span>
+              <Button
+                variant="outline"
+                size="icon-sm"
+                className="text-red-500 border-red-300 hover:bg-red-50"
+                onClick={async () => {
+                  if (!supabase) return;
+                  if (!window.confirm(`Retirer « ${b.nom} » des bureaux supplémentaires ?`)) return;
+                  sbThrow(
+                    (await supabase
+                      .from("personnel_bureaux")
+                      .delete()
+                      .eq("personnel_id", agentId)
+                      .eq("bureau_id", b.id)).error
+                  );
+                  reloadAgent();
+                }}
+              >
+                <X className="size-3.5" />
+              </Button>
+            </div>
+          ))}
+        </Section>
+      )}
+
+      {agent.bureau_id == null && extraBureaux.length === 0 && null}
+
       {editOpen && <EditDialog agent={agent} bureaux={bureaux} ecoles={ecoles} onClose={() => setEditOpen(false)} onSaved={reloadAgent} />}
       {muterOpen && <MuterDialog agent={agent} bureaux={bureaux} ecoles={ecoles} onClose={() => setMuterOpen(false)} onSaved={reloadAgent} />}
       {archiverOpen && <ArchiverDialog agent={agent} onClose={() => setArchiverOpen(false)} />}
+      {addBureauOpen && <AddExtraBureauDialog agentId={agentId} bureaux={bureaux} existingIds={[...(agent.bureau_id ? [agent.bureau_id] : []), ...extraBureaux.map((b) => b.id)]} onClose={() => setAddBureauOpen(false)} onSaved={reloadAgent} />}
     </div>
   );
 }
@@ -467,6 +524,40 @@ function ArchiverDialog({ agent, onClose }: { agent: PersonnelRow; onClose: () =
       <Field label="Année(s) de départ">
         <TextInput value={annee} onChange={(e) => setAnnee(e.target.value)} placeholder="Ex : 2023-2024-2025" />
       </Field>
+    </FormDialog>
+  );
+}
+
+function AddExtraBureauDialog({ agentId, bureaux, existingIds, onClose, onSaved }: { agentId: number; bureaux: BureauRow[]; existingIds: number[]; onClose: () => void; onSaved: () => void }) {
+  const [selectedId, setSelectedId] = useState("");
+  const available = bureaux.filter((b) => !existingIds.includes(b.id));
+
+  async function save() {
+    if (!supabase) throw new Error("Supabase non configuré.");
+    if (!selectedId) throw new Error("Sélectionnez un bureau.");
+    sbThrow(
+      (await supabase.from("personnel_bureaux").insert({
+        personnel_id: agentId,
+        bureau_id: Number(selectedId),
+      })).error
+    );
+    onSaved();
+    onClose();
+  }
+
+  return (
+    <FormDialog open onOpenChange={(o) => !o && onClose()} title="Ajouter un bureau supplémentaire" description="L'agent sera associé à ce bureau en plus de son affectation principale." onSubmit={save} submitLabel="Ajouter">
+      <Field label="Bureau">
+        <SelectInput value={selectedId} onChange={(e) => setSelectedId(e.target.value)}>
+          <option value="">— Sélectionner —</option>
+          {available.map((b) => (
+            <option key={b.id} value={b.id}>{b.nom}</option>
+          ))}
+        </SelectInput>
+      </Field>
+      {available.length === 0 && (
+        <p className="text-[12.5px] text-ink-soft">Tous les bureaux sont déjà associés à cet agent.</p>
+      )}
     </FormDialog>
   );
 }
