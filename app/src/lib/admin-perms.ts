@@ -27,7 +27,7 @@ export function adminPerms(role: RoleId, profile: Profile): AdminPerms {
   if (role === "super") {
     return {
       bureaux: ALL,
-      utilisateurs: { add: false, edit: true, del: false },
+      utilisateurs: ALL,
       ecoles: ALL,
       personnel: ALL,
       dossiers: ALL,
