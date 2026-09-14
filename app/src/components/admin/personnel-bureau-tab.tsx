@@ -73,12 +73,28 @@ export function PersonnelBureauTab() {
   const { rows, loading, refresh } = useRows<PersonnelRow>(
     async () => {
       if (!supabase) return [];
-      const { data, error } = await supabase
-        .from("personnel")
-        .select(SELECT)
-        .not("bureau_id", "is", null)
-        .order("nom_complet", { ascending: true });
-      return error || !data ? [] : (data as unknown as PersonnelRow[]);
+      const [primaryRes, extraRes] = await Promise.all([
+        supabase
+          .from("personnel")
+          .select(SELECT)
+          .not("bureau_id", "is", null)
+          .order("nom_complet", { ascending: true }),
+        supabase
+          .from("personnel_bureaux")
+          .select("personnel_id"),
+      ]);
+      const primary = (primaryRes.data ?? []) as unknown as PersonnelRow[];
+      const extraIds = (extraRes.data ?? []).map((r: any) => r.personnel_id).filter((id: number) => !primary.some((p) => p.id === id));
+      let extra: PersonnelRow[] = [];
+      if (extraIds.length > 0) {
+        const { data: extraData } = await supabase
+          .from("personnel")
+          .select(SELECT)
+          .in("id", extraIds)
+          .order("nom_complet", { ascending: true });
+        extra = (extraData ?? []) as unknown as PersonnelRow[];
+      }
+      return [...primary, ...extra];
     },
     []
   );

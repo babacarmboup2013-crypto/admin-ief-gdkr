@@ -31,12 +31,29 @@ export default function BureauPage() {
   const { rows: personnel, loading: personnelLoading } = useRows<PersonnelRow>(
     async () => {
       if (!supabase) return [];
-      const { data, error } = await supabase
-        .from("personnel")
-        .select(PERSONNEL_SELECT)
-        .eq("bureau_id", bureauId)
-        .order("nom_complet", { ascending: true });
-      return error || !data ? [] : (data as unknown as PersonnelRow[]);
+      const [primaryRes, extraRes] = await Promise.all([
+        supabase
+          .from("personnel")
+          .select(PERSONNEL_SELECT)
+          .eq("bureau_id", bureauId)
+          .order("nom_complet", { ascending: true }),
+        supabase
+          .from("personnel_bureaux")
+          .select("personnel_id")
+          .eq("bureau_id", bureauId),
+      ]);
+      const primary = (primaryRes.data ?? []) as unknown as PersonnelRow[];
+      const extraIds = (extraRes.data ?? []).map((r: any) => r.personnel_id).filter((id: number) => !primary.some((p) => p.id === id));
+      let extra: PersonnelRow[] = [];
+      if (extraIds.length > 0) {
+        const { data: extraData } = await supabase
+          .from("personnel")
+          .select(PERSONNEL_SELECT)
+          .in("id", extraIds)
+          .order("nom_complet", { ascending: true });
+        extra = (extraData ?? []) as unknown as PersonnelRow[];
+      }
+      return [...primary, ...extra];
     },
     [bureauId]
   );
