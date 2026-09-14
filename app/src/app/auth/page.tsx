@@ -47,17 +47,22 @@ function AuthForm() {
 
   return (
     <div
-      className="relative flex min-h-dvh items-center justify-center overflow-hidden"
+      className="relative flex min-h-dvh w-full items-center justify-center overflow-hidden"
       style={{ background: "linear-gradient(135deg, #f7efdb 0%, #fdf8ef 30%, #f0e8d4 60%, #faf6ee 100%)" }}
     >
-      {/* Decorative radial blurs */}
-      <div className="pointer-events-none absolute left-[8%] top-[10%] h-[500px] w-[500px] rounded-full bg-[#1b2a4a]/[0.05] blur-[80px]" />
-      <div className="pointer-events-none absolute bottom-[5%] right-[15%] h-[350px] w-[350px] rounded-full bg-[#c89b3c]/[0.06] blur-[60px]" />
+      {/* Decorative radial blurs - larger, more visible */}
+      <div className="pointer-events-none absolute left-[5%] top-[5%] h-[600px] w-[600px] rounded-full bg-[#1b2a4a]/[0.04] blur-[100px]" />
+      <div className="pointer-events-none absolute bottom-[0%] right-[10%] h-[450px] w-[450px] rounded-full bg-[#c89b3c]/[0.06] blur-[80px]" />
+      <div className="pointer-events-none absolute left-[40%] top-[60%] h-[400px] w-[400px] rounded-full bg-[#1b2a4a]/[0.03] blur-[90px]" />
 
-      {/* Decorative large faded shape behind left content */}
+      {/* Decorative large faded shapes */}
       <div
-        className="pointer-events-none absolute left-[12%] top-[15%] h-[520px] w-[420px] rounded-[60px] opacity-[0.04]"
+        className="pointer-events-none absolute left-[8%] top-[10%] h-[600px] w-[500px] rounded-[80px] opacity-[0.035]"
         style={{ background: "linear-gradient(135deg, #1b2a4a, #101c33)" }}
+      />
+      <div
+        className="pointer-events-none absolute right-[5%] bottom-[10%] h-[300px] w-[300px] rounded-full opacity-[0.03]"
+        style={{ background: "linear-gradient(135deg, #c89b3c, #a87d2a)" }}
       />
 
       {/* Home button */}
@@ -68,50 +73,58 @@ function AuthForm() {
         <Home className="size-5" />
       </Link>
 
-      {/* Main content */}
-      <div className="relative z-10 flex w-full max-w-6xl flex-col items-center gap-10 px-6 lg:flex-row lg:justify-center lg:gap-24">
+      {/* Main content - full width split layout */}
+      <div className="relative z-10 flex w-full max-w-7xl flex-col items-center gap-12 px-6 py-10 lg:flex-row lg:justify-center lg:gap-28">
 
         {/* Left column: branding */}
-        <div className="hidden max-w-md flex-col space-y-4 lg:flex">
-          <h2 className="text-[32px] font-extrabold leading-tight text-[#1b2a4a]">
+        <div className="hidden max-w-lg flex-col space-y-6 lg:flex">
+          <h2 className="text-[38px] font-extrabold leading-[1.15] text-[#1b2a4a]">
             L&apos;administration IEF,<br />
             <span className="text-[#c89b3c]">simple et efficace.</span>
           </h2>
-          <p className="text-sm leading-relaxed text-[#6b7a8a]">
-            La plateforme de gestion du personnel et des écoles de la
-            circonscription IEF Grand Dakar — suivi des affectations,
-            mutations, archivages et dossiers RH en un seul endroit.
+          <p className="text-[15px] leading-relaxed text-[#6b7a8a]">
+            La plateforme centralisée de l&apos;Inspection d&apos;Éducation de
+            Formation du Grand Dakar — gérer le personnel, les écoles,
+            les dossiers, les rapports, les réunions et la communication
+            entre tous les bureaux de l&apos;IEF en un seul endroit.
           </p>
+          <div className="flex flex-wrap gap-3 pt-2">
+            {["Personnel", "Écoles", "Dossiers", "Rapports", "Réunions", "Discussions"].map((item) => (
+              <span key={item} className="rounded-full border border-[#1b2a4a]/10 bg-white/60 px-4 py-1.5 text-[12px] font-medium text-[#1b2a4a]/70">
+                {item}
+              </span>
+            ))}
+          </div>
         </div>
 
         {/* Right column: card */}
-        <div className="w-full max-w-lg">
-          {/* Logo + title */}
-          <div className="mb-8 flex flex-col items-center">
-            <div className="mb-3 flex size-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[#1b2a4a] to-[#101c33] shadow-lg shadow-[#1b2a4a]/25">
-              <span className="text-[14px] font-bold tracking-widest text-[#c89b3c]">AIGDKR</span>
+        <div className="w-full max-w-xl">
+          {/* Logo - overflowing its box */}
+          <div className="relative mb-6 flex flex-col items-center">
+            <div className="relative -mb-5 z-10 flex size-[80px] items-center justify-center rounded-[22px] bg-gradient-to-br from-[#1b2a4a] to-[#101c33] shadow-xl shadow-[#1b2a4a]/25">
+              <span className="text-[18px] font-bold tracking-widest text-[#c89b3c]">AIGDKR</span>
             </div>
-            <h1 className="text-2xl font-extrabold text-[#1b2a4a]">
+            <h1 className="mt-7 text-[28px] font-extrabold text-[#1b2a4a]">
               Admin IEF
             </h1>
-            <p className="mt-1 text-xs text-center text-[#6b7a8a]">
+            <p className="mt-1.5 text-[13px] text-center text-[#6b7a8a]">
               Plateforme d&apos;administration IEF Grand Dakar
             </p>
           </div>
 
-          {/* Login card */}
+          {/* Login card - larger */}
           <div
-            className="rounded-2xl border border-[#e3ddd0] bg-white px-8 py-10 shadow-[0_1px_2px_rgba(27,42,74,0.04),0_12px_30px_-8px_rgba(27,42,74,0.08)]"
+            className="rounded-2xl border border-[#e3ddd0] bg-white px-10 py-10 shadow-[0_2px_4px_rgba(27,42,74,0.04),0_16px_40px_-8px_rgba(27,42,74,0.10)]"
             style={{ transition: "transform .25s, box-shadow .25s, border-color .25s" }}
           >
-            <h2 className="mb-6 text-center text-[16px] font-semibold text-[#1b2a4a]">
+            <h2 className="mb-7 text-center text-[18px] font-semibold text-[#1b2a4a]">
               Connexion
             </h2>
 
-            <form onSubmit={onSubmit} className="flex flex-col gap-5">
+            <form onSubmit={onSubmit} className="flex flex-col gap-6">
               {/* Email */}
               <div>
-                <label className="mb-1.5 block text-xs font-semibold text-[#6b7a8a]">
+                <label className="mb-2 block text-[13px] font-semibold text-[#4a5568]">
                   Email
                 </label>
                 <input
@@ -120,37 +133,37 @@ function AuthForm() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="prenom@ief.local"
-                  className="w-full rounded-lg border border-[#e3ddd0] bg-white px-4 py-3 text-sm text-[#1b2a4a] placeholder:text-[#aab0b8] outline-none transition-all focus:border-[#1b2a4a] focus:ring-2 focus:ring-[#1b2a4a]/10"
+                  className="w-full rounded-xl border border-[#e3ddd0] bg-[#faf8f4] px-5 py-3.5 text-[14px] text-[#1b2a4a] placeholder:text-[#b0b8c0] outline-none transition-all focus:border-[#1b2a4a] focus:bg-white focus:ring-2 focus:ring-[#1b2a4a]/10"
                 />
               </div>
 
               {/* Password */}
               <div>
-                <label className="mb-1.5 block text-xs font-semibold text-[#6b7a8a]">
+                <label className="mb-2 block text-[13px] font-semibold text-[#4a5568]">
                   Mot de passe
                 </label>
                 <div className="relative">
-                  <KeyRound className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[#aab0b8]" />
+                  <KeyRound className="absolute left-4 top-1/2 size-[18px] -translate-y-1/2 text-[#b0b8c0]" />
                   <input
                     type={showPw ? "text" : "password"}
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••"
-                    className="w-full rounded-lg border border-[#e3ddd0] bg-white py-3 pl-9 pr-10 text-sm text-[#1b2a4a] placeholder:text-[#aab0b8] outline-none transition-all focus:border-[#1b2a4a] focus:ring-2 focus:ring-[#1b2a4a]/10"
+                    placeholder="••••••••••"
+                    className="w-full rounded-xl border border-[#e3ddd0] bg-[#faf8f4] py-3.5 pl-11 pr-12 text-[14px] text-[#1b2a4a] placeholder:text-[#b0b8c0] outline-none transition-all focus:border-[#1b2a4a] focus:bg-white focus:ring-2 focus:ring-[#1b2a4a]/10"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPw((v) => !v)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#aab0b8] hover:text-[#6b7a8a] cursor-pointer"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-[#b0b8c0] hover:text-[#6b7a8a] cursor-pointer"
                   >
-                    {showPw ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                    {showPw ? <EyeOff className="size-[18px]" /> : <Eye className="size-[18px]" />}
                   </button>
                 </div>
               </div>
 
               {error && (
-                <div className="rounded-lg border border-red-300/40 bg-red-50 px-4 py-3 text-[12.5px] text-red-600">
+                <div className="rounded-xl border border-red-300/40 bg-red-50 px-5 py-3.5 text-[13px] text-red-600">
                   {error}
                 </div>
               )}
@@ -158,7 +171,7 @@ function AuthForm() {
               <button
                 type="submit"
                 disabled={busy}
-                className="w-full cursor-pointer rounded-lg bg-gradient-to-r from-[#1b2a4a] to-[#101c33] py-3 text-sm font-semibold text-white shadow-md shadow-[#1b2a4a]/20 transition-all hover:shadow-lg hover:shadow-[#1b2a4a]/30 disabled:opacity-60"
+                className="mt-1 w-full cursor-pointer rounded-xl bg-gradient-to-r from-[#1b2a4a] to-[#101c33] py-4 text-[15px] font-semibold text-white shadow-lg shadow-[#1b2a4a]/20 transition-all hover:shadow-xl hover:shadow-[#1b2a4a]/30 disabled:opacity-60"
               >
                 {busy ? "Patientez…" : "Se connecter"}
               </button>
