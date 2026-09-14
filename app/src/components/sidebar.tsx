@@ -95,8 +95,8 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
           IA
         </div>
         <div className="leading-tight">
-          <div className="font-serif text-[15px] text-white">IEF ADMIN</div>
-          <div className="text-[11px] text-[#96a5c2]">Plateforme des 11 bureaux</div>
+          <div className="font-serif text-[15px] text-white">Admin IEF V1</div>
+          <div className="text-[11px] text-[#96a5c2]">Plateforme d'administration de l'IEF Grand Dakar</div>
         </div>
       </div>
 
