@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, MessageSquare, CalendarClock, Settings, LogOut, LogIn } from "lucide-react";
+import { LayoutDashboard, MessageSquare, CalendarClock, Settings, LogOut, LogIn, Users } from "lucide-react";
 import { DASHBOARDS } from "@/lib/data";
 import { useRole } from "@/lib/role-context";
 import { fetchBureaux } from "@/lib/queries";
@@ -17,9 +17,10 @@ const canSeeAllBureaux = (role: string) =>
 
 const MODULES = [
   { view: "dashboard", label: "Tableau de bord", icon: LayoutDashboard, href: "/" },
+  { view: "administration", label: "Administration", icon: Settings, href: "/administration" },
+  { view: "personnel", label: "Personnel", icon: Users, href: "/personnel" },
   { view: "discussions", label: "Discussions", icon: MessageSquare, href: "/discussions" },
   { view: "reunions", label: "Réunions", icon: CalendarClock, href: "/reunions" },
-  { view: "administration", label: "Administration", icon: Settings, href: "/administration" },
 ];
 
 export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void }) {
@@ -191,22 +192,6 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
           })}
         </ul>
       </nav>
-
-      {session && (
-        <>
-          <div className="text-[11px] text-[#7c8bab] px-5 pt-4 pb-2">Personnel</div>
-          <nav className="px-3">
-            <ul>
-              <li>
-                <Link href="/personnel" onClick={onClose} className={cn("mb-0.5 flex items-center gap-2.5 rounded px-2.5 py-2 text-[13.5px] text-[#c3cde0] transition-colors hover:bg-white/[0.06]", pathname === "/personnel" && "bg-white/[0.09] text-white")}>
-                  <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-white/[0.08] text-[10.5px] text-[#96a5c2]">📊</span>
-                  Écoles · Personnel · Départ
-                </Link>
-              </li>
-            </ul>
-          </nav>
-        </>
-      )}
 
       <div className="mt-auto border-t border-sidebar-border px-5 pb-5 pt-4">
         {session ? (
