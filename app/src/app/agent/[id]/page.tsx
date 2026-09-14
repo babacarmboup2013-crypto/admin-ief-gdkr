@@ -8,7 +8,7 @@ import { CYCLE_LABELS, MOTIFS_DEPART, PERSONNEL_STATUTS, SEXE_LABELS, SIT_MAT_OP
 import { StatusBadge } from "@/components/admin/status";
 import { FormDialog } from "@/components/admin/form-dialog";
 import { DateInput, Field, SelectInput, TextInput } from "@/components/admin/fields";
-import { ArrowLeft, User, MapPin, Briefcase, GraduationCap, Phone, AlertTriangle, Pencil, ArrowRightLeft, Archive } from "lucide-react";
+import { ArrowLeft, User, MapPin, Briefcase, GraduationCap, Phone, AlertTriangle, Pencil, ArrowRightLeft, Archive, CircleUserRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { sbThrow } from "@/components/admin/sb";
 
@@ -122,8 +122,8 @@ export default function AgentPage() {
       </Link>
 
       <div className="mb-6 flex items-start gap-4">
-        <div className="flex size-14 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-          <User className="size-7" />
+        <div className={`flex size-14 shrink-0 items-center justify-center rounded-full text-white ${agent.sexe === "F" ? "bg-pink-500" : "bg-blue-600"}`}>
+          <span className="text-[22px] font-bold">{agent.nom_complet?.charAt(0) ?? "?"}</span>
         </div>
         <div className="flex-1">
           <h1 className="text-[24px] leading-tight text-navy">{agent.nom_complet}</h1>

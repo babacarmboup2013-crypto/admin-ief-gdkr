@@ -261,6 +261,15 @@ export function PersonnelTab() {
         title="Personnel"
         subtitle={`${filteredRows.length} agent(s) sur ${rows.length}.`}
         columns={[
+          {
+            header: "",
+            className: "w-[36px]",
+            cell: (r) => (
+              <div className={`flex size-7 shrink-0 items-center justify-center rounded-full text-[11px] font-bold text-white ${r.sexe === "F" ? "bg-pink-500" : "bg-blue-600"}`}>
+                {r.nom_complet?.charAt(0) ?? "?"}
+              </div>
+            ),
+          },
           { header: "Nom complet", cell: (r) => <Link href={`/agent/${r.id}`} className="font-medium text-primary hover:underline">{r.nom_complet}</Link> },
           { header: "Affectation", cell: (r) => <span className="text-ink-soft">{affectation(r).label}</span> },
           { header: "Fonction", cell: (r) => <span className="text-ink-soft">{r.fonction ?? "—"}</span> },
