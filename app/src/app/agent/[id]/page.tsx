@@ -148,21 +148,17 @@ export default function AgentPage() {
 
       <Section title="Identité" icon={User}>
         <Row label="Nom complet" value={agent.nom_complet} />
+        <Row label="Matricule" value={agent.matricule} />
         <Row label="Sexe" value={agent.sexe === "M" ? "Masculin" : agent.sexe === "F" ? "Féminin" : null} />
-        <Row label="Date de naissance" value={agent.date_naissance} />
-        <Row label="Lieu de naissance" value={agent.lieu_naissance} />
-        <Row label="N° CNI" value={agent.n_cni} />
-        <Row label="Situation matrimoniale" value={agent.sit_matrimoniale} />
-        <Row label="Nombre d'enfants" value={agent.nb_enfants} />
       </Section>
 
       <Section title="Affectation" icon={Briefcase}>
         <Row label="Affectation" value={lieu} />
         <Row label="Fonction" value={agent.fonction} />
-        <Row label="Matricule" value={agent.matricule} />
         <Row label="Date d'entrée" value={agent.date_entree} />
         <Row label="Statut" value={statutInfo.label} />
         <Row label="Source feuille" value={agent.source_feuille} />
+        <Row label="OS arrivée" value={agent.os_arrivee} />
         {agent.ecole_id && ecoleInfo && (
           <>
             <Row label="Cycle" value={CYCLE_LABELS[ecoleInfo.cycle] ?? ecoleInfo.cycle} />
@@ -171,17 +167,22 @@ export default function AgentPage() {
         )}
       </Section>
 
+      <Section title="État civil" icon={User}>
+        <Row label="Date de naissance" value={agent.date_naissance} />
+        <Row label="Lieu de naissance" value={agent.lieu_naissance} />
+        <Row label="N° CNI" value={agent.n_cni} />
+        <Row label="Situation matrimoniale" value={agent.sit_matrimoniale} />
+        <Row label="Enfants" value={agent.nb_enfants} />
+      </Section>
+
       <Section title="Carrière" icon={GraduationCap}>
         <Row label="Corps" value={agent.corps} />
         <Row label="Grade" value={agent.grade} />
         <Row label="Discipline" value={agent.discipline} />
-        <Row label="Ancienneté enseignement" value={agent.anciennete_enseignement} />
-        <Row label="Ancienneté poste" value={agent.anciennete_poste} />
-      </Section>
-
-      <Section title="Formation" icon={GraduationCap}>
         <Row label="Diplôme académique" value={agent.diplome_academique} />
         <Row label="Diplôme professionnel" value={agent.diplome_professionnel} />
+        <Row label="Ancienneté enseignement" value={agent.anciennete_enseignement} />
+        <Row label="Ancienneté poste" value={agent.anciennete_poste} />
       </Section>
 
       <Section title="Contact" icon={Phone}>

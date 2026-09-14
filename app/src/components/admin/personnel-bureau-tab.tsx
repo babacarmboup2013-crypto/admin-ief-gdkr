@@ -189,19 +189,27 @@ export function PersonnelBureauTab() {
     else refresh();
   }
 
+  const BUREAU_ORDER: Record<number, number> = { 12: 0, 13: 1, 14: 2, 23: 5 };
+  function hierarchie(row: PersonnelRow): number {
+    if (row.bureau_id != null) return BUREAU_ORDER[row.bureau_id] ?? 3;
+    return 4;
+  }
+
   const filteredRows = useMemo(() => {
     const q = (k: string) => (search[k] ?? "").toLowerCase().trim();
     const hasQ = Object.values(search).some((v) => v.trim());
-    if (!hasQ) return rows;
-    return rows.filter((r) => {
-      const b = bureaux.rows.find((x) => x.id === r.bureau_id);
-      const bName = b?.nom?.toLowerCase() ?? "";
-      if (q("nom") && !r.nom_complet?.toLowerCase().includes(q("nom"))) return false;
-      if (q("bureau") && !bName.includes(q("bureau"))) return false;
-      if (q("matricule") && !r.matricule?.toLowerCase().includes(q("matricule"))) return false;
-      if (q("email") && !r.email?.toLowerCase().includes(q("email"))) return false;
-      return true;
-    });
+    const list = hasQ
+      ? rows.filter((r) => {
+          const b = bureaux.rows.find((x) => x.id === r.bureau_id);
+          const bName = b?.nom?.toLowerCase() ?? "";
+          if (q("nom") && !r.nom_complet?.toLowerCase().includes(q("nom"))) return false;
+          if (q("bureau") && !bName.includes(q("bureau"))) return false;
+          if (q("matricule") && !r.matricule?.toLowerCase().includes(q("matricule"))) return false;
+          if (q("email") && !r.email?.toLowerCase().includes(q("email"))) return false;
+          return true;
+        })
+      : rows;
+    return [...list].sort((a, b) => hierarchie(a) - hierarchie(b) || (a.nom_complet ?? "").localeCompare(b.nom_complet ?? ""));
   }, [rows, search, bureaux.rows]);
 
   return (
