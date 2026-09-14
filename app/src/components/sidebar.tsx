@@ -17,8 +17,8 @@ const canSeeAllBureaux = (role: string) =>
 
 const MODULES = [
   { view: "dashboard", label: "Tableau de bord", icon: LayoutDashboard, href: "/" },
-  { view: "administration", label: "Administration", icon: Settings, href: "/administration" },
   { view: "personnel", label: "Personnel", icon: Users, href: "/personnel" },
+  { view: "administration", label: "Administration", icon: Settings, href: "/administration" },
   { view: "discussions", label: "Discussions", icon: MessageSquare, href: "/discussions" },
   { view: "reunions", label: "Réunions", icon: CalendarClock, href: "/reunions" },
 ];
