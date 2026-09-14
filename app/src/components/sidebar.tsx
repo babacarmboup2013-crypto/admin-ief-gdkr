@@ -16,7 +16,7 @@ const canSeeAllBureaux = (role: string) =>
   role === "super" || role === "chef";
 
 const MODULES = [
-  { view: "personnel", label: "Personnel IEF", icon: Users, href: "/personnel" },
+  { view: "personnel", label: "Personnel", icon: Users, href: "/personnel" },
   { view: "dashboard", label: "Tableau de bord", icon: LayoutDashboard, href: "/" },
   { view: "administration", label: "Administration", icon: Settings, href: "/administration" },
   { view: "discussions", label: "Discussions", icon: MessageSquare, href: "/discussions" },
