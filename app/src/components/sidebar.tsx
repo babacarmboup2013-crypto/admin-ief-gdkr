@@ -91,7 +91,7 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
       )}
     >
       <div className="flex items-center gap-2.5 border-b border-sidebar-border px-5 pb-5 pt-7">
-        <div className="flex size-[34px] shrink-0 items-center justify-center rounded-full border-[1.5px] border-sidebar-primary font-serif text-[15px] text-sidebar-primary">
+        <div className="flex size-[42px] shrink-0 items-center justify-center rounded-full border-[1.5px] border-sidebar-primary font-serif text-[11px] font-bold tracking-wide text-sidebar-primary">
           AIGDKR
         </div>
         <div className="leading-tight">
