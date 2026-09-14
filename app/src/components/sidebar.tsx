@@ -198,19 +198,19 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
           <nav className="px-3">
             <ul>
               <li>
-                <Link href="/administration?tab=ecoles" onClick={onClose} className={cn("mb-0.5 flex items-center gap-2.5 rounded px-2.5 py-2 text-[13.5px] text-[#c3cde0] transition-colors hover:bg-white/[0.06]", pathname === "/administration" && "bg-white/[0.09] text-white")}>
+                <Link href="/ecoles" onClick={onClose} className={cn("mb-0.5 flex items-center gap-2.5 rounded px-2.5 py-2 text-[13.5px] text-[#c3cde0] transition-colors hover:bg-white/[0.06]", pathname === "/ecoles" && "bg-white/[0.09] text-white")}>
                   <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-white/[0.08] text-[10.5px] text-[#96a5c2]">69</span>
                   Écoles
                 </Link>
               </li>
               <li>
-                <Link href="/administration?tab=personnel" onClick={onClose} className={cn("mb-0.5 flex items-center gap-2.5 rounded px-2.5 py-2 text-[13.5px] text-[#c3cde0] transition-colors hover:bg-white/[0.06]", pathname === "/administration" && "bg-white/[0.09] text-white")}>
+                <Link href="/personnel" onClick={onClose} className={cn("mb-0.5 flex items-center gap-2.5 rounded px-2.5 py-2 text-[13.5px] text-[#c3cde0] transition-colors hover:bg-white/[0.06]", pathname === "/personnel" && "bg-white/[0.09] text-white")}>
                   <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-white/[0.08] text-[10.5px] text-[#96a5c2]">897</span>
                   Personnel actif
                 </Link>
               </li>
               <li>
-                <Link href="/administration?tab=depart" onClick={onClose} className={cn("mb-0.5 flex items-center gap-2.5 rounded px-2.5 py-2 text-[13.5px] text-[#c3cde0] transition-colors hover:bg-white/[0.06]", pathname === "/administration" && "bg-white/[0.09] text-white")}>
+                <Link href="/depart" onClick={onClose} className={cn("mb-0.5 flex items-center gap-2.5 rounded px-2.5 py-2 text-[13.5px] text-[#c3cde0] transition-colors hover:bg-white/[0.06]", pathname === "/depart" && "bg-white/[0.09] text-white")}>
                   <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-white/[0.08] text-[10.5px] text-[#96a5c2]">220</span>
                   Départ / mutés
                 </Link>
