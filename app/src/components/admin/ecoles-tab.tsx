@@ -23,7 +23,7 @@ export function EcolesTab() {
   const [cycle, setCycle] = useState("élémentaire");
   const [localisation, setLocalisation] = useState("");
   const [effectif, setEffectif] = useState("");
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState<Record<string, string>>({});
   const { rows, loading, refresh } = useRows<EcoleRow>(
     async () => {
       if (!supabase) return [];
@@ -88,18 +88,28 @@ export function EcolesTab() {
   }
 
   const filteredRows = useMemo(() => {
-    if (!search.trim()) return rows;
-    const q = search.toLowerCase();
-    return rows.filter((r) =>
-      r.nom?.toLowerCase().includes(q) ||
-      r.localisation?.toLowerCase().includes(q) ||
-      r.cycle?.toLowerCase().includes(q)
-    );
+    const q = (k: string) => (search[k] ?? "").toLowerCase().trim();
+    const hasQ = Object.values(search).some((v) => v.trim());
+    if (!hasQ) return rows;
+    return rows.filter((r) => {
+      if (q("nom") && !r.nom?.toLowerCase().includes(q("nom"))) return false;
+      if (q("cycle") && !(CYCLE_LABELS[r.cycle] ?? r.cycle).toLowerCase().includes(q("cycle"))) return false;
+      if (q("district") && !r.localisation?.toLowerCase().includes(q("district"))) return false;
+      return true;
+    });
   }, [rows, search]);
 
   return (
     <>
-      <SearchBar value={search} onChange={setSearch} placeholder="Rechercher par nom, cycle, district..." />
+      <SearchBar
+        fields={[
+          { key: "nom", label: "Nom", placeholder: "Nom de l'école..." },
+          { key: "cycle", label: "Cycle", placeholder: "Élémentaire, Collège..." },
+          { key: "district", label: "District", placeholder: "District..." },
+        ]}
+        values={search}
+        onChange={(k, v) => setSearch((prev) => ({ ...prev, [k]: v }))}
+      />
       <AdminTable
         title="Écoles de la circonscription"
         subtitle={`${filteredRows.length} école(s) sur ${rows.length}.`}

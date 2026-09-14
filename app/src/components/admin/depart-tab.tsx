@@ -11,7 +11,7 @@ import { SearchBar } from "./search-bar";
 const SELECT = "id,bureau_id,ecole_id,nom_complet,fonction,date_entree,statut,matricule,sexe,telephone,corps,grade,source_feuille,motif_depart,depart_annee";
 
 export function DepartTab() {
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState<Record<string, string>>({});
   const { rows, loading } = useRows<PersonnelRow>(
     async () => {
       if (!supabase) return [];
@@ -25,19 +25,28 @@ export function DepartTab() {
   );
 
   const filteredRows = useMemo(() => {
-    if (!search.trim()) return rows;
-    const q = search.toLowerCase();
-    return rows.filter((r) =>
-      r.nom_complet?.toLowerCase().includes(q) ||
-      r.matricule?.toLowerCase().includes(q) ||
-      r.fonction?.toLowerCase().includes(q) ||
-      r.motif_depart?.toLowerCase().includes(q)
-    );
+    const q = (k: string) => (search[k] ?? "").toLowerCase().trim();
+    const hasQ = Object.values(search).some((v) => v.trim());
+    if (!hasQ) return rows;
+    return rows.filter((r) => {
+      if (q("nom") && !r.nom_complet?.toLowerCase().includes(q("nom"))) return false;
+      if (q("matricule") && !r.matricule?.toLowerCase().includes(q("matricule"))) return false;
+      if (q("motif") && !r.motif_depart?.toLowerCase().includes(q("motif"))) return false;
+      return true;
+    });
   }, [rows, search]);
 
   return (
     <>
-      <SearchBar value={search} onChange={setSearch} placeholder="Rechercher par nom, matricule, fonction, motif..." />
+      <SearchBar
+        fields={[
+          { key: "nom", label: "Nom", placeholder: "Nom complet..." },
+          { key: "matricule", label: "Matricule", placeholder: "N° matricule..." },
+          { key: "motif", label: "Motif", placeholder: "Motif départ..." },
+        ]}
+        values={search}
+        onChange={(k, v) => setSearch((prev) => ({ ...prev, [k]: v }))}
+      />
       <AdminTable
         title="Personnel départ / muté"
         subtitle={`${filteredRows.length} agent(s) muté(s) sur ${rows.length}.`}

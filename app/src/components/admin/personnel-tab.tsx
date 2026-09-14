@@ -72,7 +72,7 @@ export function PersonnelTab() {
   const [lieuNaissance, setLieuNaissance] = useState("");
   const [corps, setCorps] = useState("");
   const [grade, setGrade] = useState("");
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState<Record<string, string>>({});
   const [discipline, setDiscipline] = useState("");
   const [diplAc, setDiplAc] = useState("");
   const [diplProf, setDiplProf] = useState("");
@@ -227,24 +227,32 @@ export function PersonnelTab() {
   }
 
   const filteredRows = useMemo(() => {
-    if (!search.trim()) return rows;
-    const q = search.toLowerCase();
+    const q = (k: string) => (search[k] ?? "").toLowerCase().trim();
+    const hasQ = Object.values(search).some((v) => v.trim());
+    if (!hasQ) return rows;
     return rows.filter((r) => {
       const ecole = ecoles.rows.find((e) => e.id === r.ecole_id);
       const eName = ecole?.nom?.toLowerCase() ?? "";
-      return (
-        r.nom_complet?.toLowerCase().includes(q) ||
-        r.matricule?.toLowerCase().includes(q) ||
-        r.email?.toLowerCase().includes(q) ||
-        r.fonction?.toLowerCase().includes(q) ||
-        eName.includes(q)
-      );
+      if (q("nom") && !r.nom_complet?.toLowerCase().includes(q("nom"))) return false;
+      if (q("ecole") && !eName.includes(q("ecole"))) return false;
+      if (q("matricule") && !r.matricule?.toLowerCase().includes(q("matricule"))) return false;
+      if (q("email") && !r.email?.toLowerCase().includes(q("email"))) return false;
+      return true;
     });
   }, [rows, search, ecoles.rows]);
 
   return (
     <>
-      <SearchBar value={search} onChange={setSearch} placeholder="Rechercher par nom, matricule, email, fonction, école..." />
+      <SearchBar
+        fields={[
+          { key: "nom", label: "Nom", placeholder: "Nom complet..." },
+          { key: "ecole", label: "École", placeholder: "Nom de l'école..." },
+          { key: "matricule", label: "Matricule", placeholder: "N° matricule..." },
+          { key: "email", label: "Email", placeholder: "Email..." },
+        ]}
+        values={search}
+        onChange={(k, v) => setSearch((prev) => ({ ...prev, [k]: v }))}
+      />
       <AdminTable
         title="Personnel"
         subtitle={`${filteredRows.length} agent(s) sur ${rows.length}.`}
