@@ -99,20 +99,7 @@ function AuthForm() {
 
         {/* Right column: card */}
         <div className="w-full max-w-xl">
-          {/* Logo - overflowing its box */}
-          <div className="relative mb-6 flex flex-col items-center">
-            <div className="relative -mb-5 z-10 flex size-[80px] items-center justify-center rounded-[22px] bg-gradient-to-br from-[#1b2a4a] to-[#101c33] shadow-xl shadow-[#1b2a4a]/25">
-              <span className="text-[18px] font-bold tracking-widest text-[#c89b3c]">AIGDKR</span>
-            </div>
-            <h1 className="mt-7 text-[28px] font-extrabold text-[#1b2a4a]">
-              Admin IEF
-            </h1>
-            <p className="mt-1.5 text-[13px] text-center text-[#6b7a8a]">
-              Plateforme d&apos;administration IEF Grand Dakar
-            </p>
-          </div>
-
-          {/* Login card - larger */}
+          {/* Login card */}
           <div
             className="rounded-2xl border border-[#e3ddd0] bg-white px-10 py-10 shadow-[0_2px_4px_rgba(27,42,74,0.04),0_16px_40px_-8px_rgba(27,42,74,0.10)]"
             style={{ transition: "transform .25s, box-shadow .25s, border-color .25s" }}
