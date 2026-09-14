@@ -196,6 +196,17 @@ export default function AgentPage() {
         </Section>
       )}
 
+      {agent.ecole_id && ecoleInfo && (
+        <Section title="École d'affectation" icon={MapPin}>
+          <Row label="Nom" value={ecoleInfo.nom} />
+          <Row label="Cycle" value={CYCLE_LABELS[ecoleInfo.cycle] ?? ecoleInfo.cycle} />
+          <Row label="Localisation" value={ecoleInfo.localisation} />
+          <div className="mt-2">
+            <Link href={`/ecole/${agent.ecole_id}`} className="text-[13px] text-primary hover:underline">Voir la fiche école →</Link>
+          </div>
+        </Section>
+      )}
+
       {editOpen && <EditDialog agent={agent} bureaux={bureaux} ecoles={ecoles} onClose={() => setEditOpen(false)} onSaved={reloadAgent} />}
       {muterOpen && <MuterDialog agent={agent} bureaux={bureaux} ecoles={ecoles} onClose={() => setMuterOpen(false)} onSaved={reloadAgent} />}
       {archiverOpen && <ArchiverDialog agent={agent} onClose={() => setArchiverOpen(false)} />}
