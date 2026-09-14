@@ -10,8 +10,8 @@ export default function PersonnelPage() {
   return (
     <Tabs defaultValue="bureau">
       <TabsList variant="line" className="mb-5 h-auto w-full flex-wrap gap-1">
-        <TabsTrigger value="ecoles">Écoles</TabsTrigger>
         <TabsTrigger value="bureau">Personnel IEF</TabsTrigger>
+        <TabsTrigger value="ecoles">Écoles</TabsTrigger>
         <TabsTrigger value="personnel">Personnel</TabsTrigger>
         <TabsTrigger value="depart">Départ / mutés</TabsTrigger>
       </TabsList>
