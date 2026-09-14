@@ -21,6 +21,8 @@ import { sbThrow } from "./sb";
 import { useRows } from "./use-rows";
 import { useBureauxRef, useEcolesRef } from "./use-refs";
 import { SearchBar } from "./search-bar";
+import { ArrowRightLeft, Archive } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const SELECT = [
   "id",
@@ -59,6 +61,8 @@ export function PersonnelTab() {
   const ecoles = useEcolesRef();
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<PersonnelRow | null>(null);
+  const [muting, setMuting] = useState<PersonnelRow | null>(null);
+  const [archiving, setArchiving] = useState<PersonnelRow | null>(null);
 
   const [nom, setNom] = useState("");
   const [matricule, setMatricule] = useState("");
@@ -314,6 +318,16 @@ export function PersonnelTab() {
         onDelete={remove}
         empty="Aucun agent importé. Exécutez les migrations d'import ou ajoutez une personne."
         addLabel="Ajouter une personne"
+        customActions={(r) => (
+          <>
+            <Button variant="outline" size="icon-sm" aria-label="Muter" onClick={() => setMuting(r)}>
+              <ArrowRightLeft />
+            </Button>
+            <Button variant="outline" size="icon-sm" className="text-orange-600 border-orange-300 hover:bg-orange-50" aria-label="Archiver" onClick={() => setArchiving(r)}>
+              <Archive />
+            </Button>
+          </>
+        )}
       />
 
       <FormDialog
@@ -474,6 +488,112 @@ export function PersonnelTab() {
           </>
         ) : null}
       </FormDialog>
+
+      {muting && (
+        <MuterDialog
+          agent={muting}
+          bureaux={bureaux.rows}
+          ecoles={ecoles.rows}
+          onClose={() => setMuting(null)}
+          onSaved={() => { setMuting(null); refresh(); }}
+        />
+      )}
+
+      {archiving && (
+        <ArchiverDialog
+          agent={archiving}
+          onClose={() => setArchiving(null)}
+          onSaved={() => { setArchiving(null); refresh(); }}
+        />
+      )}
     </>
+  );
+}
+
+function MuterDialog({ agent, bureaux, ecoles, onClose, onSaved }: { agent: PersonnelRow; bureaux: { id: number; nom: string }[]; ecoles: { id: number; nom: string }[]; onClose: () => void; onSaved: () => void }) {
+  const [type, setType] = useState<"bureau" | "ecole">(agent.ecole_id != null ? "ecole" : "bureau");
+  const [bureauId, setBureauId] = useState(agent.bureau_id == null ? "" : String(agent.bureau_id));
+  const [ecoleId, setEcoleId] = useState(agent.ecole_id == null ? "" : String(agent.ecole_id));
+  const [fonction, setFonction] = useState(agent.fonction ?? "");
+
+  async function save() {
+    if (!supabase) throw new Error("Supabase non configuré.");
+    const payload: Record<string, unknown> = { fonction: fonction.trim() || null };
+    if (type === "bureau") {
+      if (!bureauId) throw new Error("Sélectionnez le bureau.");
+      payload.bureau_id = Number(bureauId);
+      payload.ecole_id = null;
+    } else {
+      if (!ecoleId) throw new Error("Sélectionnez l'école.");
+      payload.ecole_id = Number(ecoleId);
+      payload.bureau_id = null;
+    }
+    sbThrow((await supabase.from("personnel").update(payload).eq("id", agent.id)).error);
+    onSaved();
+  }
+
+  return (
+    <FormDialog open onOpenChange={(o) => !o && onClose()} title={`Muter ${agent.nom_complet}`} description="Changer l'affectation de cet agent." onSubmit={save} submitLabel="Confirmer la mutation">
+      <Field label="Nouvelle affectation">
+        <SelectInput value={type} onChange={(e) => setType(e.target.value as "bureau" | "ecole")}>
+          <option value="bureau">Bureau IEF</option>
+          <option value="ecole">École</option>
+        </SelectInput>
+      </Field>
+      {type === "bureau" ? (
+        <Field label="Bureau">
+          <SelectInput value={bureauId} onChange={(e) => setBureauId(e.target.value)}>
+            <option value="">— Sélectionner —</option>
+            {bureaux.map((b) => <option key={b.id} value={b.id}>{b.nom}</option>)}
+          </SelectInput>
+        </Field>
+      ) : (
+        <Field label="École">
+          <SelectInput value={ecoleId} onChange={(e) => setEcoleId(e.target.value)}>
+            <option value="">— Sélectionner —</option>
+            {ecoles.map((e) => <option key={e.id} value={e.id}>{e.nom}</option>)}
+          </SelectInput>
+        </Field>
+      )}
+      <Field label="Fonction (optionnel)">
+        <TextInput value={fonction} onChange={(e) => setFonction(e.target.value)} placeholder="Laisser vide pour conserver" />
+      </Field>
+    </FormDialog>
+  );
+}
+
+function ArchiverDialog({ agent, onClose, onSaved }: { agent: PersonnelRow; onClose: () => void; onSaved: () => void }) {
+  const [motif, setMotif] = useState(agent.motif_depart ?? "");
+  const [annee, setAnnee] = useState(agent.depart_annee ?? "");
+
+  async function save() {
+    if (!supabase) throw new Error("Supabase non configuré.");
+    if (!motif.trim()) throw new Error("Le motif de départ est obligatoire.");
+
+    const { data: row, error: fetchErr } = await supabase.from("personnel").select("*").eq("id", agent.id).maybeSingle();
+    if (fetchErr || !row) throw new Error("Impossible de récupérer l'agent.");
+
+    const { error: insErr } = await supabase.from("personnel_archive").insert({
+      ...row,
+      motif_depart: motif.trim(),
+      depart_annee: annee.trim() || null,
+      archived_at: new Date().toISOString(),
+    });
+    if (insErr) throw new Error(insErr.message);
+
+    sbThrow((await supabase.from("personnel").delete().eq("id", agent.id)).error);
+    onSaved();
+  }
+
+  return (
+    <FormDialog open onOpenChange={(o) => !o && onClose()} title={`Archiver ${agent.nom_complet}`} description="Cet agent sera transféré vers les archives et supprimé du personnel actif." onSubmit={save} submitLabel="Archiver">
+      <Field label="Motif de départ *">
+        <TextInput list="motifs-arch-tab" value={motif} onChange={(e) => setMotif(e.target.value)} autoFocus />
+        <datalist id="motifs-arch-tab">{MOTIFS_DEPART.map((m) => <option key={m} value={m} />)}</datalist>
+      </Field>
+      <Field label="Année(s) de départ">
+        <TextInput value={annee} onChange={(e) => setAnnee(e.target.value)} placeholder="Ex : 2023-2024-2025" />
+      </Field>
+    </FormDialog>
   );
 }

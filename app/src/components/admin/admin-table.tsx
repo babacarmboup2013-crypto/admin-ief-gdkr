@@ -32,6 +32,7 @@ export function AdminTable<T>({
   onDelete,
   addLabel = "Ajouter",
   empty = "Aucune donnée pour le moment.",
+  customActions,
 }: {
   title: string;
   subtitle?: string;
@@ -47,6 +48,7 @@ export function AdminTable<T>({
   onDelete?: (row: T) => void;
   addLabel?: string;
   empty?: string;
+  customActions?: (row: T) => React.ReactNode;
 }) {
   return (
     <div className="overflow-hidden rounded-lg border border-border bg-card">
@@ -75,7 +77,7 @@ export function AdminTable<T>({
                   {c.header}
                 </TableHead>
               ))}
-              {(canEdit || canDelete) && <TableHead className="w-[76px] text-right">Actions</TableHead>}
+              {(canEdit || canDelete || customActions) && <TableHead className="w-[130px] text-right">Actions</TableHead>}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -86,7 +88,7 @@ export function AdminTable<T>({
                     {c.cell(row)}
                   </TableCell>
                 ))}
-                {(canEdit || canDelete) && (
+                {(canEdit || canDelete || customActions) && (
                   <TableCell className="text-right">
                     <span className="inline-flex gap-1">
                       {canEdit && onEdit ? (
@@ -104,6 +106,7 @@ export function AdminTable<T>({
                           <Trash2 />
                         </Button>
                       ) : null}
+                      {customActions ? customActions(row) : null}
                     </span>
                   </TableCell>
                 )}
