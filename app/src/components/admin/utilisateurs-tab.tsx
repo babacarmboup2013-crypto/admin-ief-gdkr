@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { supabase } from "@/lib/supabase/client";
-import { supabaseAdmin } from "@/lib/supabase/admin";
 import { adminPerms } from "@/lib/admin-perms";
 import { ROLE_LABELS, type UtilisateurRow } from "@/lib/admin-types";
 import { useRole } from "@/lib/role-context";
@@ -13,10 +12,28 @@ import { StatusBadge } from "./status";
 import { sbThrow } from "./sb";
 import { useRows } from "./use-rows";
 import { useBureauxRef } from "./use-refs";
-import { Archive, Trash2 } from "lucide-react";
+import { Archive, KeyRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const ROLES = Object.keys(ROLE_LABELS);
+
+async function appellerApiAdmin(payload: Record<string, unknown>) {
+  const res = await fetch("/api/admin/utilisateurs", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || "Une erreur est survenue.");
+  return data;
+}
 
 export function UtilisateursTab() {
   const { role, profile } = useRole();
@@ -26,11 +43,12 @@ export function UtilisateursTab() {
   const [editing, setEditing] = useState<UtilisateurRow | null>(null);
   const [nom, setNom] = useState("");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [fonction, setFonction] = useState("");
   const [roleName, setRoleName] = useState("agent_bureau");
   const [bureauId, setBureauId] = useState("");
   const [actif, setActif] = useState(true);
+
+  const [motDePasseAffiche, setMotDePasseAffiche] = useState<string | null>(null);
 
   const { rows, loading, refresh } = useRows<UtilisateurRow>(
     async () => {
@@ -54,7 +72,6 @@ export function UtilisateursTab() {
     setEditing(null);
     setNom("");
     setEmail("");
-    setPassword("");
     setFonction("");
     setRoleName("agent_bureau");
     setBureauId("");
@@ -67,7 +84,6 @@ export function UtilisateursTab() {
     setEditing(row);
     setNom(row.nom_complet);
     setEmail(row.email);
-    setPassword("");
     setFonction(row.fonction ?? "");
     setRoleName(row.role);
     setBureauId(row.bureau_id == null ? "" : String(row.bureau_id));
@@ -90,38 +106,23 @@ export function UtilisateursTab() {
       sbThrow((await supabase.from("utilisateurs").update(payload).eq("id", editing.id)).error);
     } else {
       if (!email.trim()) throw new Error("L'email est obligatoire.");
-      if (!password.trim()) throw new Error("Le mot de passe est obligatoire.");
-      if (password.length < 6) throw new Error("Le mot de passe doit faire au moins 6 caractères.");
-      if (!supabaseAdmin) throw new Error("Clé service_role manquante — configservez SUPABASE_SERVICE_ROLE_KEY.");
 
-      const { data: authData, error: authErr } = await supabaseAdmin.auth.admin.createUser({
-        email: email.trim(),
-        password,
-        email_confirm: true,
-        user_metadata: { nom_complet: nom.trim(), fonction: fonction.trim() || null },
-      });
-      if (authErr) throw new Error(authErr.message);
-
-      const uid = authData.user.id;
-      const { error: profileErr } = await supabase.from("utilisateurs").insert({
-        id: uid,
+      const resultat = await appellerApiAdmin({
+        action: "creer",
         nom_complet: nom.trim(),
         email: email.trim(),
         role: roleName,
         bureau_id: bureauId === "" ? null : Number(bureauId),
         fonction: fonction.trim() || null,
-        actif: true,
       });
-      if (profileErr) throw new Error(profileErr.message);
+      setMotDePasseAffiche(resultat.mot_de_passe_temporaire);
     }
     refresh();
   }
 
   async function remove(row: UtilisateurRow) {
-    if (!supabase || !supabaseAdmin) return;
     if (!window.confirm(`Supprimer définitivement « ${row.nom_complet} » ? Cette action est irréversible.`)) return;
-    sbThrow((await supabase.from("utilisateurs").delete().eq("id", row.id)).error);
-    await supabaseAdmin.auth.admin.deleteUser(row.id);
+    await appellerApiAdmin({ action: "supprimer", id: row.id });
     refresh();
   }
 
@@ -132,6 +133,16 @@ export function UtilisateursTab() {
     if (!window.confirm(`${action.charAt(0).toUpperCase() + action.slice(1)} le compte de « ${row.nom_complet} » ?`)) return;
     sbThrow((await supabase.from("utilisateurs").update({ actif: newActif }).eq("id", row.id)).error);
     refresh();
+  }
+
+  async function resetPassword(row: UtilisateurRow) {
+    if (!window.confirm(`Générer un nouveau mot de passe temporaire pour « ${row.nom_complet} » ?`)) return;
+    try {
+      const resultat = await appellerApiAdmin({ action: "reinitialiser_mot_de_passe", id: row.id });
+      setMotDePasseAffiche(resultat.mot_de_passe_temporaire);
+    } catch (err) {
+      window.alert(err instanceof Error ? err.message : "Une erreur est survenue.");
+    }
   }
 
   return (
@@ -159,15 +170,29 @@ export function UtilisateursTab() {
         addLabel="Ajouter un utilisateur"
         empty="Aucun utilisateur."
         customActions={(r) => (
-          <Button
-            variant="outline"
-            size="icon-sm"
-            className={r.actif ? "text-orange-600 border-orange-300 hover:bg-orange-50" : "text-green-600 border-green-300 hover:bg-green-50"}
-            aria-label={r.actif ? "Désactiver" : "Réactiver"}
-            onClick={() => toggleArchive(r)}
-          >
-            <Archive />
-          </Button>
+          <>
+            {perms.edit ? (
+              <Button
+                variant="outline"
+                size="icon-sm"
+                aria-label="Réinitialiser le mot de passe"
+                title="Réinitialiser le mot de passe"
+                onClick={() => resetPassword(r)}
+              >
+                <KeyRound />
+              </Button>
+            ) : null}
+            <Button
+              variant="outline"
+              size="icon-sm"
+              className={r.actif ? "text-orange-600 border-orange-300 hover:bg-orange-50" : "text-green-600 border-green-300 hover:bg-green-50"}
+              aria-label={r.actif ? "Désactiver" : "Réactiver"}
+              title={r.actif ? "Désactiver" : "Réactiver"}
+              onClick={() => toggleArchive(r)}
+            >
+              <Archive />
+            </Button>
+          </>
         )}
       />
 
@@ -191,14 +216,10 @@ export function UtilisateursTab() {
           />
         </Field>
         {!editing && (
-          <Field label="Mot de passe">
-            <TextInput
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-            />
-          </Field>
+          <p className="text-[12px] text-ink-soft -mt-2">
+            Un mot de passe temporaire sera généré automatiquement à la création.
+            L&apos;utilisateur devra le changer à sa première connexion.
+          </p>
         )}
         <div className="grid grid-cols-2 gap-3">
           <Field label="Rôle">
@@ -229,6 +250,31 @@ export function UtilisateursTab() {
           </Field>
         )}
       </FormDialog>
+
+      <Dialog open={!!motDePasseAffiche} onOpenChange={(o) => !o && setMotDePasseAffiche(null)}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Mot de passe temporaire généré</DialogTitle>
+            <DialogDescription>
+              Communiquez-le à l&apos;agent par un canal sûr. Il devra le changer dès sa première
+              connexion. Il ne sera plus jamais affiché.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex items-center justify-between gap-3 rounded-md border border-dashed border-border bg-muted/40 px-3 py-2.5">
+            <span className="font-mono text-[15px] tracking-wide">{motDePasseAffiche}</span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                if (motDePasseAffiche) navigator.clipboard.writeText(motDePasseAffiche);
+              }}
+            >
+              Copier
+            </Button>
+          </div>
+          <Button onClick={() => setMotDePasseAffiche(null)}>J&apos;ai noté le mot de passe</Button>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
