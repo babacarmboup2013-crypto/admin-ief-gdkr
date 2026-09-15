@@ -83,8 +83,8 @@ function AuthForm() {
             <span className="text-[#c89b3c]">simple et efficace.</span>
           </h2>
           <p className="text-[15px] leading-relaxed text-[#6b7a8a]">
-            La plateforme centralisée de l&apos;Inspection d&apos;Éducation de
-            Formation du Grand Dakar — gérer le personnel, les écoles,
+            La plateforme centralisée de l&apos;Inspection de l&apos;Éducation
+            et de la Formation de Grand Dakar — gérer le personnel, les écoles,
             les dossiers, les rapports, les réunions et la communication
             entre tous les bureaux de l&apos;IEF en un seul endroit.
           </p>
