@@ -166,7 +166,7 @@ function AuthForm() {
           </div>
 
           <p className="mt-6 text-center text-[11px] text-[#9ca3af]">
-            © 2025 CN IEF Grand Dakar Built by Groupe InTechSoft Enterprises — Tous droits réservés
+            © 2026 CN IEF Grand Dakar Built by Groupe InTechSoft Enterprises — Tous droits réservés
           </p>
         </div>
       </div>
