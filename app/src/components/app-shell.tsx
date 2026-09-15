@@ -115,6 +115,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </div>
           </div>
           {children}
+          <footer className="mt-10 border-t border-line py-4 text-center text-[11px] text-ink-soft">
+            © 2026 CN IEF Grand Dakar Built by Groupe InTechSoft Enterprises — Tous droits réservés
+          </footer>
         </main>
       </div>
     </RoleContext.Provider>
