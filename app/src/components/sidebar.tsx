@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, MessageSquare, CalendarClock, Settings, LogOut, LogIn, Users } from "lucide-react";
+import { LayoutDashboard, MessageSquare, CalendarClock, Settings, LogOut, LogIn, Users, KeyRound } from "lucide-react";
 import { DASHBOARDS } from "@/lib/data";
 import { useRole } from "@/lib/role-context";
 import { fetchBureaux } from "@/lib/queries";
@@ -11,6 +11,8 @@ import { useSession } from "@/lib/use-session";
 import { supabase } from "@/lib/supabase/client";
 import type { Bureau } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 const canSeeAllBureaux = (role: string) =>
   role === "super" || role === "chef";
@@ -33,6 +35,12 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
   const [bureauCounts, setBureauCounts] = useState<Record<number, number>>({});
   const [direction, setDirection] = useState<{ nom_complet: string; fonction: string; email: string }[]>([]);
   const { session } = useSession();
+  const [pwDialogOpen, setPwDialogOpen] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [pwError, setPwError] = useState<string | null>(null);
+  const [pwSuccess, setPwSuccess] = useState(false);
+  const [pwBusy, setPwBusy] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -80,6 +88,30 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
     onClose();
     router.push("/auth");
     router.refresh();
+  }
+
+  async function handleChangePassword() {
+    setPwError(null);
+    setPwSuccess(false);
+    if (newPassword.length < 6) {
+      setPwError("Le mot de passe doit contenir au moins 6 caractères.");
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setPwError("Les mots de passe ne correspondent pas.");
+      return;
+    }
+    setPwBusy(true);
+    const { error } = await supabase!.auth.updateUser({ password: newPassword });
+    setPwBusy(false);
+    if (error) {
+      setPwError(error.message);
+    } else {
+      setPwSuccess(true);
+      setNewPassword("");
+      setConfirmPassword("");
+      setTimeout(() => setPwDialogOpen(false), 1500);
+    }
   }
 
   return (
@@ -199,9 +231,17 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
             <div className="text-[11px] text-[#7c8bab]">Connecté en tant que</div>
             <div className="truncate text-xs font-medium text-[#dfe6f2]">{session.user.email}</div>
             <div className="mt-0.5 text-[11px] text-[#96a5c2]">{config.foot}</div>
+            {role === "super" && (
+              <button
+                onClick={() => setPwDialogOpen(true)}
+                className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg border border-sidebar-border py-2 text-[11.5px] font-medium text-[#c3cde0] transition-colors hover:bg-white/[0.06]"
+              >
+                <KeyRound className="size-3.5" /> Changer le mot de passe
+              </button>
+            )}
             <button
               onClick={signOut}
-              className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg border border-sidebar-border py-2 text-[11.5px] font-medium text-[#c3cde0] transition-colors hover:bg-white/[0.06]"
+              className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg border border-sidebar-border py-2 text-[11.5px] font-medium text-[#c3cde0] transition-colors hover:bg-white/[0.06]"
             >
               <LogOut className="size-3.5" /> Se déconnecter
             </button>
@@ -220,6 +260,52 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
           </>
         )}
       </div>
+
+      <Dialog open={pwDialogOpen} onOpenChange={setPwDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Changer le mot de passe</DialogTitle>
+          </DialogHeader>
+          <div className="flex flex-col gap-4 py-2">
+            <div>
+              <label className="mb-1 block text-[13px] font-medium text-foreground">Nouveau mot de passe</label>
+              <input
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="••••••••"
+                className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring/20"
+              />
+            </div>
+            <div>
+              <label className="mb-1 block text-[13px] font-medium text-foreground">Confirmer</label>
+              <input
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="••••••••"
+                className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring/20"
+              />
+            </div>
+            {pwError && (
+              <div className="rounded-lg border border-red-300/40 bg-red-50 px-3 py-2 text-[12px] text-red-600">
+                {pwError}
+              </div>
+            )}
+            {pwSuccess && (
+              <div className="rounded-lg border border-teal-300/40 bg-teal-50 px-3 py-2 text-[12px] text-teal-600">
+                Mot de passe modifié avec succès !
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setPwDialogOpen(false)}>Annuler</Button>
+            <Button onClick={handleChangePassword} disabled={pwBusy}>
+              {pwBusy ? "Enregistrement…" : "Enregistrer"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </aside>
   );
 }
