@@ -12,7 +12,7 @@ import { StatusBadge } from "./status";
 import { sbThrow } from "./sb";
 import { useRows } from "./use-rows";
 import { useBureauxRef } from "./use-refs";
-import { Archive, KeyRound } from "lucide-react";
+import { Archive, KeyRound, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -20,6 +20,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogFooter,
 } from "@/components/ui/dialog";
 
 const ROLES = Object.keys(ROLE_LABELS);
@@ -49,6 +50,13 @@ export function UtilisateursTab() {
   const [actif, setActif] = useState(true);
 
   const [motDePasseAffiche, setMotDePasseAffiche] = useState<string | null>(null);
+  const [pwDialogOpen, setPwDialogOpen] = useState(false);
+  const [pwTarget, setPwTarget] = useState<UtilisateurRow | null>(null);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [pwError, setPwError] = useState<string | null>(null);
+  const [pwSuccess, setPwSuccess] = useState(false);
+  const [pwBusy, setPwBusy] = useState(false);
 
   const { rows, loading, refresh } = useRows<UtilisateurRow>(
     async () => {
@@ -145,6 +153,39 @@ export function UtilisateursTab() {
     }
   }
 
+  function openPwDialog(row: UtilisateurRow) {
+    setPwTarget(row);
+    setNewPassword("");
+    setConfirmPassword("");
+    setPwError(null);
+    setPwSuccess(false);
+    setPwDialogOpen(true);
+  }
+
+  async function saveCustomPassword() {
+    setPwError(null);
+    setPwSuccess(false);
+    if (newPassword.length < 6) {
+      setPwError("Le mot de passe doit contenir au moins 6 caractères.");
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setPwError("Les mots de passe ne correspondent pas.");
+      return;
+    }
+    setPwBusy(true);
+    try {
+      await appellerApiAdmin({ action: "modifier_mot_de_passe", id: pwTarget!.id, nouveau_mot_de_passe: newPassword });
+      setPwSuccess(true);
+      setNewPassword("");
+      setConfirmPassword("");
+      setTimeout(() => setPwDialogOpen(false), 1500);
+    } catch (err) {
+      setPwError(err instanceof Error ? err.message : "Une erreur est survenue.");
+    }
+    setPwBusy(false);
+  }
+
   return (
     <>
       <AdminTable
@@ -172,15 +213,26 @@ export function UtilisateursTab() {
         customActions={(r) => (
           <>
             {perms.edit ? (
-              <Button
-                variant="outline"
-                size="icon-sm"
-                aria-label="Réinitialiser le mot de passe"
-                title="Réinitialiser le mot de passe"
-                onClick={() => resetPassword(r)}
-              >
-                <KeyRound />
-              </Button>
+              <>
+                <Button
+                  variant="outline"
+                  size="icon-sm"
+                  aria-label="Réinitialiser le mot de passe"
+                  title="Réinitialiser le mot de passe"
+                  onClick={() => resetPassword(r)}
+                >
+                  <KeyRound />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="icon-sm"
+                  aria-label="Définir un mot de passe"
+                  title="Définir un mot de passe"
+                  onClick={() => openPwDialog(r)}
+                >
+                  <Lock />
+                </Button>
+              </>
             ) : null}
             <Button
               variant="outline"
@@ -273,6 +325,51 @@ export function UtilisateursTab() {
             </Button>
           </div>
           <Button onClick={() => setMotDePasseAffiche(null)}>J&apos;ai noté le mot de passe</Button>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={pwDialogOpen} onOpenChange={setPwDialogOpen}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Définir le mot de passe</DialogTitle>
+            <DialogDescription>
+              Définissez un nouveau mot de passe pour <strong>{pwTarget?.nom_complet}</strong>.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col gap-4 py-2">
+            <Field label="Nouveau mot de passe">
+              <TextInput
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="••••••••"
+              />
+            </Field>
+            <Field label="Confirmer">
+              <TextInput
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="••••••••"
+              />
+            </Field>
+            {pwError && (
+              <div className="rounded-lg border border-red-300/40 bg-red-50 px-3 py-2 text-[12px] text-red-600">
+                {pwError}
+              </div>
+            )}
+            {pwSuccess && (
+              <div className="rounded-lg border border-teal-300/40 bg-teal-50 px-3 py-2 text-[12px] text-teal-600">
+                Mot de passe modifié avec succès !
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setPwDialogOpen(false)}>Annuler</Button>
+            <Button onClick={saveCustomPassword} disabled={pwBusy}>
+              {pwBusy ? "Enregistrement…" : "Enregistrer"}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </>

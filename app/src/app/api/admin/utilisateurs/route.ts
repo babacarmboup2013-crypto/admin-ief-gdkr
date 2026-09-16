@@ -133,6 +133,21 @@ export async function POST(req: NextRequest) {
       }
 
       // ==================================================================
+      case "modifier_mot_de_passe": {
+        const { id, nouveau_mot_de_passe } = body as { id: string; nouveau_mot_de_passe: string };
+        if (!id) return NextResponse.json({ error: "id requis." }, { status: 400 });
+        if (!nouveau_mot_de_passe || nouveau_mot_de_passe.length < 6) {
+          return NextResponse.json({ error: "Le mot de passe doit contenir au moins 6 caractères." }, { status: 400 });
+        }
+
+        const { error: erreurMdpCustom } = await admin.auth.admin.updateUserById(id, { password: nouveau_mot_de_passe });
+        if (erreurMdpCustom) return NextResponse.json({ error: erreurMdpCustom.message }, { status: 400 });
+
+        await admin.from("utilisateurs").update({ doit_changer_mot_de_passe: false }).eq("id", id);
+        return NextResponse.json({ ok: true });
+      }
+
+      // ==================================================================
       case "supprimer": {
         const { id } = body as { id: string };
         if (!id) return NextResponse.json({ error: "id requis." }, { status: 400 });
