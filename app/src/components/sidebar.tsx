@@ -231,14 +231,12 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
             <div className="text-[11px] text-[#7c8bab]">Connecté en tant que</div>
             <div className="truncate text-xs font-medium text-[#dfe6f2]">{session.user.email}</div>
             <div className="mt-0.5 text-[11px] text-[#96a5c2]">{config.foot}</div>
-            {role === "super" && (
-              <button
-                onClick={() => setPwDialogOpen(true)}
-                className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg border border-sidebar-border py-2 text-[11.5px] font-medium text-[#c3cde0] transition-colors hover:bg-white/[0.06]"
-              >
-                <KeyRound className="size-3.5" /> Changer le mot de passe
-              </button>
-            )}
+            <button
+              onClick={() => setPwDialogOpen(true)}
+              className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg border border-sidebar-border py-2 text-[11.5px] font-medium text-[#c3cde0] transition-colors hover:bg-white/[0.06]"
+            >
+              <KeyRound className="size-3.5" /> Changer le mot de passe
+            </button>
             <button
               onClick={signOut}
               className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg border border-sidebar-border py-2 text-[11.5px] font-medium text-[#c3cde0] transition-colors hover:bg-white/[0.06]"
