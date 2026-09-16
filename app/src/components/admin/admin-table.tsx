@@ -52,13 +52,13 @@ export function AdminTable<T>({
 }) {
   return (
     <div className="overflow-hidden rounded-lg border border-border bg-card">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-5 py-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-3 py-3 sm:px-5 sm:py-4">
         <div>
-          <h2 className="font-serif text-[15.5px] text-navy">{title}</h2>
-          {subtitle ? <p className="mt-0.5 text-[12px] text-ink-soft">{subtitle}</p> : null}
+          <h2 className="font-serif text-[14px] text-navy sm:text-[15.5px]">{title}</h2>
+          {subtitle ? <p className="mt-0.5 text-[11px] text-ink-soft sm:text-[12px]">{subtitle}</p> : null}
         </div>
         {canAdd && onAdd ? (
-          <Button onClick={onAdd}>
+          <Button onClick={onAdd} size="sm">
             <Plus /> {addLabel}
           </Button>
         ) : null}
@@ -78,7 +78,7 @@ export function AdminTable<T>({
                   {c.header}
                 </TableHead>
               ))}
-              {(canEdit || canDelete || customActions) && <TableHead className="w-[130px] text-right">Actions</TableHead>}
+              {(canEdit || canDelete || customActions) && <TableHead className="w-[100px] text-right sm:w-[130px]">Actions</TableHead>}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -91,7 +91,7 @@ export function AdminTable<T>({
                 ))}
                 {(canEdit || canDelete || customActions) && (
                   <TableCell className="text-right">
-                    <span className="inline-flex gap-1">
+                    <span className="inline-flex gap-0.5 sm:gap-1">
                       {canEdit && onEdit ? (
                         <Button variant="outline" size="icon-sm" aria-label="Modifier" onClick={() => onEdit(row)}>
                           <Pencil />

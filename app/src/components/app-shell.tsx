@@ -85,7 +85,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <RoleContext.Provider value={{ role, setRole, uid, profile }}>
-      <div className="flex min-h-screen">
+      <div className="flex min-h-dvh">
         {sidebarOpen && (
           <div
             className="fixed inset-0 z-40 bg-navy-deep/45 lg:hidden"
@@ -93,14 +93,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           />
         )}
         <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-        <main className="min-w-0 flex-1 px-4 pb-14 pt-5 sm:px-6 lg:px-9 lg:pt-8">
+        <main className="min-w-0 flex-1 px-3 pb-14 pt-4 sm:px-5 lg:px-9 lg:pt-8">
           {role === "rh" && !pathname.startsWith("/administration") && pathname !== "/discussions" && pathname !== "/reunions" && (
-            <div className="mb-2 text-right text-[12px] text-ink-soft">
+            <div className="mb-2 text-right text-[11px] text-ink-soft sm:text-[12px]">
               {new Date().toLocaleString("fr-SN", { dateStyle: "full", timeStyle: "short" })}
             </div>
           )}
-          <div className="mb-7 flex flex-wrap items-start justify-between gap-5">
-            <div className="flex items-start gap-3">
+          <div className="mb-5 flex flex-wrap items-start justify-between gap-3 sm:mb-7 sm:gap-5">
+            <div className="flex items-start gap-2 sm:gap-3">
               <button
                 aria-label="Ouvrir le menu"
                 onClick={() => setSidebarOpen(true)}
@@ -109,14 +109,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 <Menu className="size-4" />
               </button>
               <div>
-                <h1 className="text-[26px] leading-tight text-navy">{title}</h1>
-                <p className="mt-1 text-[13.5px] text-ink-soft">{sub}</p>
+                <h1 className="text-xl leading-tight text-navy sm:text-[26px]">{title}</h1>
+                <p className="mt-1 text-[12px] text-ink-soft sm:text-[13.5px]">{sub}</p>
               </div>
             </div>
           </div>
           {children}
-          <footer className="mt-10 border-t border-line py-4 text-center text-[11px] text-ink-soft">
-            © 2026 CN IEF Grand Dakar Built by Groupe InTechSoft Enterprises — Tous droits réservés
+          <footer className="mt-10 border-t border-line py-4 text-center text-[10px] text-ink-soft sm:text-[11px]">
+            © 2026 CN IEF Grand Dakar — Tous droits réservés
           </footer>
         </main>
       </div>

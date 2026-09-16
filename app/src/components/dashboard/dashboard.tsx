@@ -26,11 +26,11 @@ function Panels({ config }: { config: RoleDashboard }) {
 
   if (gridTwo) {
     return (
-      <div className="grid items-start gap-4 [grid-template-columns:1.4fr_1fr] lg:gap-[18px]">
+      <div className="grid items-start gap-4 sm:grid-cols-[1.4fr_1fr] lg:gap-[18px]">
         <Panel panel={panels[0]} />
         <Panel panel={panels[1]} />
         {panels.slice(2).map((p, i) => (
-          <div key={i} className="[grid-column:1/-1]">
+          <div key={i} className="sm:[grid-column:1/-1]">
             <Panel panel={p} />
           </div>
         ))}

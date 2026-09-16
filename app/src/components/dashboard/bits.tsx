@@ -25,10 +25,10 @@ export function Tag({ tone }: { tone: TagTone }) {
 
 export function KpiCard({ kpi }: { kpi: Kpi }) {
   return (
-    <div className="rounded-lg border border-border bg-card p-4 pb-4 lg:p-[18px] lg:pb-4">
-      <div className="mb-2.5 text-xs text-ink-soft">{kpi.label}</div>
-      <div className="font-serif text-[28px] leading-none text-navy">{kpi.value}</div>
-      <div className={cn("mt-1.5 text-[11.5px]", kpi.warn ? "text-red" : "text-teal")}>{kpi.delta}</div>
+    <div className="rounded-lg border border-border bg-card p-3 pb-3 sm:p-4 sm:pb-4 lg:p-[18px] lg:pb-4">
+      <div className="mb-2 text-[11px] text-ink-soft sm:text-xs">{kpi.label}</div>
+      <div className="font-serif text-[22px] leading-none text-navy sm:text-[28px]">{kpi.value}</div>
+      <div className={cn("mt-1.5 text-[10px] sm:text-[11.5px]", kpi.warn ? "text-red" : "text-teal")}>{kpi.delta}</div>
     </div>
   );
 }
@@ -50,7 +50,7 @@ export function Banner({
   return (
     <div
       className={cn(
-        "mb-6 flex items-start gap-2.5 rounded-lg border px-4 py-3.5 text-[13px] leading-relaxed",
+        "mb-5 flex items-start gap-2 rounded-lg border px-3 py-3 text-[12px] leading-relaxed sm:mb-6 sm:gap-2.5 sm:px-4 sm:py-3.5 sm:text-[13px]",
         styles[tone]
       )}
     >
@@ -72,9 +72,9 @@ function RowCellView({ cell }: { cell: RowCell }) {
 export function Panel({ panel }: { panel: Panel }) {
   return (
     <div className="flex flex-col overflow-hidden rounded-lg border border-border bg-card">
-      <div className="flex items-center justify-between border-b border-border px-5 py-4">
-        <h2 className="font-serif text-[15.5px] text-navy">{panel.title}</h2>
-        {panel.link && <span className="text-xs font-medium text-teal">{panel.link}</span>}
+      <div className="flex items-center justify-between border-b border-border px-3 py-3 sm:px-5 sm:py-4">
+        <h2 className="font-serif text-[13px] text-navy sm:text-[15.5px]">{panel.title}</h2>
+        {panel.link && <span className="text-[10px] font-medium text-teal sm:text-xs">{panel.link}</span>}
       </div>
 
       {panel.type === "table" ? (
@@ -85,7 +85,7 @@ export function Panel({ panel }: { panel: Panel }) {
                 {panel.headers.map((h) => (
                   <th
                     key={h}
-                    className="border-b border-border px-5 py-2.5 text-left text-[11px] font-medium text-ink-soft"
+                    className="border-b border-border px-3 py-2 text-left text-[10px] font-medium text-ink-soft sm:px-5 sm:text-[11px]"
                   >
                     {h}
                   </th>
@@ -96,7 +96,7 @@ export function Panel({ panel }: { panel: Panel }) {
               {panel.rows.map((row, i) => (
                 <tr key={i}>
                   {row.map((cell, j) => (
-                    <td key={j} className="border-b border-border px-5 py-3 text-[13px]">
+                    <td key={j} className="border-b border-border px-3 py-2.5 text-[12px] sm:px-5 sm:text-[13px]">
                       <RowCellView cell={cell} />
                     </td>
                   ))}
@@ -110,22 +110,22 @@ export function Panel({ panel }: { panel: Panel }) {
           {panel.items.map((item, i) => (
             <li
               key={i}
-              className="flex items-center justify-between border-b border-border px-5 py-3 last:border-b-0"
+              className="flex items-center justify-between border-b border-border px-3 py-2.5 last:border-b-0 sm:px-5 sm:py-3"
             >
               {"initials" in item ? (
-                <div className="flex items-center gap-2.5">
-                  <div className="flex size-[26px] items-center justify-center rounded-full bg-primary text-[11px] font-semibold text-white">
+                <div className="flex items-center gap-2 sm:gap-2.5">
+                  <div className="flex size-[22px] items-center justify-center rounded-full bg-primary text-[9px] font-semibold text-white sm:size-[26px] sm:text-[11px]">
                     {item.initials}
                   </div>
                   <div>
-                    <div className="text-[13px] font-medium text-ink">{item.name}</div>
-                    <div className="mt-0.5 text-[11.5px] text-ink-soft">{item.meta}</div>
+                    <div className="text-[12px] font-medium text-ink sm:text-[13px]">{item.name}</div>
+                    <div className="mt-0.5 text-[10px] text-ink-soft sm:text-[11.5px]">{item.meta}</div>
                   </div>
                 </div>
               ) : (
                 <div>
-                  <div className="text-[13px] font-medium text-ink">{item.name}</div>
-                  <div className="mt-0.5 text-[11.5px] text-ink-soft">{item.meta}</div>
+                  <div className="text-[12px] font-medium text-ink sm:text-[13px]">{item.name}</div>
+                  <div className="mt-0.5 text-[10px] text-ink-soft sm:text-[11.5px]">{item.meta}</div>
                 </div>
               )}
             </li>
