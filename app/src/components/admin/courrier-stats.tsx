@@ -8,8 +8,6 @@ type Granularite = "jour" | "semaine" | "mois";
 
 type LigneCourrier = {
   date_courrier: string | null;
-  nature_ordinaire: string | null;
-  nature_confidentielle: string | null;
   transmission_interne: string[] | null;
 };
 
@@ -19,15 +17,7 @@ type StatPeriode = {
   recus: number;
   traites: number;
   instance: number;
-  total: number;
 };
-
-const ARRIVEES = ["arriv__ordinaire", "arriv_e_confidentiel"];
-const DEPARTS = ["d_part_ordinaire", "d_part_confidentiel"];
-
-function natureDu(row: LigneCourrier): string | null {
-  return row.nature_ordinaire ?? row.nature_confidentielle;
-}
 
 function libelleJour(date: string): string {
   return new Date(`${date}T00:00:00`).toLocaleDateString("fr-FR", {
@@ -70,6 +60,12 @@ function periodeDe(date: string | null, granularite: Granularite) {
   return mois(date);
 }
 
+const estTraite = (row: LigneCourrier) =>
+  (row.transmission_interne ?? []).length > 0;
+
+const pourcentage = (part: number, total: number) =>
+  total === 0 ? 0 : Math.round((part / total) * 100);
+
 export function CourrierStats({ bureauId }: { bureauId: number }) {
   const [lignes, setLignes] = useState<LigneCourrier[]>([]);
   const [chargement, setChargement] = useState(supabase != null);
@@ -80,9 +76,7 @@ export function CourrierStats({ bureauId }: { bureauId: number }) {
     let actif = true;
     supabase
       .from("courriers")
-      .select(
-        "date_courrier,nature_ordinaire,nature_confidentielle,transmission_interne"
-      )
+      .select("date_courrier,transmission_interne")
       .eq("bureau_id", bureauId)
       .then(({ data }) => {
         if (!actif) return;
@@ -95,28 +89,18 @@ export function CourrierStats({ bureauId }: { bureauId: number }) {
   }, [bureauId]);
 
   const totaux = useMemo(() => {
-    let recus = 0;
-    let traites = 0;
-    let instance = 0;
-    for (const row of lignes) {
-      const nature = natureDu(row);
-      if (DEPARTS.includes(nature ?? "")) traites += 1;
-      else if (ARRIVEES.includes(nature ?? "")) {
-        recus += 1;
-        if ((row.transmission_interne ?? []).length === 0) instance += 1;
-      }
-    }
-    return { recus, traites, instance, total: recus + traites };
+    const traites = lignes.filter(estTraite).length;
+    return {
+      recus: lignes.length,
+      traites,
+      instance: lignes.length - traites,
+      taux: pourcentage(traites, lignes.length),
+    };
   }, [lignes]);
 
   const periodes = useMemo(() => {
     const carte = new Map<string, StatPeriode>();
     for (const row of lignes) {
-      const nature = natureDu(row);
-      const estRecu = ARRIVEES.includes(nature ?? "");
-      const estTraite = DEPARTS.includes(nature ?? "");
-      if (!estRecu && !estTraite) continue;
-
       const periode = periodeDe(row.date_courrier, granularite);
       const entree =
         carte.get(periode.cle) ??
@@ -126,20 +110,14 @@ export function CourrierStats({ bureauId }: { bureauId: number }) {
           recus: 0,
           traites: 0,
           instance: 0,
-          total: 0,
         } as StatPeriode);
-      if (estTraite) entree.traites += 1;
-      else if (estRecu) {
-        entree.recus += 1;
-        if ((row.transmission_interne ?? []).length === 0) entree.instance += 1;
-      }
-      entree.total = entree.recus + entree.traites;
+      entree.recus += 1;
+      if (estTraite(row)) entree.traites += 1;
+      else entree.instance += 1;
       carte.set(periode.cle, entree);
     }
     return [...carte.values()].sort((a, b) => a.cle.localeCompare(b.cle)).reverse();
   }, [lignes, granularite]);
-
-  const max = Math.max(1, ...periodes.map((p) => p.total));
 
   if (chargement) {
     return (
@@ -193,8 +171,8 @@ export function CourrierStats({ bureauId }: { bureauId: number }) {
           </div>
         </div>
         <div className="rounded-md bg-muted/50 px-3 py-2.5">
-          <div className="text-[11.5px] text-ink-soft">Total enregistré</div>
-          <div className="text-[22px] font-semibold text-navy">{totaux.total}</div>
+          <div className="text-[11.5px] text-ink-soft">Taux de traitement</div>
+          <div className="text-[22px] font-semibold text-navy">{totaux.taux} %</div>
         </div>
       </div>
 
@@ -217,7 +195,7 @@ export function CourrierStats({ bureauId }: { bureauId: number }) {
                 <th className="px-4 py-2.5 text-right font-medium text-ink-soft">
                   En instance
                 </th>
-                <th className="px-4 py-2.5 text-right font-medium text-ink-soft">Total</th>
+                <th className="px-4 py-2.5 text-right font-medium text-ink-soft">Taux</th>
                 <th className="px-5 py-2.5 font-medium text-ink-soft">Répartition</th>
               </tr>
             </thead>
@@ -230,26 +208,23 @@ export function CourrierStats({ bureauId }: { bureauId: number }) {
                   <td className="px-5 py-2.5 font-medium capitalize text-ink">
                     {p.libelle}
                   </td>
-                  <td className="px-4 py-2.5 text-right text-sky-800">{p.recus}</td>
+                  <td className="px-4 py-2.5 text-right font-semibold text-sky-800">
+                    {p.recus}
+                  </td>
                   <td className="px-4 py-2.5 text-right text-emerald-800">
                     {p.traites}
                   </td>
                   <td className="px-4 py-2.5 text-right text-amber-800">
                     {p.instance}
                   </td>
-                  <td className="px-4 py-2.5 text-right font-semibold text-navy">
-                    {p.total}
+                  <td className="px-4 py-2.5 text-right text-ink-soft">
+                    {pourcentage(p.traites, p.recus)} %
                   </td>
                   <td className="px-5 py-2.5">
-                    <div className="flex h-2 w-full min-w-[90px] overflow-hidden rounded-full bg-muted">
-                      <div
-                        className="bg-sky-500"
-                        style={{ width: `${(p.recus / max) * 100}%` }}
-                        title={`${p.recus} reçus`}
-                      />
+                    <div className="flex h-2 w-full min-w-[90px] overflow-hidden rounded-full bg-amber-400/60">
                       <div
                         className="bg-emerald-500"
-                        style={{ width: `${(p.traites / max) * 100}%` }}
+                        style={{ width: `${pourcentage(p.traites, p.recus)}%` }}
                         title={`${p.traites} traités`}
                       />
                     </div>
@@ -262,8 +237,8 @@ export function CourrierStats({ bureauId }: { bureauId: number }) {
       )}
 
       <p className="border-t border-border px-5 py-2.5 text-[11px] text-ink-soft">
-        Reçus = natures « Arrivée » · Traitée = natures « Départ » · En instance =
-        courrier reçu sans destinataire en transmission interne.
+        Reçus = tous les courriers enregistrés au Secrétariat · Traitée = au moins un
+        destinataire en transmission interne · En instance = aucun destinataire.
       </p>
     </section>
   );
