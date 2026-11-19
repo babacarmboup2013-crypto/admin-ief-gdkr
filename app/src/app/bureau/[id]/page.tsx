@@ -3,13 +3,13 @@
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase/client";
-import { BUREAUX, dossiersLabel } from "@/lib/data";
+import { BUREAUX, dossiersLabel, referentBureau } from "@/lib/data";
 import { useRole } from "@/lib/role-context";
 import { useRows } from "@/components/admin/use-rows";
 import { StatusBadge } from "@/components/admin/status";
 import { CourrierStats } from "@/components/admin/courrier-stats";
 import { PERSONNEL_STATUTS, type DossierRow, type PersonnelRow, type RapportRow } from "@/lib/admin-types";
-import { ArrowLeft, Users, FileText, BarChart3, Lock } from "lucide-react";
+import { ArrowLeft, Users, FileText, BarChart3, Lock, UserRound } from "lucide-react";
 
 const PERSONNEL_SELECT = "id,bureau_id,ecole_id,nom_complet,fonction,date_entree,statut,matricule,sexe,telephone,email,corps,grade,source_feuille";
 
@@ -98,6 +98,7 @@ export default function BureauPage() {
 
   const actifs = personnel.filter((p) => p.statut === "actif");
   const inactifs = personnel.filter((p) => p.statut !== "actif");
+  const referent = referentBureau(bureau.id);
 
   return (
     <div>
@@ -112,6 +113,14 @@ export default function BureauPage() {
         <div>
           <h1 className="text-[26px] leading-tight text-navy">Bureau {bureau.id}</h1>
           <p className="mt-1 text-[13.5px] text-ink-soft">{bureau.nom}</p>
+          {referent && (
+            <div className="mt-2 inline-flex flex-wrap items-center gap-1.5 rounded-full border border-primary/20 bg-primary/5 px-2.5 py-1 text-[12px] text-primary">
+              <UserRound className="size-3.5" />
+              Assuré par
+              <span className="font-semibold">{referent.nom}</span>
+              <span className="text-ink-soft">— {referent.fonction}</span>
+            </div>
+          )}
         </div>
         {bureauId === 3 && (
           <div className="flex flex-wrap gap-2">

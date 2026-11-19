@@ -28,6 +28,15 @@ export function dossiersLabel(bureauId: number | null): string {
   return DOSSIERS_LABELS[bureauId] ?? "Dossiers";
 }
 
+/** Référent connu d'un bureau, affiché sur sa fiche. */
+export const BUREAUX_REFERENTS: Record<number, { nom: string; fonction: string }> = {
+  4: { nom: "BABACAR MBOUP", fonction: "Correspondant Numérique" },
+};
+
+export function referentBureau(bureauId: number) {
+  return BUREAUX_REFERENTS[bureauId] ?? null;
+}
+
 export const ROLES: { id: RoleId; label: string }[] = [
   { id: "super", label: "Super Admin" },
   { id: "chef", label: "IEF (Chef Admin)" },
