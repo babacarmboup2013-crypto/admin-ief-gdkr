@@ -163,10 +163,39 @@ export const TRANSMISSIONS_INTERNES: string[] = [
   "BEXCO CHARGE ENSEIGNEMENT MOYEN GENERAL",
 ];
 
+/** Destinataires de la « Transmission Interne » du formulaire confidentiel. */
+export const TRANSMISSIONS_CONFIDENTIELLES: string[] = [
+  "IEF",
+  "SECRETAIRE GENERAL",
+  "SECRETARIAT PARTICULIER",
+  "GESTIONNAIRE CHARGEE DES FINANCES",
+  "COMPTABLE DES MATIERES",
+  "SUIVI-EVALUATION",
+  "PLANIFICATEUR",
+  "CORRESPONDANT NUMERIQUE",
+  "CONSEILLER PEDAGOGIQUE",
+  "BRH CHARGEE PERSONNEL",
+  "BRH CHARGEE CARRIERE",
+  "INSPECTEUR KANE ARABE",
+  "INSPECTEUR YADE",
+  "INSPECTEUR FAYE",
+  "INSPECTRICE THERESE",
+  "CHARGE COMMUNICATION",
+  "CHARGEE PARTENARIAT",
+  "BEXCO CHARGE ELEMENTAIRE/EXAMENS PROFESSIONNELS",
+  "BEXCO CHARGE ENSEIGNMENT MOYEN GENERAL",
+];
+
 /** Valeurs brutes du champ « Nature Ordinaire » du formulaire KoboToolbox. */
 export const NATURES_ORDINAIRES: Record<string, string> = {
   arriv__ordinaire: "Arrivé Ordinaire",
   d_part_ordinaire: "Départ Ordinaire",
+};
+
+/** Valeurs brutes du champ « Nature du Courrier » du formulaire confidentiel. */
+export const NATURES_CONFIDENTIELLES: Record<string, string> = {
+  arriv_e_confidentiel: "Arrivée Confidentiel",
+  d_part_confidentiel: "Départ Confidentiel",
 };
 
 export const COURRIER_STATUTS: Record<string, StatutAide> = {
@@ -182,6 +211,7 @@ export interface CourrierRow {
   objet: string | null;
   type_courrier: string;
   nature_ordinaire: string | null;
+  nature_confidentielle: string | null;
   expediteur: string | null;
   destinataire: string | null;
   transmission_interne: string[] | null;

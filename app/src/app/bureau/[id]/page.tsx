@@ -8,7 +8,7 @@ import { useRole } from "@/lib/role-context";
 import { useRows } from "@/components/admin/use-rows";
 import { StatusBadge } from "@/components/admin/status";
 import { PERSONNEL_STATUTS, type DossierRow, type PersonnelRow, type RapportRow } from "@/lib/admin-types";
-import { ArrowLeft, Users, FileText, BarChart3 } from "lucide-react";
+import { ArrowLeft, Users, FileText, BarChart3, Lock } from "lucide-react";
 
 const PERSONNEL_SELECT = "id,bureau_id,ecole_id,nom_complet,fonction,date_entree,statut,matricule,sexe,telephone,email,corps,grade,source_feuille";
 
@@ -113,12 +113,20 @@ export default function BureauPage() {
           <p className="mt-1 text-[13.5px] text-ink-soft">{bureau.nom}</p>
         </div>
         {bureauId === 3 && (
-          <Link
-            href="/courriers"
-            className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-2 text-[12.5px] font-medium text-primary transition-colors hover:bg-muted/40"
-          >
-            <FileText className="size-3.5" /> Ouvrir la gestion des courriers
-          </Link>
+          <div className="flex flex-wrap gap-2">
+            <Link
+              href="/courriers"
+              className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-2 text-[12.5px] font-medium text-primary transition-colors hover:bg-muted/40"
+            >
+              <FileText className="size-3.5" /> Courriers ordinaires
+            </Link>
+            <Link
+              href="/courriers-confidentiels"
+              className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-2 text-[12.5px] font-medium text-primary transition-colors hover:bg-muted/40"
+            >
+              <Lock className="size-3.5" /> Courriers confidentiels
+            </Link>
+          </div>
         )}
       </div>
 

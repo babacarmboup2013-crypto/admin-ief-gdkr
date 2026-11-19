@@ -79,8 +79,9 @@ export default function CourriersPage() {
     supabase
       .from("courriers")
       .select(
-        "id,date_courrier,numero_reference,objet,type_courrier,nature_ordinaire,expediteur,destinataire,transmission_interne,fichier_path,fichier_nom,kobo_id,kobo_uuid,bureau_id,saisi_par,statut,created_at"
+        "id,date_courrier,numero_reference,objet,type_courrier,nature_ordinaire,nature_confidentielle,expediteur,destinataire,transmission_interne,fichier_path,fichier_nom,kobo_id,kobo_uuid,bureau_id,saisi_par,statut,created_at"
       )
+      .eq("type_courrier", "ordinaire")
       .order("date_courrier", { ascending: false })
       .order("id", { ascending: false })
       .then(({ data, error: e }) => {
