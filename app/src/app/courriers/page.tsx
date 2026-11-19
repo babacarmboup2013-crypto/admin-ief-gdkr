@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/admin/status";
 import {
   COURRIER_STATUTS,
+  NATURES_ORDINAIRES,
   TRANSMISSIONS_INTERNES,
   fmtDate,
   type CourrierRow,
@@ -33,6 +34,9 @@ export default function CourriersPage() {
   const [numeroReference, setNumeroReference] = useState("");
   const [objet, setObjet] = useState("");
   const [typeCourrier] = useState("ordinaire");
+  const [nature, setNature] = useState("");
+  const [expediteur, setExpediteur] = useState("");
+  const [destinataire, setDestinataire] = useState("");
   const [transmission, setTransmission] = useState<string[]>([]);
   const [fichier, setFichier] = useState<File | null>(null);
   const [bureauId, setBureauId] = useState(
@@ -75,7 +79,7 @@ export default function CourriersPage() {
     supabase
       .from("courriers")
       .select(
-        "id,date_courrier,numero_reference,objet,type_courrier,transmission_interne,fichier_path,fichier_nom,bureau_id,saisi_par,statut,created_at"
+        "id,date_courrier,numero_reference,objet,type_courrier,nature_ordinaire,expediteur,destinataire,transmission_interne,fichier_path,fichier_nom,kobo_id,kobo_uuid,bureau_id,saisi_par,statut,created_at"
       )
       .order("date_courrier", { ascending: false })
       .order("id", { ascending: false })
@@ -104,6 +108,9 @@ export default function CourriersPage() {
     setDateCourrier(new Date().toISOString().slice(0, 10));
     setNumeroReference("");
     setObjet("");
+    setNature("");
+    setExpediteur("");
+    setDestinataire("");
     setTransmission([]);
     setFichier(null);
     setEditingId(null);
@@ -163,6 +170,9 @@ export default function CourriersPage() {
         numero_reference: numeroReference.trim(),
         objet: objet.trim(),
         type_courrier: typeCourrier,
+        nature_ordinaire: nature || null,
+        expediteur: nature === "arriv__ordinaire" ? expediteur.trim() || null : null,
+        destinataire: nature === "d_part_ordinaire" ? destinataire.trim() || null : null,
         transmission_interne: transmission,
         bureau_id: bureauId === "" ? null : Number(bureauId),
         saisi_par: uid,
@@ -215,6 +225,9 @@ export default function CourriersPage() {
     setDateCourrier(row.date_courrier?.slice(0, 10) ?? "");
     setNumeroReference(row.numero_reference ?? "");
     setObjet(row.objet ?? "");
+    setNature(row.nature_ordinaire ?? "");
+    setExpediteur(row.expediteur ?? "");
+    setDestinataire(row.destinataire ?? "");
     setTransmission(row.transmission_interne ?? []);
     setBureauId(row.bureau_id == null ? "" : String(row.bureau_id));
     setFichier(null);
@@ -225,7 +238,12 @@ export default function CourriersPage() {
 
   async function remove(row: CourrierRow) {
     if (!supabase) return;
-    if (!window.confirm(`Supprimer le courrier n° ${row.numero_reference} ?`)) return;
+    if (
+      !window.confirm(
+        `Supprimer le courrier n° ${row.numero_reference ?? row.id} ?`
+      )
+    )
+      return;
     if (row.fichier_path) {
       await supabase.storage.from("courriers").remove([row.fichier_path]);
     }
@@ -313,13 +331,56 @@ export default function CourriersPage() {
           </Field>
         </div>
 
-        <div className="mt-4">
+        <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Field label="Type de courrier">
             <SelectInput value={typeCourrier} disabled>
               <option value="ordinaire">Ordinaire</option>
             </SelectInput>
           </Field>
+          <Field label="Nature Ordinaire">
+            <SelectInput
+              value={nature}
+              onChange={(e) => {
+                setNature(e.target.value);
+                if (e.target.value !== "arriv__ordinaire") setExpediteur("");
+                if (e.target.value !== "d_part_ordinaire") setDestinataire("");
+              }}
+            >
+              <option value="">— Choisir —</option>
+              {Object.entries(NATURES_ORDINAIRES).map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </SelectInput>
+          </Field>
         </div>
+
+        {nature ? (
+          <div className="mt-4">
+            <Field
+              label={
+                nature === "arriv__ordinaire"
+                  ? "Expéditeur simple"
+                  : "Destinataire simple"
+              }
+            >
+              {nature === "arriv__ordinaire" ? (
+                <TextInput
+                  value={expediteur}
+                  onChange={(e) => setExpediteur(e.target.value)}
+                  placeholder="Nom de l'expéditeur"
+                />
+              ) : (
+                <TextInput
+                  value={destinataire}
+                  onChange={(e) => setDestinataire(e.target.value)}
+                  placeholder="Nom du destinataire"
+                />
+              )}
+            </Field>
+          </div>
+        ) : null}
 
         <fieldset className="mt-5">
           <legend className="mb-2 text-[12.5px] font-medium text-ink">
@@ -445,7 +506,17 @@ export default function CourriersPage() {
                       <td className="px-5 py-2.5 text-ink-soft">
                         {fmtDate(row.date_courrier)}
                       </td>
-                      <td className="px-5 py-2.5 text-ink">{row.objet}</td>
+                      <td className="px-5 py-2.5 text-ink">
+                        <div>{row.objet || <span className="text-ink-soft">—</span>}</div>
+                        {row.nature_ordinaire ? (
+                          <div className="mt-0.5 text-[11px] text-ink-soft">
+                            {NATURES_ORDINAIRES[row.nature_ordinaire] ??
+                              row.nature_ordinaire}
+                            {row.expediteur ? ` · ${row.expediteur}` : null}
+                            {row.destinataire ? ` · ${row.destinataire}` : null}
+                          </div>
+                        ) : null}
+                      </td>
                       <td className="px-5 py-2.5 text-ink-soft">
                         <span title={(row.transmission_interne ?? []).join(", ")}>
                           {(row.transmission_interne ?? []).length} destinataire(s)

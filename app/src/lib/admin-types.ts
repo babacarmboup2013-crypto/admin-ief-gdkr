@@ -163,6 +163,12 @@ export const TRANSMISSIONS_INTERNES: string[] = [
   "BEXCO CHARGE ENSEIGNEMENT MOYEN GENERAL",
 ];
 
+/** Valeurs brutes du champ « Nature Ordinaire » du formulaire KoboToolbox. */
+export const NATURES_ORDINAIRES: Record<string, string> = {
+  arriv__ordinaire: "Arrivé Ordinaire",
+  d_part_ordinaire: "Départ Ordinaire",
+};
+
 export const COURRIER_STATUTS: Record<string, StatutAide> = {
   brouillon: { label: "Brouillon", tone: "cours" },
   soumis: { label: "Soumis", tone: "attente" },
@@ -171,13 +177,18 @@ export const COURRIER_STATUTS: Record<string, StatutAide> = {
 
 export interface CourrierRow {
   id: number;
-  date_courrier: string;
-  numero_reference: string;
-  objet: string;
+  date_courrier: string | null;
+  numero_reference: string | null;
+  objet: string | null;
   type_courrier: string;
+  nature_ordinaire: string | null;
+  expediteur: string | null;
+  destinataire: string | null;
   transmission_interne: string[] | null;
   fichier_path: string | null;
   fichier_nom: string | null;
+  kobo_id: number | null;
+  kobo_uuid: string | null;
   bureau_id: number | null;
   saisi_par: string | null;
   statut: string;
