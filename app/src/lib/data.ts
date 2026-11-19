@@ -31,6 +31,7 @@ export function dossiersLabel(bureauId: number | null): string {
 /** Référent connu d'un bureau, affiché sur sa fiche. */
 export const BUREAUX_REFERENTS: Record<number, { nom: string; fonction: string }> = {
   4: { nom: "BABACAR MBOUP", fonction: "Correspondant Numérique" },
+  6: { nom: "BABACAR MBOUP", fonction: "Correspondant Numérique" },
 };
 
 export function referentBureau(bureauId: number) {
