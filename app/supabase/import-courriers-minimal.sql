@@ -298,3 +298,5 @@ update public.courriers set fichier_path = '00000000-0000-4000-8000-000000000016
 update public.courriers set fichier_path = '00000000-0000-4000-8000-000000000016/kobo_918256300_IMGreponse_mutation_maguette_diagne_20261119_0001-16_31_31.pdf', fichier_nom = 'IMGreponse mutation maguette diagne_20261119_0001-16_31_31.pdf' where kobo_id = 918256300;
 
 commit;
+-- FIN DU SCRIPT — ne rien copier apres cette ligne
+notify pgrst, 'reload schema';
