@@ -7,6 +7,7 @@ import { BUREAUX, dossiersLabel } from "@/lib/data";
 import { useRole } from "@/lib/role-context";
 import { useRows } from "@/components/admin/use-rows";
 import { StatusBadge } from "@/components/admin/status";
+import { CourrierStats } from "@/components/admin/courrier-stats";
 import { PERSONNEL_STATUTS, type DossierRow, type PersonnelRow, type RapportRow } from "@/lib/admin-types";
 import { ArrowLeft, Users, FileText, BarChart3, Lock } from "lucide-react";
 
@@ -151,6 +152,8 @@ export default function BureauPage() {
           <div className="text-[22px] font-semibold text-navy">{rapports.length}</div>
         </div>
       </div>
+
+      {bureauId === 3 && <CourrierStats bureauId={bureauId} />}
 
       <div className="rounded-lg border border-border bg-card overflow-hidden mb-6">
         <div className="border-b border-border px-5 py-3.5">
