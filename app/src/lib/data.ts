@@ -14,6 +14,20 @@ export const BUREAUX: Bureau[] = [
   { id: 11, nom: "Enseignement Arabe" },
 ];
 
+/**
+ * Libellé du module « Dossiers » propre à chaque bureau.
+ * Par défaut : « Dossiers ». À compléter au fur et à mesure que les métiers
+ * sont définis (ex. le Secrétariat gère les courriers).
+ */
+export const DOSSIERS_LABELS: Record<number, string> = {
+  3: "Gestion des courriers",
+};
+
+export function dossiersLabel(bureauId: number | null): string {
+  if (bureauId == null) return "Dossiers";
+  return DOSSIERS_LABELS[bureauId] ?? "Dossiers";
+}
+
 export const ROLES: { id: RoleId; label: string }[] = [
   { id: "super", label: "Super Admin" },
   { id: "chef", label: "IEF (Chef Admin)" },

@@ -3,7 +3,7 @@
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase/client";
-import { BUREAUX } from "@/lib/data";
+import { BUREAUX, dossiersLabel } from "@/lib/data";
 import { useRole } from "@/lib/role-context";
 import { useRows } from "@/components/admin/use-rows";
 import { StatusBadge } from "@/components/admin/status";
@@ -107,9 +107,19 @@ export default function BureauPage() {
         <ArrowLeft className="size-3.5" /> Retour au tableau de bord
       </Link>
 
-      <div className="mb-6">
-        <h1 className="text-[26px] leading-tight text-navy">Bureau {bureau.id}</h1>
-        <p className="mt-1 text-[13.5px] text-ink-soft">{bureau.nom}</p>
+      <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h1 className="text-[26px] leading-tight text-navy">Bureau {bureau.id}</h1>
+          <p className="mt-1 text-[13.5px] text-ink-soft">{bureau.nom}</p>
+        </div>
+        {bureauId === 3 && (
+          <Link
+            href="/courriers"
+            className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-2 text-[12.5px] font-medium text-primary transition-colors hover:bg-muted/40"
+          >
+            <FileText className="size-3.5" /> Ouvrir la gestion des courriers
+          </Link>
+        )}
       </div>
 
       <div className="mb-6 grid grid-cols-1 gap-3.5 sm:grid-cols-3">
@@ -122,7 +132,7 @@ export default function BureauPage() {
         </div>
         <div className="rounded-lg border border-border bg-card p-4">
           <div className="flex items-center gap-2 text-[12px] text-ink-soft mb-1">
-            <FileText className="size-3.5" /> Dossiers
+            <FileText className="size-3.5" /> {dossiersLabel(bureauId)}
           </div>
           <div className="text-[22px] font-semibold text-navy">{dossiers.length}</div>
         </div>
@@ -178,7 +188,9 @@ export default function BureauPage() {
       {dossiers.length > 0 && (
         <div className="rounded-lg border border-border bg-card overflow-hidden mb-6">
           <div className="border-b border-border px-5 py-3.5">
-            <h2 className="font-serif text-[15.5px] text-navy">Dossiers ({dossiers.length})</h2>
+            <h2 className="font-serif text-[15.5px] text-navy">
+              {dossiersLabel(bureauId)} ({dossiers.length})
+            </h2>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left text-[13px]">

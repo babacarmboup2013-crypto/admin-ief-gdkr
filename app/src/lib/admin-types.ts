@@ -140,6 +140,50 @@ export interface DossierRow {
   cree_par: string | null;
 }
 
+/** Destinataires de la « Transmission Interne » — libellés exacts du formulaire KoboToolbox IEF. */
+export const TRANSMISSIONS_INTERNES: string[] = [
+  "IEF",
+  "SECRETAIRE GENERAL",
+  "SECRETARIAT PARTICULIER",
+  "GESTIONNAIRE CHARGEE DES FINANCES",
+  "COMPTABLE DES MATIERES",
+  "SUIVIE-VALUATION",
+  "PLANIFICATEUR",
+  "CORRESPONDANT NUMERIQUE",
+  "CONSEILLER PEDAGOGIQUE",
+  "BRH CHARGEE PERSONNEL",
+  "BRH CHARGEE CARRIERE",
+  "INSPECTEUR ARABE",
+  "INSPECTEUR YADE",
+  "INSPECTEUR FAYE",
+  "INSPECTRICE THERESE",
+  "CHARGE COMMUNICATION",
+  "CHARGEE PARTENARIAT",
+  "BEXCO CHARGE ELEMETAIRE/EXAMENS PROFESSIONNEL",
+  "BEXCO CHARGE ENSEIGNEMENT MOYEN GENERAL",
+];
+
+export const COURRIER_STATUTS: Record<string, StatutAide> = {
+  brouillon: { label: "Brouillon", tone: "cours" },
+  soumis: { label: "Soumis", tone: "attente" },
+  archive: { label: "Archivé", tone: "ok" },
+};
+
+export interface CourrierRow {
+  id: number;
+  date_courrier: string;
+  numero_reference: string;
+  objet: string;
+  type_courrier: string;
+  transmission_interne: string[] | null;
+  fichier_path: string | null;
+  fichier_nom: string | null;
+  bureau_id: number | null;
+  saisi_par: string | null;
+  statut: string;
+  created_at: string | null;
+}
+
 export interface RapportRow {
   id: number;
   bureau_id: number | null;

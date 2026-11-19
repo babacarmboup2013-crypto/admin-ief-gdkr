@@ -101,6 +101,25 @@ export function DateTimeInput({
   );
 }
 
+export function FileInput({
+  error,
+  className,
+  ...props
+}: React.ComponentProps<"input"> & { error?: boolean }) {
+  return (
+    <input
+      type="file"
+      {...props}
+      className={cn(
+        inputCls,
+        "cursor-pointer file:mr-3 file:rounded file:border-0 file:bg-sidebar-primary/15 file:px-3 file:py-1 file:text-[12px] file:font-medium file:text-primary",
+        error && "border-red ring-1 ring-red/30",
+        className
+      )}
+    />
+  );
+}
+
 export function FormError({ message }: { message: string | null }) {
   if (!message) return null;
   return (
