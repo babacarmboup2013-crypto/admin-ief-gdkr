@@ -24,7 +24,7 @@ function AuthForm() {
       router.replace(next);
       router.refresh();
     }
-  }, [session]);
+  }, [session, next, router]);
 
   if (session) return null;
 

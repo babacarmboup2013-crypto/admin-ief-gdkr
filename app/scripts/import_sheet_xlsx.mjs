@@ -199,7 +199,7 @@ const isHeader = (cells, col, re) => re.test((fix(cells[col]) || '').replace(/\s
 function mapIef(grid) {
   const out = [];
   let started = false;
-  for (const [row, cells] of [...grid.entries()].sort((a, b) => a[0] - b[0])) {
+  for (const [, cells] of [...grid.entries()].sort((a, b) => a[0] - b[0])) {
     if (!started) {
       if (isHeader(cells, 'F', /^MATRICULE$/i) && isHeader(cells, 'G', /^PRENOMS$/i)) started = true;
       continue;
@@ -219,7 +219,7 @@ function mapIef(grid) {
   return out;
 }
 
-function mapElementaire(grid, cells) {
+function mapElementaire(grid) {
   const out = [];
   let started = false;
   let school = null;

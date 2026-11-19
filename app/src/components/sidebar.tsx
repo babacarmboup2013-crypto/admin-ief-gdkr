@@ -74,7 +74,7 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
         .select("nom_complet,fonction,email")
         .in("role", ["super_admin", "chef_admin", "secretaire_general", "inspecteur"])
         .order("role");
-      if (active && data) setDirection(data as any[]);
+      if (active && data) setDirection(data as { nom_complet: string; fonction: string; email: string }[]);
     })();
     return () => { active = false; };
   }, []);
@@ -128,7 +128,7 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
         </div>
         <div className="leading-tight">
           <div className="font-serif text-[15px] text-white">Admin IEF V1</div>
-          <div className="text-[11px] text-[#96a5c2]">Plateforme d'administration de l'IEF Grand Dakar</div>
+          <div className="text-[11px] text-[#96a5c2]">Plateforme d’administration de l’IEF Grand Dakar</div>
         </div>
       </div>
 

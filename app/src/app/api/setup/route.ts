@@ -1,7 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
-import type { NextRequest } from "next/server";
 
-export async function POST(req: NextRequest) {
+export async function POST() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY!;
   const supabase = createClient(url, key);
@@ -32,7 +31,7 @@ export async function POST(req: NextRequest) {
     END $$;
   `;
 
-  const { error } = await supabase.rpc("exec_sql" as any, { query: sql } as any);
+  const { error } = await supabase.rpc("exec_sql", { query: sql });
   if (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }

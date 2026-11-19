@@ -228,7 +228,6 @@ function main() {
   let records = [];
   const schools = new Map();
   const counts = {};
-  let contactsSansEcole = 0;
 
   const addRecord = (rec) => {
     counts[rec.source] = (counts[rec.source] || 0) + 1;
@@ -489,25 +488,18 @@ function main() {
   fs.writeFileSync(path.join(outDir, 'ecoles.json'), JSON.stringify(schoolsArr, null, 2), 'utf8');
   fs.writeFileSync(path.join(outDir, 'summary.json'), JSON.stringify(out, null, 2), 'utf8');
 
-  // eslint-disable-next-line no-console
   console.log(JSON.stringify(out, null, 2));
-  // eslint-disable-next-line no-console
   console.log('\nÉcoles détectées :', schoolsArr.length);
   for (const s of schoolsArr.slice(0, 30))
-    // eslint-disable-next-line no-console
     console.log('  -', s.nom, '[' + s.cycle + (s.localisation ? ', ' + s.localisation : '') + ']');
   if (schoolsArr.length > 30)
-    // eslint-disable-next-line no-console
     console.log(`  ... et ${schoolsArr.length - 30} autres`);
   if (genSql) {
     fs.writeFileSync(path.join(migDir, '0006_import_ecoles.sql'), genEcolesSql(schoolsArr), 'utf8');
     fs.writeFileSync(path.join(migDir, '0007_import_personnel.sql'), genPersonnelSql(finalRecs), 'utf8');
-    // eslint-disable-next-line no-console
     console.log('SQL -> supabase/migrations/0006_import_ecoles.sql');
-    // eslint-disable-next-line no-console
     console.log('SQL -> supabase/migrations/0007_import_personnel.sql');
   }
-  // eslint-disable-next-line no-console
   console.log('Rapport -> scripts/output/summary.json');
 }
 

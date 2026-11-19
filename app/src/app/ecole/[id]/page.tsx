@@ -1,10 +1,9 @@
 "use client";
 
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase/client";
-import { useRole } from "@/lib/role-context";
 import { useRows } from "@/components/admin/use-rows";
 import { StatusBadge } from "@/components/admin/status";
 import { CYCLE_LABELS, PERSONNEL_STATUTS, type PersonnelRow } from "@/lib/admin-types";
@@ -22,9 +21,7 @@ interface EcoleInfo {
 
 export default function EcolePage() {
   const params = useParams();
-  const router = useRouter();
   const ecoleId = Number(params.id);
-  const { role, profile } = useRole();
 
   const [ecole, setEcole] = useState<EcoleInfo | null>(null);
   const [loadingEcole, setLoadingEcole] = useState(true);

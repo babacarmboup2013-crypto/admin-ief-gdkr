@@ -1,15 +1,13 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase/client";
 import { BUREAUX } from "@/lib/data";
 import { useRole } from "@/lib/role-context";
 import { useRows } from "@/components/admin/use-rows";
-import { useBureauxRef, useEcolesRef } from "@/components/admin/use-refs";
 import { StatusBadge } from "@/components/admin/status";
-import { PERSONNEL_STATUTS, type PersonnelRow } from "@/lib/admin-types";
+import { PERSONNEL_STATUTS, type DossierRow, type PersonnelRow, type RapportRow } from "@/lib/admin-types";
 import { ArrowLeft, Users, FileText, BarChart3 } from "lucide-react";
 
 const PERSONNEL_SELECT = "id,bureau_id,ecole_id,nom_complet,fonction,date_entree,statut,matricule,sexe,telephone,email,corps,grade,source_feuille";
@@ -24,8 +22,6 @@ export default function BureauPage() {
   const router = useRouter();
   const bureauId = Number(params.id);
   const { role, profile } = useRole();
-  const bureaux = useBureauxRef();
-  const ecoles = useEcolesRef();
   const bureau = BUREAUX.find((b) => b.id === bureauId);
 
   const { rows: personnel, loading: personnelLoading } = useRows<PersonnelRow>(
@@ -43,7 +39,9 @@ export default function BureauPage() {
           .eq("bureau_id", bureauId),
       ]);
       const primary = (primaryRes.data ?? []) as unknown as PersonnelRow[];
-      const extraIds = (extraRes.data ?? []).map((r: any) => r.personnel_id).filter((id: number) => !primary.some((p) => p.id === id));
+      const extraIds = (extraRes.data ?? [])
+        .map((r) => (r as { personnel_id: number }).personnel_id)
+        .filter((id) => !primary.some((p) => p.id === id));
       let extra: PersonnelRow[] = [];
       if (extraIds.length > 0) {
         const { data: extraData } = await supabase
@@ -58,12 +56,12 @@ export default function BureauPage() {
     [bureauId]
   );
 
-  const { rows: dossiers, loading: dossiersLoading } = useRows<any>(
+  const { rows: dossiers } = useRows<DossierRow>(
     async () => {
       if (!supabase) return [];
       const { data, error } = await supabase
         .from("dossiers")
-        .select("id,titre,statut,echeance,assigne_a,cree_par,created_at")
+        .select("id,bureau_id,titre,statut,echeance,assigne_a,cree_par,created_at")
         .eq("bureau_id", bureauId)
         .order("created_at", { ascending: false });
       return error || !data ? [] : data;
@@ -71,12 +69,12 @@ export default function BureauPage() {
     [bureauId]
   );
 
-  const { rows: rapports, loading: rapportsLoading } = useRows<any>(
+  const { rows: rapports } = useRows<RapportRow>(
     async () => {
       if (!supabase) return [];
       const { data, error } = await supabase
         .from("rapports")
-        .select("id,titre,statut,soumis_par,valide_par,created_at")
+        .select("id,bureau_id,titre,contenu,statut,soumis_par,valide_par,created_at")
         .eq("bureau_id", bureauId)
         .order("created_at", { ascending: false });
       return error || !data ? [] : data;
@@ -192,7 +190,7 @@ export default function BureauPage() {
                 </tr>
               </thead>
               <tbody>
-                {dossiers.map((d: any) => (
+                {dossiers.map((d) => (
                   <tr key={d.id} className="border-b border-border last:border-0 hover:bg-muted/20">
                     <td className="px-5 py-2.5 font-medium text-ink">{d.titre}</td>
                     <td className="px-5 py-2.5 text-ink-soft">{d.statut}</td>
@@ -219,7 +217,7 @@ export default function BureauPage() {
                 </tr>
               </thead>
               <tbody>
-                {rapports.map((r: any) => (
+                {rapports.map((r) => (
                   <tr key={r.id} className="border-b border-border last:border-0 hover:bg-muted/20">
                     <td className="px-5 py-2.5 font-medium text-ink">{r.titre}</td>
                     <td className="px-5 py-2.5 text-ink-soft">{r.statut}</td>

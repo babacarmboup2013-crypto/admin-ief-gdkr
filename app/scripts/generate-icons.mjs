@@ -1,10 +1,12 @@
-const sharp = require('sharp');
-const path = require('path');
-const fs = require('fs');
+import sharp from "sharp";
+import path from "node:path";
+import fs from "node:fs";
+import { fileURLToPath } from "node:url";
 
 const sizes = [72, 96, 128, 144, 152, 192, 384, 512];
-const svgPath = path.join(__dirname, '..', 'public', 'icons', 'icon.svg');
-const outputDir = path.join(__dirname, '..', 'public', 'icons');
+const rootDir = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
+const svgPath = path.join(rootDir, "public", "icons", "icon.svg");
+const outputDir = path.join(rootDir, "public", "icons");
 
 const svgBuffer = fs.readFileSync(svgPath);
 

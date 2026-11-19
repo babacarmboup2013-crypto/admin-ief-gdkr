@@ -8,8 +8,6 @@ import {
   MOTIFS_DEPART,
   PERSONNEL_STATUTS,
   SEXE_LABELS,
-  SIT_MAT_OPTIONS,
-  fmtDate,
   type PersonnelRow,
 } from "@/lib/admin-types";
 import { useRole } from "@/lib/role-context";
@@ -31,6 +29,13 @@ const SELECT = [
   "telephone","email","n_cni","sit_matrimoniale","nb_enfants","os_arrivee",
   "motif_depart","depart_annee","source_feuille",
 ].join(", ");
+
+const BUREAU_ORDER: Record<number, number> = { 12: 0, 13: 1, 14: 2, 23: 5 };
+
+function hierarchie(row: PersonnelRow): number {
+  if (row.bureau_id != null) return BUREAU_ORDER[row.bureau_id] ?? 3;
+  return 4;
+}
 
 export function PersonnelBureauTab() {
   const { role, profile } = useRole();
@@ -84,7 +89,9 @@ export function PersonnelBureauTab() {
           .select("personnel_id"),
       ]);
       const primary = (primaryRes.data ?? []) as unknown as PersonnelRow[];
-      const extraIds = (extraRes.data ?? []).map((r: any) => r.personnel_id).filter((id: number) => !primary.some((p) => p.id === id));
+      const extraIds = (extraRes.data ?? [])
+        .map((r) => (r as { personnel_id: number }).personnel_id)
+        .filter((id) => !primary.some((p) => p.id === id));
       let extra: PersonnelRow[] = [];
       if (extraIds.length > 0) {
         const { data: extraData } = await supabase
@@ -203,12 +210,6 @@ export function PersonnelBureauTab() {
     const { error } = await supabase.from("personnel").delete().eq("id", row.id);
     if (error) window.alert(error.message);
     else refresh();
-  }
-
-  const BUREAU_ORDER: Record<number, number> = { 12: 0, 13: 1, 14: 2, 23: 5 };
-  function hierarchie(row: PersonnelRow): number {
-    if (row.bureau_id != null) return BUREAU_ORDER[row.bureau_id] ?? 3;
-    return 4;
   }
 
   const filteredRows = useMemo(() => {

@@ -4,11 +4,11 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase/client";
-import { CYCLE_LABELS, MOTIFS_DEPART, PERSONNEL_STATUTS, SEXE_LABELS, SIT_MAT_OPTIONS, type PersonnelRow } from "@/lib/admin-types";
+import { CYCLE_LABELS, MOTIFS_DEPART, PERSONNEL_STATUTS, SIT_MAT_OPTIONS, type PersonnelRow } from "@/lib/admin-types";
 import { StatusBadge } from "@/components/admin/status";
 import { FormDialog } from "@/components/admin/form-dialog";
 import { DateInput, Field, SelectInput, TextInput } from "@/components/admin/fields";
-import { ArrowLeft, User, MapPin, Briefcase, GraduationCap, Phone, AlertTriangle, Pencil, ArrowRightLeft, Archive, CircleUserRound, Plus, X } from "lucide-react";
+import { ArrowLeft, User, MapPin, Briefcase, GraduationCap, Phone, AlertTriangle, Pencil, ArrowRightLeft, Archive, Plus, X, type LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { sbThrow } from "@/components/admin/sb";
 
@@ -24,7 +24,7 @@ function Row({ label, value }: { label: string; value: string | number | null | 
   );
 }
 
-function Section({ title, icon: Icon, children }: { title: string; icon: any; children: React.ReactNode }) {
+function Section({ title, icon: Icon, children }: { title: string; icon: LucideIcon; children: React.ReactNode }) {
   return (
     <div className="rounded-lg border border-border bg-card overflow-hidden mb-4">
       <div className="flex items-center gap-2 border-b border-border px-5 py-3 bg-muted/30">
@@ -38,10 +38,10 @@ function Section({ title, icon: Icon, children }: { title: string; icon: any; ch
 
 type BureauRow = { id: number; nom: string };
 type EcoleRef = { id: number; nom: string };
+type EcoleInfo = { nom: string; cycle: string; localisation: string | null };
 
 export default function AgentPage() {
   const params = useParams();
-  const router = useRouter();
   const agentId = Number(params.id);
   const [agent, setAgent] = useState<PersonnelRow | null>(null);
   const [bureauNom, setBureauNom] = useState<string | null>(null);
@@ -86,14 +86,14 @@ export default function AgentPage() {
       }
       if (a.ecole_id) {
         const { data: e } = await supabase.from("ecoles").select("nom,cycle,localisation").eq("id", a.ecole_id).maybeSingle();
-        if (active && e) setEcoleInfo(e as any);
+        if (active && e) setEcoleInfo(e as EcoleInfo);
       }
       const { data: pb } = await supabase
         .from("personnel_bureaux")
         .select("bureau_id")
         .eq("personnel_id", agentId);
       if (active && pb && pb.length > 0) {
-        const ids = pb.map((r: any) => r.bureau_id);
+        const ids = pb.map((r) => (r as { bureau_id: number }).bureau_id);
         const { data: bs } = await supabase.from("bureaux").select("id,nom").in("id", ids);
         if (active && bs) setExtraBureaux(bs as { id: number; nom: string }[]);
       }
@@ -116,14 +116,14 @@ export default function AgentPage() {
     }
     if (a.ecole_id) {
       const { data: e } = await supabase.from("ecoles").select("nom,cycle,localisation").eq("id", a.ecole_id).maybeSingle();
-      if (e) setEcoleInfo(e as any);
+      if (e) setEcoleInfo(e as EcoleInfo);
     }
     const { data: pb } = await supabase
       .from("personnel_bureaux")
       .select("bureau_id")
       .eq("personnel_id", agentId);
     if (pb && pb.length > 0) {
-      const ids = pb.map((r: any) => r.bureau_id);
+      const ids = pb.map((r) => (r as { bureau_id: number }).bureau_id);
       const { data: bs } = await supabase.from("bureaux").select("id,nom").in("id", ids);
       if (bs) setExtraBureaux(bs as { id: number; nom: string }[]);
     } else {
