@@ -68,6 +68,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   } else if (pathname.startsWith("/administration")) {
     title = "Administration";
     sub = "Saisie et gestion des données réelles";
+  } else if (pathname.startsWith("/transmissions")) {
+    title = "Transmissions internes";
+    sub = "Courriers et dossiers transmis entre bureaux";
   }
   if (role === "rh" && !pathname.startsWith("/administration") && pathname !== "/discussions" && pathname !== "/reunions") {
     sub = "";

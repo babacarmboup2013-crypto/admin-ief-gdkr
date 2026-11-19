@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, MessageSquare, CalendarClock, Settings, LogOut, LogIn, Users, KeyRound, Mail, Lock, Search } from "lucide-react";
+import { LayoutDashboard, MessageSquare, CalendarClock, Settings, LogOut, LogIn, Users, KeyRound, Mail, Lock, Search, ArrowRightLeft } from "lucide-react";
 import { DASHBOARDS } from "@/lib/data";
 import { useRole } from "@/lib/role-context";
 import { fetchBureaux } from "@/lib/queries";
@@ -23,6 +23,7 @@ const MODULES = [
   { view: "courriers", label: "Courriers ordinaires", icon: Mail, href: "/courriers" },
   { view: "courriers-confidentiels", label: "Courriers confidentiels", icon: Lock, href: "/courriers-confidentiels" },
   { view: "recherche-courriers", label: "Recherche courriers", icon: Search, href: "/recherche-courriers" },
+  { view: "transmissions", label: "Transmissions", icon: ArrowRightLeft, href: "/transmissions" },
   { view: "administration", label: "Administration", icon: Settings, href: "/administration" },
   { view: "discussions", label: "Discussions", icon: MessageSquare, href: "/discussions" },
   { view: "reunions", label: "Réunions", icon: CalendarClock, href: "/reunions" },

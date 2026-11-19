@@ -1,12 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import { Send } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
 import { adminPerms } from "@/lib/admin-perms";
 import { DOSSIER_STATUTS, fmtDate, type DossierRow } from "@/lib/admin-types";
 import { useRole } from "@/lib/role-context";
+import { Button } from "@/components/ui/button";
 import { AdminTable } from "./admin-table";
 import { FormDialog } from "./form-dialog";
+import { TransmissionDialog } from "./transmission-dialog";
 import { DateInput, Field, SelectInput, TextInput } from "./fields";
 import { StatusBadge } from "./status";
 import { sbThrow } from "./sb";
@@ -22,6 +25,7 @@ export function DossiersTab() {
   const users = useUsersRef();
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<DossierRow | null>(null);
+  const [transmissionDossier, setTransmissionDossier] = useState<DossierRow | null>(null);
   const [titre, setTitre] = useState("");
   const [bureauId, setBureauId] = useState("");
   const [statut, setStatut] = useState("en_cours");
@@ -125,6 +129,17 @@ export function DossiersTab() {
         onEdit={openEdit}
         onDelete={remove}
         addLabel="Nouveau dossier"
+        customActions={(r) => (
+          <Button
+            variant="outline"
+            size="icon-sm"
+            aria-label="Transmettre"
+            title="Transmettre à un bureau"
+            onClick={() => setTransmissionDossier(r)}
+          >
+            <Send />
+          </Button>
+        )}
       />
 
       <FormDialog
@@ -174,6 +189,18 @@ export function DossiersTab() {
           </Field>
         </div>
       </FormDialog>
+
+      {transmissionDossier ? (
+        <TransmissionDialog
+          open
+          onOpenChange={(v) => !v && setTransmissionDossier(null)}
+          typeObjet="dossier"
+          objetId={transmissionDossier.id}
+          objetTitre={transmissionDossier.titre}
+          bureauSourceId={transmissionDossier.bureau_id}
+          onSaved={refresh}
+        />
+      ) : null}
     </>
   );
 }

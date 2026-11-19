@@ -140,6 +140,30 @@ export interface DossierRow {
   cree_par: string | null;
 }
 
+export interface TransmissionRow {
+  id: number;
+  type_objet: "courrier" | "dossier";
+  objet_id: number;
+  objet_ref: string | null;
+  objet_titre: string | null;
+  bureau_source_id: number | null;
+  bureau_destinataire_id: number;
+  expediteur_id: string | null;
+  note: string | null;
+  statut: string;
+  date_transmission: string;
+  date_reponse: string | null;
+  traite_par: string | null;
+  created_at: string | null;
+}
+
+export const TRANSMISSION_STATUTS: Record<string, StatutAide> = {
+  en_attente: { label: "En attente", tone: "attente" },
+  accepte: { label: "Acceptée", tone: "cours" },
+  traite: { label: "Traitée", tone: "ok" },
+  refuse: { label: "Refusée", tone: "attente" },
+};
+
 /** Destinataires de la « Transmission Interne » — libellés exacts du formulaire KoboToolbox IEF. */
 export const TRANSMISSIONS_INTERNES: string[] = [
   "IEF",

@@ -13,6 +13,7 @@ import {
 } from "@/components/admin/fields";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/admin/status";
+import { TransmissionDialog } from "@/components/admin/transmission-dialog";
 import {
   COURRIER_STATUTS,
   NATURES_ORDINAIRES,
@@ -20,7 +21,7 @@ import {
   fmtDate,
   type CourrierRow,
 } from "@/lib/admin-types";
-import { Download, FileText, Mail, Trash2 } from "lucide-react";
+import { Download, FileText, Mail, Send, Trash2 } from "lucide-react";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 Mo, comme dans le formulaire source
 const ACCEPTED_FILES =
@@ -43,6 +44,7 @@ export default function CourriersPage() {
     profile.bureauId == null ? "" : String(profile.bureauId)
   );
   const [editingId, setEditingId] = useState<number | null>(null);
+  const [transmissionObjet, setTransmissionObjet] = useState<CourrierRow | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -547,6 +549,14 @@ export default function CourriersPage() {
                         <div className="flex items-center gap-2">
                           <button
                             type="button"
+                            onClick={() => setTransmissionObjet(row)}
+                            title="Transmettre à un bureau"
+                            className="inline-flex items-center gap-1 text-primary hover:underline"
+                          >
+                            <Send className="size-3.5" /> Transmettre
+                          </button>
+                          <button
+                            type="button"
                             onClick={() => openEdit(row)}
                             title="Modifier"
                             className="text-primary hover:underline"
@@ -571,6 +581,19 @@ export default function CourriersPage() {
           </div>
         )}
       </div>
+
+      {transmissionObjet ? (
+        <TransmissionDialog
+          open
+          onOpenChange={(v) => !v && setTransmissionObjet(null)}
+          typeObjet="courrier"
+          objetId={transmissionObjet.id}
+          objetRef={transmissionObjet.numero_reference}
+          objetTitre={transmissionObjet.objet}
+          bureauSourceId={transmissionObjet.bureau_id}
+          onSaved={refresh}
+        />
+      ) : null}
 
       <p className="mt-4 flex items-center gap-1.5 text-[11.5px] text-ink-soft">
         <FileText className="size-3.5" />

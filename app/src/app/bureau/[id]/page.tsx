@@ -60,12 +60,34 @@ export default function BureauPage() {
   const { rows: dossiers } = useRows<DossierRow>(
     async () => {
       if (!supabase) return [];
+      const select = "id,bureau_id,titre,statut,echeance,assigne_a,cree_par,created_at";
       const { data, error } = await supabase
         .from("dossiers")
-        .select("id,bureau_id,titre,statut,echeance,assigne_a,cree_par,created_at")
+        .select(select)
         .eq("bureau_id", bureauId)
         .order("created_at", { ascending: false });
-      return error || !data ? [] : data;
+      if (error || !data) return [];
+
+      // Les dossiers transmis restent rattachés à leur bureau d'origine mais
+      // doivent aussi apparaître dans le bureau destinataire.
+      const { data: entrees } = await supabase
+        .from("transmissions")
+        .select("objet_id")
+        .eq("type_objet", "dossier")
+        .eq("bureau_destinataire_id", bureauId)
+        .in("statut", ["en_attente", "accepte"]);
+      const ids = (entrees ?? []).map(
+        (t: { objet_id: number }) => t.objet_id
+      );
+      if (ids.length === 0) return data;
+
+      const { data: recus } = await supabase
+        .from("dossiers")
+        .select(select)
+        .in("id", ids)
+        .order("created_at", { ascending: false });
+      const dejaVus = new Set(data.map((d) => d.id));
+      return [...data, ...(recus ?? []).filter((d) => !dejaVus.has(d.id))];
     },
     [bureauId]
   );
