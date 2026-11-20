@@ -17,8 +17,28 @@ function AuthForm() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showPw, setShowPw] = useState(false);
+  const [now, setNow] = useState<Date | null>(null);
+
+  // Date et heure courantes, rafraîchies toutes les 30 secondes.
+  // Initialisées après l'hydratation pour éviter un écart SSR / navigateur.
+  useEffect(() => {
+    const refresh = () => setNow(new Date());
+    refresh();
+    const timer = window.setInterval(refresh, 30_000);
+    return () => window.clearInterval(timer);
+  }, []);
 
   const next = searchParams.get("next") || "/";
+  const dateLabel = now
+    ? now.toLocaleString("fr-FR", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      })
+    : "";
 
   useEffect(() => {
     if (session) {
@@ -85,6 +105,13 @@ function AuthForm() {
       >
         <Home className="size-5" />
       </Link>
+
+      {/* Date et heure courantes */}
+      {dateLabel && (
+        <div className="absolute right-5 top-5 z-50 max-w-[70vw] truncate rounded-full border border-[#1b2a4a]/15 bg-white/80 px-3 py-1.5 text-[11px] font-medium text-[#1b2a4a] shadow-sm backdrop-blur-sm sm:max-w-none sm:text-[12px]">
+          {dateLabel}
+        </div>
+      )}
 
       {/* Main content - full width split layout */}
       <div className="relative z-10 flex w-full max-w-7xl flex-col items-center gap-12 px-6 py-10 lg:flex-row lg:justify-center lg:gap-28">
