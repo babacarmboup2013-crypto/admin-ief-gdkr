@@ -6,6 +6,7 @@ import { supabase } from "@/lib/supabase/client";
 import { useSession } from "@/lib/use-session";
 import { Eye, EyeOff, KeyRound, Home } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 function AuthForm() {
   const router = useRouter();
@@ -55,6 +56,18 @@ function AuthForm() {
       <div className="pointer-events-none absolute bottom-[0%] right-[10%] h-[450px] w-[450px] rounded-full bg-[#c89b3c]/[0.06] blur-[80px]" />
       <div className="pointer-events-none absolute left-[40%] top-[60%] h-[400px] w-[400px] rounded-full bg-[#1b2a4a]/[0.03] blur-[90px]" />
 
+      {/* Logo en filigrane */}
+      <Image
+        src="/logo-ief.jpeg"
+        alt=""
+        aria-hidden
+        width={520}
+        height={520}
+        unoptimized
+        loading="eager"
+        className="pointer-events-none absolute left-1/2 top-1/2 h-[520px] w-[520px] max-h-[75vh] max-w-[75vw] -translate-x-1/2 -translate-y-1/2 select-none object-contain opacity-[0.07] mix-blend-multiply"
+      />
+
       {/* Decorative large faded shapes */}
       <div
         className="pointer-events-none absolute left-[8%] top-[10%] h-[600px] w-[500px] rounded-[80px] opacity-[0.035]"
@@ -78,6 +91,27 @@ function AuthForm() {
 
         {/* Left column: branding */}
         <div className="hidden max-w-lg flex-col space-y-6 lg:flex">
+          <div className="flex items-center gap-4">
+            <div className="flex size-[120px] shrink-0 items-center justify-center rounded-2xl bg-white/90 p-2 shadow-sm">
+              <Image
+                src="/logo-ief.jpeg"
+                alt="Logo officiel de l'IEF Grand Dakar"
+                width={120}
+                height={120}
+                unoptimized
+                loading="eager"
+                className="size-full object-contain"
+              />
+            </div>
+            <div>
+              <div className="font-serif text-[20px] text-[#1b2a4a]">
+                IEF Grand Dakar
+              </div>
+              <div className="text-[12px] text-[#6b7a8a]">
+                Inspection de l&apos;Éducation et de la Formation
+              </div>
+            </div>
+          </div>
           <h2 className="text-[38px] font-extrabold leading-[1.15] text-[#1b2a4a]">
             L&apos;administration IEF,<br />
             <span className="text-[#c89b3c]">simple et efficace.</span>
@@ -98,13 +132,24 @@ function AuthForm() {
         </div>
 
         {/* Right column: card */}
-        <div className="w-full max-w-xl">
+        <div className="w-full max-w-2xl">
           {/* Login card */}
           <div
-            className="rounded-2xl border border-[#e3ddd0] bg-white px-10 py-10 shadow-[0_2px_4px_rgba(27,42,74,0.04),0_16px_40px_-8px_rgba(27,42,74,0.10)]"
+            className="rounded-2xl border border-[#e3ddd0] bg-white px-12 py-12 shadow-[0_2px_4px_rgba(27,42,74,0.04),0_16px_40px_-8px_rgba(27,42,74,0.10)] sm:px-14 sm:py-14"
             style={{ transition: "transform .25s, box-shadow .25s, border-color .25s" }}
           >
-            <h2 className="mb-7 text-center text-[18px] font-semibold text-[#1b2a4a]">
+            <div className="mb-6 flex justify-center">
+              <Image
+                src="/logo-ief.jpeg"
+                alt="Logo officiel de l'IEF Grand Dakar"
+                width={144}
+                height={144}
+                unoptimized
+                loading="eager"
+                className="size-36 object-contain"
+              />
+            </div>
+            <h2 className="mb-8 text-center text-[22px] font-semibold text-[#1b2a4a]">
               Connexion
             </h2>
 

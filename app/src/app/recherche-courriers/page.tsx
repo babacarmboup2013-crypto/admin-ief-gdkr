@@ -2,6 +2,9 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib/supabase/client";
+import { useRole } from "@/lib/role-context";
+import { voitTousLesBureaux } from "@/lib/admin-perms";
+import { useBureauxRef } from "@/components/admin/use-refs";
 import {
   DateInput,
   Field,
@@ -48,6 +51,8 @@ function normalise(valeur: string | null | undefined): string {
 }
 
 export default function RechercheCourriersPage() {
+  const { role, profile } = useRole();
+  const bureaux = useBureauxRef();
   const [rows, setRows] = useState<CourrierRow[]>([]);
   const [loading, setLoading] = useState(supabase != null);
   const [loadError, setLoadError] = useState<string | null>(
@@ -56,6 +61,7 @@ export default function RechercheCourriersPage() {
   const [downloadError, setDownloadError] = useState<string | null>(null);
 
   const [type, setType] = useState<string>("tous");
+  const [bureauFiltre, setBureauFiltre] = useState("");
   const [motCle, setMotCle] = useState("");
   const [nature, setNature] = useState("");
   const [statut, setStatut] = useState("");
@@ -66,11 +72,17 @@ export default function RechercheCourriersPage() {
   useEffect(() => {
     if (!supabase) return;
     let active = true;
-    supabase
+    let requete = supabase
       .from("courriers")
       .select(
-        "id,date_courrier,numero_reference,objet,type_courrier,nature_ordinaire,nature_confidentielle,expediteur,destinataire,transmission_interne,fichier_path,fichier_nom,statut"
-      )
+        "id,date_courrier,numero_reference,objet,type_courrier,nature_ordinaire,nature_confidentielle,expediteur,destinataire,transmission_interne,fichier_path,fichier_nom,bureau_id,statut"
+      );
+
+    if (!voitTousLesBureaux(role)) {
+      requete = requete.eq("bureau_id", profile.bureauId ?? -1);
+    }
+
+    requete
       .order("date_courrier", { ascending: false })
       .order("id", { ascending: false })
       .then(({ data, error: e }) => {
@@ -87,12 +99,13 @@ export default function RechercheCourriersPage() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [role, profile.bureauId]);
 
   const resultats = useMemo(() => {
     const terme = normalise(motCle);
     return rows.filter((row) => {
       if (type !== "tous" && row.type_courrier !== type) return false;
+      if (bureauFiltre && row.bureau_id !== Number(bureauFiltre)) return false;
 
       const natureCourrier = row.nature_ordinaire ?? row.nature_confidentielle;
       if (nature && natureCourrier !== nature) return false;
@@ -125,10 +138,11 @@ export default function RechercheCourriersPage() {
       }
       return true;
     });
-  }, [rows, type, motCle, nature, statut, transmission, dateDu, dateAu]);
+  }, [rows, type, bureauFiltre, motCle, nature, statut, transmission, dateDu, dateAu]);
 
   const reinitialiser = () => {
     setType("tous");
+    setBureauFiltre("");
     setMotCle("");
     setNature("");
     setStatut("");
@@ -139,6 +153,7 @@ export default function RechercheCourriersPage() {
 
   const nombreFiltres = [
     type !== "tous",
+    bureauFiltre !== "",
     motCle.trim() !== "",
     nature !== "",
     statut !== "",
@@ -210,7 +225,29 @@ export default function RechercheCourriersPage() {
           ))}
         </div>
 
+        {voitTousLesBureaux(role) ? null : (
+          <p className="mb-4 rounded-md bg-muted/40 px-3 py-2 text-[12px] text-ink-soft">
+            Recherche limitée à votre bureau :{" "}
+            {bureaux.rows.find((b) => b.id === profile.bureauId)?.nom ?? "—"}
+          </p>
+        )}
+
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {voitTousLesBureaux(role) ? (
+            <Field label="Bureau">
+              <SelectInput
+                value={bureauFiltre}
+                onChange={(e) => setBureauFiltre(e.target.value)}
+              >
+                <option value="">Tous les bureaux</option>
+                {bureaux.rows.map((b) => (
+                  <option key={b.id} value={b.id}>
+                    {b.nom}
+                  </option>
+                ))}
+              </SelectInput>
+            </Field>
+          ) : null}
           <Field label="Mot-clé" className="lg:col-span-2">
             <TextInput
               value={motCle}

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Send } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
-import { adminPerms } from "@/lib/admin-perms";
+import { adminPerms, voitTousLesBureaux } from "@/lib/admin-perms";
 import { DOSSIER_STATUTS, fmtDate, type DossierRow } from "@/lib/admin-types";
 import { useRole } from "@/lib/role-context";
 import { Button } from "@/components/ui/button";
@@ -28,20 +28,35 @@ export function DossiersTab() {
   const [transmissionDossier, setTransmissionDossier] = useState<DossierRow | null>(null);
   const [titre, setTitre] = useState("");
   const [bureauId, setBureauId] = useState("");
+  const [filtreBureau, setFiltreBureau] = useState("");
   const [statut, setStatut] = useState("en_cours");
   const [echeance, setEcheance] = useState("");
   const [assigne, setAssigne] = useState("");
   const { rows, loading, refresh } = useRows<DossierRow>(
     async () => {
       if (!supabase) return [];
-      const { data, error } = await supabase
+      let requete = supabase
         .from("dossiers")
-        .select("id, bureau_id, titre, statut, echeance, assigne_a, cree_par")
-        .order("created_at", { ascending: false });
+        .select("id, bureau_id, titre, statut, echeance, assigne_a, cree_par");
+
+      if (!voitTousLesBureaux(role)) {
+        if (profile.bureauId == null) return [];
+        requete = requete.eq("bureau_id", profile.bureauId);
+      } else if (filtreBureau !== "") {
+        requete = requete.eq("bureau_id", Number(filtreBureau));
+      }
+
+      const { data, error } = await requete.order("created_at", {
+        ascending: false,
+      });
       return error || !data ? [] : (data as DossierRow[]);
     },
-    []
+    [role, profile.bureauId, filtreBureau]
   );
+
+  const bureauxPermis = voitTousLesBureaux(role)
+    ? bureaux.rows
+    : bureaux.rows.filter((b) => b.id === profile.bureauId);
 
   function bureauName(id: number | null) {
     if (id == null) return "—";
@@ -103,6 +118,30 @@ export function DossiersTab() {
 
   return (
     <>
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border bg-card px-4 py-3">
+        <p className="text-[12.5px] text-ink-soft">
+          {voitTousLesBureaux(role)
+            ? "Vue IEF / Super Admin : tous les bureaux."
+            : `Dossiers de votre bureau : ${bureaux.rows.find((b) => b.id === profile.bureauId)?.nom ?? "—"}`}
+        </p>
+        {voitTousLesBureaux(role) ? (
+          <div className="flex items-center gap-2">
+            <span className="text-[12px] text-ink-soft">Filtrer par bureau</span>
+            <SelectInput
+              value={filtreBureau}
+              onChange={(e) => setFiltreBureau(e.target.value)}
+              className="w-[220px]"
+            >
+              <option value="">Tous les bureaux</option>
+              {bureaux.rows.map((b) => (
+                <option key={b.id} value={b.id}>
+                  {b.nom}
+                </option>
+              ))}
+            </SelectInput>
+          </div>
+        ) : null}
+      </div>
       <AdminTable
         title="Dossiers"
         subtitle="Suivi des dossiers par bureau — selon votre périmètre d'accès."
@@ -155,8 +194,10 @@ export function DossiersTab() {
         <div className="grid grid-cols-2 gap-3">
           <Field label="Bureau">
             <SelectInput value={bureauId} onChange={(e) => setBureauId(e.target.value)}>
-              <option value="">— Aucun —</option>
-              {bureaux.rows.map((b) => (
+              {voitTousLesBureaux(role) ? (
+                <option value="">— Aucun —</option>
+              ) : null}
+              {bureauxPermis.map((b) => (
                 <option key={b.id} value={b.id}>
                   {b.nom}
                 </option>

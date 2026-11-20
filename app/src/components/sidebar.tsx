@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { LayoutDashboard, MessageSquare, CalendarClock, Settings, LogOut, LogIn, Users, KeyRound, Mail, Lock, Search, ArrowRightLeft } from "lucide-react";
 import { DASHBOARDS } from "@/lib/data";
@@ -127,8 +128,16 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
       )}
     >
       <div className="flex items-center gap-2.5 border-b border-sidebar-border px-5 pb-5 pt-7">
-        <div className="flex size-[50px] shrink-0 items-center justify-center rounded-full border-[1.5px] border-sidebar-primary font-serif text-[10px] font-bold tracking-wide text-sidebar-primary">
-          AIGDKR
+        <div className="flex size-[50px] shrink-0 items-center justify-center rounded-lg bg-white/95 p-1">
+          <Image
+            src="/logo-ief.jpeg"
+            alt="Logo officiel de l'IEF Grand Dakar"
+            width={50}
+            height={50}
+            unoptimized
+            loading="eager"
+            className="size-full object-contain"
+          />
         </div>
         <div className="leading-tight">
           <div className="font-serif text-[15px] text-white">Admin IEF V1</div>

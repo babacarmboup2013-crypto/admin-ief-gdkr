@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib/supabase/client";
 import { useRole } from "@/lib/role-context";
+import { voitTousLesBureaux } from "@/lib/admin-perms";
 import { useBureauxRef, useUsersRef } from "@/components/admin/use-refs";
 import { StatusBadge } from "@/components/admin/status";
 import { sbThrow } from "@/components/admin/sb";
@@ -28,7 +29,7 @@ export default function TransmissionsPage() {
   const [onglet, setOnglet] = useState<Onglet>("recues");
   const [tick, setTick] = useState(0);
 
-  const peutToutVoir = role === "super" || role === "chef";
+  const peutToutVoir = voitTousLesBureaux(role);
 
   useEffect(() => {
     if (!supabase) return;

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase/client";
 import { useRole } from "@/lib/role-context";
+import { voitTousLesBureaux } from "@/lib/admin-perms";
 import {
   DateInput,
   Field,
@@ -28,7 +29,7 @@ const ACCEPTED_FILES =
   ".pdf,.doc,.docx,.jpg,.jpeg,.png,.webp";
 
 export default function CourriersPage() {
-  const { uid, profile } = useRole();
+  const { role, uid, profile } = useRole();
   const [dateCourrier, setDateCourrier] = useState(
     new Date().toISOString().slice(0, 10)
   );
@@ -43,6 +44,7 @@ export default function CourriersPage() {
   const [bureauId, setBureauId] = useState(
     profile.bureauId == null ? "" : String(profile.bureauId)
   );
+  const [filtreBureau, setFiltreBureau] = useState("");
   const [editingId, setEditingId] = useState<number | null>(null);
   const [transmissionObjet, setTransmissionObjet] = useState<CourrierRow | null>(null);
   const [saving, setSaving] = useState(false);
@@ -55,6 +57,10 @@ export default function CourriersPage() {
     supabase ? null : "Supabase n'est pas configuré (voir .env.local)."
   );
   const [tick, setTick] = useState(0);
+
+  const bureauxPermis = voitTousLesBureaux(role)
+    ? bureaux
+    : bureaux.filter((b) => b.id === profile.bureauId);
 
   const enregistrePar = `${profile.fonction ?? "Agent"} IEF Grand Dakar ${
     profile.nom ?? "—"
@@ -78,12 +84,20 @@ export default function CourriersPage() {
   useEffect(() => {
     if (!supabase) return;
     let active = true;
-    supabase
+    let requete = supabase
       .from("courriers")
       .select(
         "id,date_courrier,numero_reference,objet,type_courrier,nature_ordinaire,nature_confidentielle,expediteur,destinataire,transmission_interne,fichier_path,fichier_nom,kobo_id,kobo_uuid,bureau_id,saisi_par,statut,created_at"
       )
-      .eq("type_courrier", "ordinaire")
+      .eq("type_courrier", "ordinaire");
+
+    if (!voitTousLesBureaux(role)) {
+      requete = requete.eq("bureau_id", profile.bureauId ?? -1);
+    } else if (filtreBureau !== "") {
+      requete = requete.eq("bureau_id", Number(filtreBureau));
+    }
+
+    requete
       .order("date_courrier", { ascending: false })
       .order("id", { ascending: false })
       .then(({ data, error: e }) => {
@@ -100,7 +114,7 @@ export default function CourriersPage() {
     return () => {
       active = false;
     };
-  }, [tick]);
+  }, [tick, role, profile.bureauId, filtreBureau]);
 
   const refresh = () => {
     setLoading(true);
@@ -289,6 +303,31 @@ export default function CourriersPage() {
         </p>
       </div>
 
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border bg-card px-4 py-3">
+        <p className="text-[12.5px] text-ink-soft">
+          {voitTousLesBureaux(role)
+            ? "Vue IEF / Super Admin : tous les bureaux."
+            : `Affichage limité à votre bureau : ${bureaux.find((b) => b.id === profile.bureauId)?.nom ?? "—"}`}
+        </p>
+        {voitTousLesBureaux(role) ? (
+          <div className="flex items-center gap-2">
+            <span className="text-[12px] text-ink-soft">Filtrer par bureau</span>
+            <SelectInput
+              value={filtreBureau}
+              onChange={(e) => setFiltreBureau(e.target.value)}
+              className="w-[220px]"
+            >
+              <option value="">Tous les bureaux</option>
+              {bureaux.map((b) => (
+                <option key={b.id} value={b.id}>
+                  {b.nom}
+                </option>
+              ))}
+            </SelectInput>
+          </div>
+        ) : null}
+      </div>
+
       <div className="mb-6 rounded-lg border border-border bg-card p-5">
         <div className="mb-4 flex items-center justify-between gap-3">
           <h2 className="font-serif text-[16px] text-navy">
@@ -420,8 +459,10 @@ export default function CourriersPage() {
               value={bureauId}
               onChange={(e) => setBureauId(e.target.value)}
             >
-              <option value="">— Aucun —</option>
-              {bureaux.map((b) => (
+              {voitTousLesBureaux(role) ? (
+                <option value="">— Aucun —</option>
+              ) : null}
+              {bureauxPermis.map((b) => (
                 <option key={b.id} value={b.id}>
                   {b.nom}
                 </option>

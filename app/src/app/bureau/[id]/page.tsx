@@ -5,6 +5,8 @@ import Link from "next/link";
 import { supabase } from "@/lib/supabase/client";
 import { BUREAUX, dossiersLabel, referentBureau } from "@/lib/data";
 import { useRole } from "@/lib/role-context";
+import { voitTousLesBureaux } from "@/lib/admin-perms";
+import type { RoleId } from "@/lib/types";
 import { useRows } from "@/components/admin/use-rows";
 import { StatusBadge } from "@/components/admin/status";
 import { CourrierStats } from "@/components/admin/courrier-stats";
@@ -14,7 +16,7 @@ import { ArrowLeft, Users, FileText, BarChart3, Lock, UserRound } from "lucide-r
 const PERSONNEL_SELECT = "id,bureau_id,ecole_id,nom_complet,fonction,date_entree,statut,matricule,sexe,telephone,email,corps,grade,source_feuille";
 
 function canAccessBureau(role: string, profileBureauId: number | null, targetId: number): boolean {
-  if (role === "super" || role === "chef") return true;
+  if (voitTousLesBureaux(role as RoleId)) return true;
   return profileBureauId === targetId;
 }
 

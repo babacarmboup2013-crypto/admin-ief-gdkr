@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { supabase } from "@/lib/supabase/client";
-import { adminPerms } from "@/lib/admin-perms";
+import { adminPerms, voitTousLesBureaux } from "@/lib/admin-perms";
 import { RAPPORT_STATUTS, type RapportRow } from "@/lib/admin-types";
 import { useRole } from "@/lib/role-context";
 import { AdminTable } from "./admin-table";
@@ -24,19 +24,34 @@ export function RapportsTab() {
   const [editing, setEditing] = useState<RapportRow | null>(null);
   const [titre, setTitre] = useState("");
   const [bureauId, setBureauId] = useState("");
+  const [filtreBureau, setFiltreBureau] = useState("");
   const [contenu, setContenu] = useState("");
   const [statut, setStatut] = useState("brouillon");
   const { rows, loading, refresh } = useRows<RapportRow>(
     async () => {
       if (!supabase) return [];
-      const { data, error } = await supabase
+      let requete = supabase
         .from("rapports")
-        .select("id, bureau_id, titre, contenu, statut, soumis_par, valide_par")
-        .order("created_at", { ascending: false });
+        .select("id, bureau_id, titre, contenu, statut, soumis_par, valide_par");
+
+      if (!voitTousLesBureaux(role)) {
+        if (profile.bureauId == null) return [];
+        requete = requete.eq("bureau_id", profile.bureauId);
+      } else if (filtreBureau !== "") {
+        requete = requete.eq("bureau_id", Number(filtreBureau));
+      }
+
+      const { data, error } = await requete.order("created_at", {
+        ascending: false,
+      });
       return error || !data ? [] : (data as RapportRow[]);
     },
-    []
+    [role, profile.bureauId, filtreBureau]
   );
+
+  const bureauxPermis = voitTousLesBureaux(role)
+    ? bureaux.rows
+    : bureaux.rows.filter((b) => b.id === profile.bureauId);
 
   function bureauName(id: number | null) {
     if (id == null) return "—";
@@ -95,6 +110,30 @@ export function RapportsTab() {
 
   return (
     <>
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border bg-card px-4 py-3">
+        <p className="text-[12.5px] text-ink-soft">
+          {voitTousLesBureaux(role)
+            ? "Vue IEF / Super Admin : tous les bureaux."
+            : `Rapports de votre bureau : ${bureaux.rows.find((b) => b.id === profile.bureauId)?.nom ?? "—"}`}
+        </p>
+        {voitTousLesBureaux(role) ? (
+          <div className="flex items-center gap-2">
+            <span className="text-[12px] text-ink-soft">Filtrer par bureau</span>
+            <SelectInput
+              value={filtreBureau}
+              onChange={(e) => setFiltreBureau(e.target.value)}
+              className="w-[220px]"
+            >
+              <option value="">Tous les bureaux</option>
+              {bureaux.rows.map((b) => (
+                <option key={b.id} value={b.id}>
+                  {b.nom}
+                </option>
+              ))}
+            </SelectInput>
+          </div>
+        ) : null}
+      </div>
       <AdminTable
         title="Rapports"
         subtitle="Rapports saisis par les bureaux — selon votre périmètre d'accès."
@@ -135,8 +174,10 @@ export function RapportsTab() {
         <div className="grid grid-cols-2 gap-3">
           <Field label="Bureau">
             <SelectInput value={bureauId} onChange={(e) => setBureauId(e.target.value)}>
-              <option value="">— Aucun —</option>
-              {bureaux.rows.map((b) => (
+              {voitTousLesBureaux(role) ? (
+                <option value="">— Aucun —</option>
+              ) : null}
+              {bureauxPermis.map((b) => (
                 <option key={b.id} value={b.id}>
                   {b.nom}
                 </option>

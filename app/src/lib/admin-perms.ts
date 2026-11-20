@@ -107,3 +107,8 @@ export function adminPerms(role: RoleId, profile: Profile): AdminPerms {
     reunions: { add: true, edit: true, del: false },
   };
 }
+
+/** Seuls l'IEF (rôle chef) et le Super Admin ont une vue sur tous les bureaux. */
+export function voitTousLesBureaux(role: RoleId): boolean {
+  return role === "super" || role === "chef";
+}
