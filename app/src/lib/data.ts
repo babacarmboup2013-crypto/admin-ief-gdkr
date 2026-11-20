@@ -216,13 +216,13 @@ export const DASHBOARDS: Record<RoleId, RoleDashboard> = {
     ],
   },
   responsable: {
-    title: "Tableau de bord — Ressources Humaines",
-    sub: "Bureau n°7",
+    title: "Tableau de bord — Mon bureau",
+    sub: "Bureau attribué",
     foot: "Responsable de bureau",
-    activeBureaux: ["7"],
+    activeBureaux: null,
     banner: {
       tone: "teal",
-      text: "Vous consultez le bureau Ressources Humaines — les données sont limitées à ce périmètre.",
+      text: "Vous consultez les données de votre bureau - elles sont limitées à ce périmètre.",
     },
     kpis: [
       { label: "Agents du bureau", value: "7", delta: "Tous actifs" },
@@ -272,12 +272,12 @@ export const DASHBOARDS: Record<RoleId, RoleDashboard> = {
   },
   agent: {
     title: "Mes tâches",
-    sub: "Examens et Concours",
+    sub: "Bureau attribué",
     foot: "Agent de bureau",
-    activeBureaux: ["8"],
+    activeBureaux: null,
     banner: {
       tone: "teal",
-      text: "Vous consultez vos tâches dans Examens et Concours — droits : saisie.",
+      text: "Vous consultez vos tâches dans votre bureau - droits : saisie.",
     },
     kpis: [
       { label: "Dossiers qui vous sont assignés", value: "5", delta: "Aucun retard" },

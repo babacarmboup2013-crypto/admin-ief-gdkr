@@ -10,6 +10,7 @@ import { useRole } from "@/lib/role-context";
 import { fetchBureaux } from "@/lib/queries";
 import { useSession } from "@/lib/use-session";
 import { supabase } from "@/lib/supabase/client";
+import { estSecretariat as estSecretariatProfil, peutVoirCourriers as peutVoirCourriersProfil } from "@/lib/admin-perms";
 import type { Bureau } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
@@ -30,16 +31,32 @@ const MODULES = [
   { view: "reunions", label: "Réunions", icon: CalendarClock, href: "/reunions" },
 ];
 
+const COURIER_VIEWS = new Set(["courriers", "courriers-confidentiels", "recherche-courriers"]);
+
 export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void }) {
   const pathname = usePathname();
   const router = useRouter();
   const { role, profile } = useRole();
   const config = DASHBOARDS[role];
-  const activeBureaux = config.activeBureaux;
+  const activeBureaux =
+    (role === "responsable" || role === "agent") && profile.bureauId != null
+      ? [String(profile.bureauId)]
+      : config.activeBureaux;
   const [allBureaux, setAllBureaux] = useState<Bureau[]>([]);
   const [bureauCounts, setBureauCounts] = useState<Record<number, number>>({});
   const [direction, setDirection] = useState<{ nom_complet: string; fonction: string; email: string }[]>([]);
   const { session } = useSession();
+  // Les modules courriers sont réservés au Secrétariat, à l'IEF et au Super Admin.
+  const emailSecretariat = session?.user?.email === "sepaiefgranddakar@education.sn";
+  const estSecretariat = estSecretariatProfil(profile) || emailSecretariat;
+  const peutVoirCourriers = peutVoirCourriersProfil(role, profile) || emailSecretariat;
+  const estRH = role === "rh" || profile.bureauId === 7;
+  const peutVoirPersonnel = role === "super" || role === "chef" || estRH;
+  const modulesVisibles = MODULES.filter((m) => {
+    if (COURIER_VIEWS.has(m.view)) return peutVoirCourriers;
+    if (m.view === "personnel") return peutVoirPersonnel;
+    return true;
+  });
   const [pwDialogOpen, setPwDialogOpen] = useState(false);
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -210,7 +227,7 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
       <div className="mt-2 px-5 pb-2 text-[11px] text-[#7c8bab]">Modules</div>
       <nav className="px-3">
         <ul>
-          {MODULES.map((m) => {
+          {modulesVisibles.map((m) => {
             const active = m.href === "/" ? pathname === "/" : pathname.startsWith(m.href);
             return (
               <li key={m.view}>

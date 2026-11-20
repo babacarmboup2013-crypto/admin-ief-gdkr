@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib/supabase/client";
 import { useRole } from "@/lib/role-context";
-import { voitTousLesBureaux } from "@/lib/admin-perms";
+import { peutVoirCourriers, voitTousLesBureaux } from "@/lib/admin-perms";
 import { useBureauxRef } from "@/components/admin/use-refs";
 import {
   DateInput,
@@ -173,6 +173,17 @@ export default function RechercheCourriersPage() {
       return;
     }
     window.open(data.signedUrl, "_blank", "noopener,noreferrer");
+  }
+
+  if (!peutVoirCourriers(role, profile)) {
+    return (
+      <div className="rounded-lg border border-border bg-card p-8 text-center">
+        <h1 className="font-serif text-[20px] text-navy">Accès refusé</h1>
+        <p className="mt-2 text-[13.5px] text-ink-soft">
+          Cette rubrique est réservée au Secrétariat, à l&apos;IEF et au Super Admin.
+        </p>
+      </div>
+    );
   }
 
   return (

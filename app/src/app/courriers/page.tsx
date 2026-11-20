@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase/client";
 import { useRole } from "@/lib/role-context";
-import { voitTousLesBureaux } from "@/lib/admin-perms";
+import { peutVoirCourriers, voitTousLesBureaux } from "@/lib/admin-perms";
 import {
   DateInput,
   Field,
@@ -286,6 +286,17 @@ export default function CourriersPage() {
       return;
     }
     window.open(data.signedUrl, "_blank", "noopener,noreferrer");
+  }
+
+  if (!peutVoirCourriers(role, profile)) {
+    return (
+      <div className="rounded-lg border border-border bg-card p-8 text-center">
+        <h1 className="font-serif text-[20px] text-navy">Acc?s refus?</h1>
+        <p className="mt-2 text-[13.5px] text-ink-soft">
+          Cette rubrique est r?serv?e au Secr?tariat, ? l&apos;IEF et au Super Admin.
+        </p>
+      </div>
+    );
   }
 
   return (

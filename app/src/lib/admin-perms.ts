@@ -109,6 +109,38 @@ export function adminPerms(role: RoleId, profile: Profile): AdminPerms {
 }
 
 /** Seuls l'IEF (rôle chef) et le Super Admin ont une vue sur tous les bureaux. */
+const NOMS_BUREAUX: Record<number, string> = {
+  1: "Gestion financière",
+  2: "Gestion matérielle",
+  3: "Secrétariat",
+  4: "Suivi-Évaluation",
+  5: "Planification & Statistiques",
+  6: "Correspondant Numérique",
+  7: "Ressources Humaines",
+  8: "Examens et Concours",
+  9: "Bureau Genre",
+  10: "Communication & Partenariats",
+  11: "Enseignement Arabe",
+  23: "Personnel Subalterne",
+};
+
+export function nomBureau(bureauId: number | null | undefined): string {
+  if (bureauId == null) return "Bureau non attribué";
+  return NOMS_BUREAUX[bureauId] ?? ("Bureau n°" + bureauId);
+}
+
+export function estSecretariat(profile: Profile): boolean {
+  return profile.bureauId === 3 || profile.bureauId === 23;
+}
+
+export function peutVoirCourriers(role: RoleId, profile: Profile): boolean {
+  return role === "super" || role === "chef" || role === "secretaire" || estSecretariat(profile);
+}
+
+export function peutVoirPersonnel(role: RoleId, profile: Profile): boolean {
+  return role === "super" || role === "chef" || role === "rh" || profile.bureauId === 7;
+}
+
 export function voitTousLesBureaux(role: RoleId): boolean {
   return role === "super" || role === "chef";
 }

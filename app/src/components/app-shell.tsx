@@ -7,6 +7,7 @@ import { DASHBOARDS } from "@/lib/data";
 import { RoleContext, type Profile } from "@/lib/role-context";
 import type { RoleId } from "@/lib/types";
 import { supabase } from "@/lib/supabase/client";
+import { nomBureau } from "@/lib/admin-perms";
 import { useSession } from "@/lib/use-session";
 import { Sidebar } from "./sidebar";
 
@@ -81,6 +82,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   } else if (pathname.startsWith("/transmissions")) {
     title = "Transmissions internes";
     sub = "Courriers et dossiers transmis entre bureaux";
+  }
+
+  if ((role === "responsable" || role === "agent") && profile.bureauId != null) {
+    title = role === "agent"
+      ? `Mes tâches — ${nomBureau(profile.bureauId)}`
+      : `Tableau de bord — ${nomBureau(profile.bureauId)}`;
+    sub = `Bureau n°${profile.bureauId}`;
   }
   if (role === "rh" && !pathname.startsWith("/administration") && pathname !== "/discussions" && pathname !== "/reunions") {
     sub = "";
