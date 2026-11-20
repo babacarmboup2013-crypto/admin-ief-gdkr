@@ -142,11 +142,11 @@ function AuthForm() {
           src="/logo-ief.jpeg"
           alt=""
           aria-hidden
-          width={520}
-          height={520}
+          width={640}
+          height={640}
           unoptimized
           loading="eager"
-          className="pointer-events-none absolute left-1/2 top-1/2 h-[520px] w-[520px] max-h-[75vh] max-w-[80vw] -translate-x-1/2 -translate-y-1/2 select-none object-contain opacity-[0.06] mix-blend-multiply"
+          className="pointer-events-none absolute left-[54%] top-[52%] h-[640px] w-[640px] max-h-[85vh] max-w-[95vw] -translate-x-1/2 -translate-y-1/2 select-none object-contain opacity-[0.11] mix-blend-multiply"
         />
 
         <div className="relative z-10 w-full max-w-[440px]">
