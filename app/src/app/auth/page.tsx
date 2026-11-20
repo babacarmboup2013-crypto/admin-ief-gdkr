@@ -118,7 +118,7 @@ function AuthForm() {
 
         {/* Left column: branding */}
         <div className="hidden max-w-lg flex-col space-y-6 lg:flex">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center">
             <div className="flex size-[120px] shrink-0 items-center justify-center rounded-2xl bg-white/90 p-2 shadow-sm">
               <Image
                 src="/logo-ief.jpeg"
@@ -129,14 +129,6 @@ function AuthForm() {
                 loading="eager"
                 className="size-full object-contain"
               />
-            </div>
-            <div>
-              <div className="font-serif text-[20px] text-[#1b2a4a]">
-                IEF Grand Dakar
-              </div>
-              <div className="text-[12px] text-[#6b7a8a]">
-                Inspection de l&apos;Éducation et de la Formation
-              </div>
             </div>
           </div>
           <h2 className="text-[38px] font-extrabold leading-[1.15] text-[#1b2a4a]">
