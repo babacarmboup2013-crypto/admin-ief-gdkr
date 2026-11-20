@@ -4,7 +4,7 @@ import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase/client";
 import { useSession } from "@/lib/use-session";
-import { Eye, EyeOff, KeyRound, Home } from "lucide-react";
+import { ArrowRight, Eye, EyeOff, Home, KeyRound, Mail } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -19,8 +19,7 @@ function AuthForm() {
   const [showPw, setShowPw] = useState(false);
   const [now, setNow] = useState<Date | null>(null);
 
-  // Date et heure courantes, rafraîchies toutes les 30 secondes.
-  // Initialisées après l'hydratation pour éviter un écart SSR / navigateur.
+  // Horloge du bandeau : initialisée après hydratation, rafraîchie toutes les 30 s.
   useEffect(() => {
     const refresh = () => setNow(new Date());
     refresh();
@@ -28,17 +27,22 @@ function AuthForm() {
     return () => window.clearInterval(timer);
   }, []);
 
-  const next = searchParams.get("next") || "/";
-  const dateLabel = now
-    ? now.toLocaleString("fr-FR", {
+  const timeLabel = now
+    ? now.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })
+    : "";
+  const dateRaw = now
+    ? now.toLocaleDateString("fr-FR", {
         weekday: "long",
         day: "numeric",
         month: "long",
         year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
       })
     : "";
+  const dateLabel = dateRaw
+    ? dateRaw.charAt(0).toUpperCase() + dateRaw.slice(1)
+    : "";
+
+  const next = searchParams.get("next") || "/";
 
   useEffect(() => {
     if (session) {
@@ -67,146 +71,174 @@ function AuthForm() {
   }
 
   return (
-    <div
-      className="relative flex min-h-dvh w-full items-center justify-center overflow-hidden"
-      style={{ background: "linear-gradient(135deg, #f7efdb 0%, #fdf8ef 30%, #f0e8d4 60%, #faf6ee 100%)" }}
-    >
-      {/* Decorative radial blurs - larger, more visible */}
-      <div className="pointer-events-none absolute left-[5%] top-[5%] h-[600px] w-[600px] rounded-full bg-[#1b2a4a]/[0.04] blur-[100px]" />
-      <div className="pointer-events-none absolute bottom-[0%] right-[10%] h-[450px] w-[450px] rounded-full bg-[#c89b3c]/[0.06] blur-[80px]" />
-      <div className="pointer-events-none absolute left-[40%] top-[60%] h-[400px] w-[400px] rounded-full bg-[#1b2a4a]/[0.03] blur-[90px]" />
-
-      {/* Logo en filigrane */}
-      <Image
-        src="/logo-ief.jpeg"
-        alt=""
-        aria-hidden
-        width={520}
-        height={520}
-        unoptimized
-        loading="eager"
-        className="pointer-events-none absolute left-1/2 top-1/2 h-[520px] w-[520px] max-h-[75vh] max-w-[75vw] -translate-x-1/2 -translate-y-1/2 select-none object-contain opacity-[0.07] mix-blend-multiply"
-      />
-
-      {/* Decorative large faded shapes */}
-      <div
-        className="pointer-events-none absolute left-[8%] top-[10%] h-[600px] w-[500px] rounded-[80px] opacity-[0.035]"
-        style={{ background: "linear-gradient(135deg, #1b2a4a, #101c33)" }}
-      />
-      <div
-        className="pointer-events-none absolute right-[5%] bottom-[10%] h-[300px] w-[300px] rounded-full opacity-[0.03]"
-        style={{ background: "linear-gradient(135deg, #c89b3c, #a87d2a)" }}
-      />
-
-      {/* Home button */}
-      <Link
-        href="/"
-        className="absolute left-5 top-5 z-50 flex size-[42px] items-center justify-center rounded-full border-2 border-[#1b2a4a]/25 bg-white/80 text-[#1b2a4a] shadow-sm backdrop-blur-sm transition-all hover:bg-white hover:shadow-md"
+    <div className="grid min-h-dvh w-full grid-cols-1 overflow-hidden bg-[#f6f7fb] lg:grid-cols-2">
+      {/* ---------------- Bandeau gauche ---------------- */}
+      <section
+        className="relative flex min-h-[300px] flex-col items-center justify-center overflow-hidden px-6 py-14 text-white lg:min-h-dvh lg:px-12"
+        style={{ background: "linear-gradient(145deg, #1b2a4a 0%, #14213c 55%, #0a1426 100%)" }}
       >
-        <Home className="size-5" />
-      </Link>
+        {/* Cercles décoratifs */}
+        <div className="pointer-events-none absolute -right-20 -top-20 size-[300px] rounded-full bg-white/[0.06]" />
+        <div className="pointer-events-none absolute -bottom-24 -left-16 size-[350px] rounded-full bg-white/[0.04]" />
+        <div className="pointer-events-none absolute left-[-40px] top-[40%] size-[150px] rounded-full bg-white/[0.05]" />
 
-      {/* Date et heure courantes */}
-      {dateLabel && (
-        <div className="absolute right-5 top-5 z-50 max-w-[70vw] truncate rounded-full border border-[#1b2a4a]/15 bg-white/80 px-3 py-1.5 text-[11px] font-medium text-[#1b2a4a] shadow-sm backdrop-blur-sm sm:max-w-none sm:text-[12px]">
-          {dateLabel}
-        </div>
-      )}
+        {/* Retour accueil */}
+        <Link
+          href="/"
+          aria-label="Retour à l'accueil"
+          className="absolute left-5 top-5 z-20 flex size-[42px] items-center justify-center rounded-full border border-white/25 bg-white/10 text-white backdrop-blur-sm transition-colors hover:bg-white/20"
+        >
+          <Home className="size-5" />
+        </Link>
 
-      {/* Main content - full width split layout */}
-      <div className="relative z-10 flex w-full max-w-7xl flex-col items-center gap-12 px-6 py-10 lg:flex-row lg:justify-center lg:gap-28">
+        <div className="relative z-10 flex flex-col items-center text-center">
+          {/* Logo IEF */}
+          <div className="mb-8 flex size-[120px] items-center justify-center rounded-[26px] bg-white p-3 shadow-[0_20px_40px_rgba(0,0,0,0.3)]">
+            <Image
+              src="/logo-ief.jpeg"
+              alt="Logo officiel de l'IEF Grand Dakar"
+              width={120}
+              height={120}
+              unoptimized
+              loading="eager"
+              className="size-full object-contain"
+            />
+          </div>
 
-        {/* Left column: branding */}
-        <div className="hidden max-w-lg flex-col space-y-6 lg:flex">
-          <div className="flex items-center">
-            <div className="flex size-[120px] shrink-0 items-center justify-center rounded-2xl bg-white/90 p-2 shadow-sm">
-              <Image
-                src="/logo-ief.jpeg"
-                alt="Logo officiel de l'IEF Grand Dakar"
-                width={120}
-                height={120}
-                unoptimized
-                loading="eager"
-                className="size-full object-contain"
-              />
+          {/* Horloge et date */}
+          {timeLabel && (
+            <div className="text-[64px] font-extrabold leading-none tracking-tight text-white sm:text-[76px]">
+              {timeLabel}
             </div>
-          </div>
-          <h2 className="text-[38px] font-extrabold leading-[1.15] text-[#1b2a4a]">
-            L&apos;administration IEF,<br />
-            <span className="text-[#c89b3c]">simple et efficace.</span>
-          </h2>
-          <p className="text-[15px] leading-relaxed text-[#6b7a8a]">
-            La plateforme centralisée de l&apos;Inspection de l&apos;Éducation
-            et de la Formation de Grand Dakar — gérer le personnel, les écoles,
-            les dossiers, les rapports, les réunions et la communication
-            entre tous les bureaux de l&apos;IEF en un seul endroit.
+          )}
+          {dateLabel && (
+            <div className="mt-4 text-[15px] font-medium tracking-wide text-white/70 sm:text-[18px]">
+              {dateLabel}
+            </div>
+          )}
+
+          <div className="mt-9 h-px w-16 bg-white/25" />
+          <p className="mt-6 max-w-[320px] text-[13px] leading-relaxed text-white/60">
+            Portail d&apos;administration de l&apos;Inspection de l&apos;Éducation
+            et de la Formation de Grand Dakar.
           </p>
-          <div className="flex flex-wrap gap-3 pt-2">
-            {["Personnel", "Écoles", "Dossiers", "Rapports", "Réunions", "Discussions"].map((item) => (
-              <span key={item} className="rounded-full border border-[#1b2a4a]/10 bg-white/60 px-4 py-1.5 text-[12px] font-medium text-[#1b2a4a]/70">
-                {item}
-              </span>
-            ))}
-          </div>
         </div>
 
-        {/* Right column: card */}
-        <div className="w-full max-w-2xl">
-          {/* Login card */}
-          <div
-            className="rounded-2xl border border-[#e3ddd0] bg-white px-12 py-12 shadow-[0_2px_4px_rgba(27,42,74,0.04),0_16px_40px_-8px_rgba(27,42,74,0.10)] sm:px-14 sm:py-14"
-            style={{ transition: "transform .25s, box-shadow .25s, border-color .25s" }}
-          >
+        <div className="absolute bottom-6 z-10 text-center text-[11px] text-white/35">
+          © 2026 CN IEF Grand Dakar — Tous droits réservés
+        </div>
+      </section>
+
+      {/* ---------------- Panneau droit ---------------- */}
+      <section
+        className="relative flex items-center justify-center overflow-hidden px-5 py-10 sm:px-8 lg:py-16"
+        style={{
+          background:
+            "radial-gradient(circle at 85% 8%, rgba(200,155,60,0.10) 0, transparent 42%), radial-gradient(circle at 8% 92%, rgba(27,42,74,0.07) 0, transparent 36%), #f6f7fb",
+        }}
+      >
+        {/* Logo en filigrane */}
+        <Image
+          src="/logo-ief.jpeg"
+          alt=""
+          aria-hidden
+          width={520}
+          height={520}
+          unoptimized
+          loading="eager"
+          className="pointer-events-none absolute left-1/2 top-1/2 h-[520px] w-[520px] max-h-[75vh] max-w-[80vw] -translate-x-1/2 -translate-y-1/2 select-none object-contain opacity-[0.06] mix-blend-multiply"
+        />
+
+        <div className="relative z-10 w-full max-w-[440px]">
+          <div className="rounded-[20px] border border-[#e6e8f0] bg-white px-8 py-9 shadow-[0_1px_2px_rgba(26,33,56,0.04),0_24px_48px_-24px_rgba(26,33,56,0.20)] sm:px-9 sm:py-10">
+            {/* En-tête */}
+            <div className="mb-6">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#f3f0e6] px-3 py-1 text-[11px] font-semibold text-[#8a6a1f]">
+                <KeyRound className="size-3.5" />
+                Espace sécurisé
+              </span>
+              <h1 className="mt-4 text-[26px] font-extrabold tracking-tight text-[#1b2a4a]">
+                Connexion
+              </h1>
+              <p className="mt-1 text-[13px] leading-relaxed text-[#8a92a8]">
+                Accédez à votre espace d&apos;administration IEF Grand Dakar.
+              </p>
+            </div>
+
+            {/* Étapes */}
+            <div className="mb-6 flex items-center gap-2.5" aria-label="Étape 1 sur 2">
+              <span className="inline-flex items-center gap-2 whitespace-nowrap text-[12px] font-semibold text-[#1b2a4a]">
+                <span className="grid size-[22px] place-items-center rounded-full bg-[#1b2a4a] text-[11px] font-bold text-white shadow-[0_0_0_4px_rgba(27,42,74,0.08)]">
+                  1
+                </span>
+                Identifiant
+              </span>
+              <span className="h-0.5 flex-1 rounded bg-[#e6e8f0]" />
+              <span className="inline-flex items-center gap-2 whitespace-nowrap text-[12px] font-semibold text-[#8a92a8]">
+                <span className="grid size-[22px] place-items-center rounded-full border border-[#e6e8f0] bg-[#f6f7fb] text-[11px] font-bold text-[#8a92a8]">
+                  2
+                </span>
+                Mot de passe
+              </span>
+            </div>
+
+            {/* Logo dans la carte */}
             <div className="mb-6 flex justify-center">
               <Image
                 src="/logo-ief.jpeg"
                 alt="Logo officiel de l'IEF Grand Dakar"
-                width={144}
-                height={144}
+                width={112}
+                height={112}
                 unoptimized
                 loading="eager"
-                className="size-36 object-contain"
+                className="size-28 object-contain"
               />
             </div>
-            <h2 className="mb-8 text-center text-[22px] font-semibold text-[#1b2a4a]">
-              Connexion
-            </h2>
 
-            <form onSubmit={onSubmit} className="flex flex-col gap-6">
+            <form onSubmit={onSubmit} className="flex flex-col gap-4">
               {/* Email */}
               <div>
-                <label className="mb-2 block text-[13px] font-semibold text-[#4a5568]">
-                  Email
+                <label htmlFor="email" className="mb-1.5 block text-[13px] font-semibold text-[#4b5371]">
+                  E-mail professionnel
                 </label>
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="prenom@ief.local"
-                  className="w-full rounded-xl border border-[#e3ddd0] bg-[#faf8f4] px-5 py-3.5 text-[14px] text-[#1b2a4a] placeholder:text-[#b0b8c0] outline-none transition-all focus:border-[#1b2a4a] focus:bg-white focus:ring-2 focus:ring-[#1b2a4a]/10"
-                />
+                <div className="relative">
+                  <Mail className="pointer-events-none absolute left-4 top-1/2 size-[18px] -translate-y-1/2 text-[#a9b0c2]" />
+                  <input
+                    id="email"
+                    type="email"
+                    required
+                    autoFocus
+                    autoComplete="username"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="prenom.nom@ief.local"
+                    className="h-12 w-full rounded-xl border border-[#e6e8f0] bg-white pl-11 pr-4 text-[14px] text-[#1b2a4a] placeholder:text-[#a9b0c2] outline-none transition-all hover:border-[#cfd4e3] focus:border-[#1b2a4a] focus:ring-4 focus:ring-[#1b2a4a]/10"
+                  />
+                </div>
               </div>
 
-              {/* Password */}
+              {/* Mot de passe */}
               <div>
-                <label className="mb-2 block text-[13px] font-semibold text-[#4a5568]">
+                <label htmlFor="password" className="mb-1.5 block text-[13px] font-semibold text-[#4b5371]">
                   Mot de passe
                 </label>
                 <div className="relative">
-                  <KeyRound className="absolute left-4 top-1/2 size-[18px] -translate-y-1/2 text-[#b0b8c0]" />
+                  <KeyRound className="pointer-events-none absolute left-4 top-1/2 size-[18px] -translate-y-1/2 text-[#a9b0c2]" />
                   <input
+                    id="password"
                     type={showPw ? "text" : "password"}
                     required
+                    autoComplete="current-password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••••"
-                    className="w-full rounded-xl border border-[#e3ddd0] bg-[#faf8f4] py-3.5 pl-11 pr-12 text-[14px] text-[#1b2a4a] placeholder:text-[#b0b8c0] outline-none transition-all focus:border-[#1b2a4a] focus:bg-white focus:ring-2 focus:ring-[#1b2a4a]/10"
+                    className="h-12 w-full rounded-xl border border-[#e6e8f0] bg-white pl-11 pr-12 text-[14px] text-[#1b2a4a] placeholder:text-[#a9b0c2] outline-none transition-all hover:border-[#cfd4e3] focus:border-[#1b2a4a] focus:ring-4 focus:ring-[#1b2a4a]/10"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPw((v) => !v)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-[#b0b8c0] hover:text-[#6b7a8a] cursor-pointer"
+                    aria-label={showPw ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg p-2 text-[#a9b0c2] transition-colors hover:bg-[#f6f7fb] hover:text-[#4b5371]"
                   >
                     {showPw ? <EyeOff className="size-[18px]" /> : <Eye className="size-[18px]" />}
                   </button>
@@ -214,7 +246,7 @@ function AuthForm() {
               </div>
 
               {error && (
-                <div className="rounded-xl border border-red-300/40 bg-red-50 px-5 py-3.5 text-[13px] text-red-600">
+                <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] leading-relaxed text-red-600">
                   {error}
                 </div>
               )}
@@ -222,18 +254,19 @@ function AuthForm() {
               <button
                 type="submit"
                 disabled={busy}
-                className="mt-1 w-full cursor-pointer rounded-xl bg-gradient-to-r from-[#1b2a4a] to-[#101c33] py-4 text-[15px] font-semibold text-white shadow-lg shadow-[#1b2a4a]/20 transition-all hover:shadow-xl hover:shadow-[#1b2a4a]/30 disabled:opacity-60"
+                className="group mt-2 flex h-[50px] w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#1b2a4a] to-[#101c33] text-[15px] font-semibold text-white shadow-[0_10px_20px_-8px_rgba(27,42,74,0.6)] transition-all hover:-translate-y-px hover:shadow-[0_14px_26px_-8px_rgba(27,42,74,0.7)] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
               >
                 {busy ? "Patientez…" : "Se connecter"}
+                {!busy && <ArrowRight className="size-[18px] transition-transform group-hover:translate-x-0.5" />}
               </button>
             </form>
           </div>
 
-          <p className="mt-6 text-center text-[11px] text-[#9ca3af]">
-            © 2026 CN IEF Grand Dakar Built by Groupe InTechSoft Enterprises — Tous droits réservés
+          <p className="mt-5 text-center text-[12px] text-[#9aa2b4]">
+            Accès réservé au personnel de l&apos;IEF Grand Dakar.
           </p>
         </div>
-      </div>
+      </section>
     </div>
   );
 }
