@@ -69,6 +69,75 @@ function RowCellView({ cell }: { cell: RowCell }) {
   return <span className={cn(cell.muted && "text-ink-soft")}>{cell.text}</span>;
 }
 
+function ChartView({ panel }: { panel: Extract<Panel, { type: "chart" }> }) {
+  const max = Math.max(1, ...panel.rows.map((r) => r.total));
+
+  return (
+    <div className="px-3 py-3 sm:px-5 sm:py-4">
+      {panel.subtitle && (
+        <p className="mb-2.5 text-[11px] leading-relaxed text-ink-soft sm:text-[12px]">{panel.subtitle}</p>
+      )}
+
+      <div className="mb-3 flex flex-wrap items-center gap-x-4 gap-y-1.5">
+        {panel.legend.map((segment) => (
+          <span key={segment.label} className="inline-flex items-center gap-1.5 text-[10px] text-ink-soft sm:text-[11px]">
+            <span className="size-2 rounded-full" style={{ backgroundColor: segment.color }} />
+            {segment.label}
+          </span>
+        ))}
+      </div>
+
+      <div className="max-h-[420px] space-y-2.5 overflow-y-auto pr-1">
+        {panel.rows.length === 0 ? (
+          <div className="py-6 text-center text-[12px] text-ink-soft">Aucune donnée disponible.</div>
+        ) : (
+          panel.rows.map((row) => (
+            <div key={row.label}>
+              <div className="mb-1 flex items-baseline justify-between gap-3">
+                <span className="truncate text-[11px] text-ink sm:text-[12px]" title={row.label}>
+                  {row.label}
+                </span>
+                <span className="shrink-0 text-[11px] font-semibold text-navy">
+                  {row.total}
+                  {row.detail && <span className="ml-1.5 font-normal text-ink-soft">· {row.detail}</span>}
+                </span>
+              </div>
+              <div
+                className="flex h-2 w-full overflow-hidden rounded-full bg-[#eef1f6]"
+                role="img"
+                aria-label={`${row.label} : ${row.total} agents`}
+              >
+                {row.segments.map((segment) => (
+                  <div
+                    key={segment.label}
+                    className="h-full transition-[width] duration-300"
+                    style={{
+                      width: `${(segment.value / max) * 100}%`,
+                      backgroundColor: segment.color,
+                    }}
+                    title={`${segment.label} : ${segment.value}`}
+                  />
+                ))}
+              </div>
+              {row.segments.some((s) => s.value > 0) && (
+                <div className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-[10px] text-ink-soft">
+                  {row.segments
+                    .filter((s) => s.value > 0)
+                    .map((s) => (
+                      <span key={s.label}>
+                        {s.label} {s.value}
+                      </span>
+                    ))}
+                </div>
+              )}
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  );
+}
+
 export function Panel({ panel }: { panel: Panel }) {
   return (
     <div className="flex flex-col overflow-hidden rounded-lg border border-border bg-card">
@@ -77,7 +146,9 @@ export function Panel({ panel }: { panel: Panel }) {
         {panel.link && <span className="text-[10px] font-medium text-teal sm:text-xs">{panel.link}</span>}
       </div>
 
-      {panel.type === "table" ? (
+      {panel.type === "chart" ? (
+        <ChartView panel={panel} />
+      ) : panel.type === "table" ? (
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>

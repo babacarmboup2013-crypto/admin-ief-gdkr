@@ -45,7 +45,29 @@ export interface NamedListPanel {
   items: { name: string; meta: string }[];
 }
 
-export type Panel = TablePanel | PeoplePanel | NamedListPanel;
+export interface ChartSegment {
+  label: string;
+  color: string;
+  value: number;
+}
+
+export interface ChartRow {
+  label: string;
+  total: number;
+  segments: ChartSegment[];
+  detail?: string;
+}
+
+export interface ChartPanel {
+  type: "chart";
+  title: string;
+  link?: string;
+  subtitle?: string;
+  rows: ChartRow[];
+  legend: ChartSegment[];
+}
+
+export type Panel = TablePanel | PeoplePanel | NamedListPanel | ChartPanel;
 
 export type BannerTone = "teal" | "gold" | "red";
 
