@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase/client";
 import { useSession } from "@/lib/use-session";
@@ -17,7 +17,10 @@ function AuthForm() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showPw, setShowPw] = useState(false);
+  const [etapeActive, setEtapeActive] = useState<1 | 2>(1);
   const [now, setNow] = useState<Date | null>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
 
   // Horloge du bandeau : initialisée après hydratation, rafraîchie toutes les 30 s.
   useEffect(() => {
@@ -165,21 +168,61 @@ function AuthForm() {
               </p>
             </div>
 
-            {/* Étapes */}
-            <div className="mb-6 flex items-center gap-2.5" aria-label="Étape 1 sur 2">
-              <span className="inline-flex items-center gap-2 whitespace-nowrap text-[12px] font-semibold text-[#1b2a4a]">
-                <span className="grid size-[22px] place-items-center rounded-full bg-[#1b2a4a] text-[11px] font-bold text-white shadow-[0_0_0_4px_rgba(27,42,74,0.08)]">
-                  1
-                </span>
-                Identifiant
-              </span>
-              <span className="h-0.5 flex-1 rounded bg-[#e6e8f0]" />
-              <span className="inline-flex items-center gap-2 whitespace-nowrap text-[12px] font-semibold text-[#8a92a8]">
-                <span className="grid size-[22px] place-items-center rounded-full border border-[#e6e8f0] bg-[#f6f7fb] text-[11px] font-bold text-[#8a92a8]">
-                  2
-                </span>
-                Mot de passe
-              </span>
+            {/* Étapes — segmented control animé qui suit le champ actif */}
+            <div className="mb-6" aria-label={`Étape ${etapeActive} sur 2`}>
+              <div className="relative grid grid-cols-2 rounded-xl border border-[#e6e8f0] bg-[#f6f7fb] p-1">
+                {/* Pilule coulissante */}
+                <span
+                  aria-hidden
+                  className="pointer-events-none absolute inset-y-1 left-1 w-[calc(50%_-_4px)] rounded-lg bg-gradient-to-r from-[#1b2a4a] to-[#101c33] shadow-[0_8px_18px_-8px_rgba(27,42,74,0.85)] transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
+                  style={{ transform: etapeActive === 2 ? "translateX(100%)" : "translateX(0)" }}
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEtapeActive(1);
+                    emailRef.current?.focus();
+                  }}
+                  className={`relative z-10 flex items-center justify-center gap-2 rounded-lg py-2 text-[12px] font-semibold transition-colors duration-300 ${
+                    etapeActive === 1 ? "text-white" : "text-[#8a92a8] hover:text-[#4b5371]"
+                  }`}
+                >
+                  <span
+                    className={`grid size-[20px] place-items-center rounded-full text-[10px] font-bold transition-colors duration-300 ${
+                      etapeActive === 1 ? "bg-white/20 text-white" : "bg-white text-[#8a92a8]"
+                    }`}
+                  >
+                    1
+                  </span>
+                  Identifiant
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEtapeActive(2);
+                    passwordRef.current?.focus();
+                  }}
+                  className={`relative z-10 flex items-center justify-center gap-2 rounded-lg py-2 text-[12px] font-semibold transition-colors duration-300 ${
+                    etapeActive === 2 ? "text-white" : "text-[#8a92a8] hover:text-[#4b5371]"
+                  }`}
+                >
+                  <span
+                    className={`grid size-[20px] place-items-center rounded-full text-[10px] font-bold transition-colors duration-300 ${
+                      etapeActive === 2 ? "bg-white/20 text-white" : "bg-white text-[#8a92a8]"
+                    }`}
+                  >
+                    2
+                  </span>
+                  Mot de passe
+                </button>
+              </div>
+              {/* Barre de progression */}
+              <div className="mt-2 h-0.5 w-full overflow-hidden rounded-full bg-[#e6e8f0]">
+                <span
+                  className="block h-full rounded-full bg-gradient-to-r from-[#c89b3c] to-[#e0bd6d] transition-[width] duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
+                  style={{ width: etapeActive === 2 ? "100%" : "50%" }}
+                />
+              </div>
             </div>
 
             {/* Logo dans la carte */}
@@ -204,6 +247,7 @@ function AuthForm() {
                 <div className="relative">
                   <Mail className="pointer-events-none absolute left-4 top-1/2 size-[18px] -translate-y-1/2 text-[#a9b0c2]" />
                   <input
+                    ref={emailRef}
                     id="email"
                     type="email"
                     required
@@ -211,6 +255,8 @@ function AuthForm() {
                     autoComplete="username"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    onFocus={() => setEtapeActive(1)}
+                    onClick={() => setEtapeActive(1)}
                     placeholder="prenom.nom@ief.local"
                     className="h-12 w-full rounded-xl border border-[#e6e8f0] bg-white pl-11 pr-4 text-[14px] text-[#1b2a4a] placeholder:text-[#a9b0c2] outline-none transition-all hover:border-[#cfd4e3] focus:border-[#1b2a4a] focus:ring-4 focus:ring-[#1b2a4a]/10"
                   />
@@ -225,12 +271,15 @@ function AuthForm() {
                 <div className="relative">
                   <KeyRound className="pointer-events-none absolute left-4 top-1/2 size-[18px] -translate-y-1/2 text-[#a9b0c2]" />
                   <input
+                    ref={passwordRef}
                     id="password"
                     type={showPw ? "text" : "password"}
                     required
                     autoComplete="current-password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    onFocus={() => setEtapeActive(2)}
+                    onClick={() => setEtapeActive(2)}
                     placeholder="••••••••••"
                     className="h-12 w-full rounded-xl border border-[#e6e8f0] bg-white pl-11 pr-12 text-[14px] text-[#1b2a4a] placeholder:text-[#a9b0c2] outline-none transition-all hover:border-[#cfd4e3] focus:border-[#1b2a4a] focus:ring-4 focus:ring-[#1b2a4a]/10"
                   />
