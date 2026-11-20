@@ -51,7 +51,7 @@ export const ROLES: { id: RoleId; label: string }[] = [
 export const DASHBOARDS: Record<RoleId, RoleDashboard> = {
   super: {
     title: "Vue d'ensemble",
-    sub: "Tous les bureaux — samedi 12 septembre 2026",
+    sub: "Tous les bureaux",
     foot: "Super Admin",
     activeBureaux: null,
     kpis: [
@@ -106,7 +106,7 @@ export const DASHBOARDS: Record<RoleId, RoleDashboard> = {
   },
   chef: {
     title: "Validation transversale",
-    sub: "Tous les bureaux — samedi 12 septembre 2026",
+    sub: "Tous les bureaux",
     foot: "IEF — Chef Admin",
     activeBureaux: null,
     banner: {
@@ -162,7 +162,7 @@ export const DASHBOARDS: Record<RoleId, RoleDashboard> = {
   },
   secretaire: {
     title: "Espace Secrétaire Général",
-    sub: "Adjoint du Chef Admin — samedi 12 septembre 2026",
+    sub: "Adjoint du Chef Admin",
     foot: "Secrétaire Général",
     activeBureaux: null,
     kpis: [
@@ -174,7 +174,7 @@ export const DASHBOARDS: Record<RoleId, RoleDashboard> = {
   },
   inspecteur: {
     title: "Supervision des bureaux assignés",
-    sub: "3 bureaux — samedi 12 septembre 2026",
+    sub: "3 bureaux",
     foot: "Inspecteur de district",
     activeBureaux: ["1", "8", "9"],
     banner: {
@@ -217,7 +217,7 @@ export const DASHBOARDS: Record<RoleId, RoleDashboard> = {
   },
   responsable: {
     title: "Tableau de bord — Ressources Humaines",
-    sub: "Bureau n°7 — samedi 12 septembre 2026",
+    sub: "Bureau n°7",
     foot: "Responsable de bureau",
     activeBureaux: ["7"],
     banner: {
@@ -272,7 +272,7 @@ export const DASHBOARDS: Record<RoleId, RoleDashboard> = {
   },
   agent: {
     title: "Mes tâches",
-    sub: "Examens et Concours — samedi 12 septembre 2026",
+    sub: "Examens et Concours",
     foot: "Agent de bureau",
     activeBureaux: ["8"],
     banner: {

@@ -33,6 +33,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { session } = useSession();
   const uid = session?.user?.id ?? null;
+  const [now, setNow] = useState<Date | null>(null);
+
+  // Date et heure courantes, rafraîchies toutes les 30 secondes.
+  // Initialisées après l'hydratation pour éviter un écart SSR / navigateur.
+  useEffect(() => {
+    const refresh = () => setNow(new Date());
+    refresh();
+    const timer = window.setInterval(refresh, 30_000);
+    return () => window.clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     if (!uid || !supabase) return;
@@ -76,6 +86,18 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     sub = "";
   }
 
+  const dateLabel = now
+    ? now.toLocaleString("fr-FR", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      })
+    : "";
+  if (sub && dateLabel) sub = `${sub} — ${dateLabel}`;
+
   if (pathname === "/auth") {
     return (
       <RoleContext.Provider value={{ role, setRole, uid, profile }}>
@@ -99,7 +121,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <main className="min-w-0 flex-1 px-3 pb-14 pt-4 sm:px-5 lg:px-9 lg:pt-8">
           {role === "rh" && !pathname.startsWith("/administration") && pathname !== "/discussions" && pathname !== "/reunions" && (
             <div className="mb-2 text-right text-[11px] text-ink-soft sm:text-[12px]">
-              {new Date().toLocaleString("fr-SN", { dateStyle: "full", timeStyle: "short" })}
+              {dateLabel}
             </div>
           )}
           <div className="mb-5 flex flex-wrap items-start justify-between gap-3 sm:mb-7 sm:gap-5">
