@@ -22,7 +22,7 @@ import {
   fmtDate,
   type CourrierRow,
 } from "@/lib/admin-types";
-import { Download, FileText, Mail, Send, Trash2 } from "lucide-react";
+import { Archive, Download, FileText, Mail, RotateCcw, Send, Trash2 } from "lucide-react";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 Mo, comme dans le formulaire source
 const ACCEPTED_FILES =
@@ -257,13 +257,11 @@ export default function CourriersPage() {
     if (!supabase) return;
     if (
       !window.confirm(
-        `Supprimer le courrier n° ${row.numero_reference ?? row.id} ?`
+        `Supprimer le courrier n? ${row.numero_reference ?? row.id} ?`
       )
     )
       return;
-    if (row.fichier_path) {
-      await supabase.storage.from("courriers").remove([row.fichier_path]);
-    }
+
     const { error: e } = await supabase
       .from("courriers")
       .delete()
@@ -272,7 +270,35 @@ export default function CourriersPage() {
       setError(e.message);
       return;
     }
+
+    let message = "Courrier supprim?.";
+    if (row.fichier_path) {
+      const { error: storageError } = await supabase.storage
+        .from("courriers")
+        .remove([row.fichier_path]);
+      if (storageError) {
+        message = "Courrier supprim?. Le fichier joint n'a pas pu ?tre retir? du stockage.";
+      }
+    }
+    setSuccess(message);
     if (editingId === row.id) resetForm();
+    refresh();
+  }
+
+  async function setArchive(row: CourrierRow, archiver: boolean) {
+    if (!supabase) return;
+    const { error: e } = await supabase
+      .from("courriers")
+      .update({
+        statut: archiver ? "archive" : "soumis",
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", row.id);
+    if (e) {
+      setError(e.message);
+      return;
+    }
+    setSuccess(archiver ? "Courrier archiv?." : "Courrier d?sarchiv?.");
     refresh();
   }
 
@@ -599,6 +625,22 @@ export default function CourriersPage() {
                       </td>
                       <td className="px-5 py-2.5">
                         <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setArchive(row, row.statut !== "archive")}
+                            title={row.statut === "archive" ? "D?sarchiver" : "Archiver"}
+                            className="inline-flex items-center gap-1 text-primary hover:underline"
+                          >
+                            {row.statut === "archive" ? (
+                              <>
+                                <RotateCcw className="size-3.5" /> D?sarchiver
+                              </>
+                            ) : (
+                              <>
+                                <Archive className="size-3.5" /> Archiver
+                              </>
+                            )}
+                          </button>
                           <button
                             type="button"
                             onClick={() => setTransmissionObjet(row)}
