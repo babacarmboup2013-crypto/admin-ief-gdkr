@@ -16,6 +16,8 @@ export function TransmissionDialog({
   objetRef = null,
   objetTitre = null,
   bureauSourceId = null,
+  fichierPath = null,
+  fichierNom = null,
   onSaved,
 }: {
   open: boolean;
@@ -25,6 +27,8 @@ export function TransmissionDialog({
   objetRef?: string | null;
   objetTitre?: string | null;
   bureauSourceId?: number | null;
+  fichierPath?: string | null;
+  fichierNom?: string | null;
   onSaved?: () => void;
 }) {
   const { uid, profile } = useRole();
@@ -53,6 +57,8 @@ export function TransmissionDialog({
           bureau_destinataire_id: destId,
           expediteur_id: uid,
           note: note.trim() || null,
+          fichier_path: fichierPath ?? null,
+          fichier_nom: fichierNom ?? null,
           statut: "en_attente",
         })
       ).error
@@ -103,6 +109,9 @@ export function TransmissionDialog({
         {objetRef ? <span className="font-mono">{objetRef} — </span> : null}
         <span className="font-medium">{objetTitre ?? `#${objetId}`}</span>
       </div>
+      {fichierNom ? (
+        <div className="mt-1 text-[12px] text-ink-soft">Pièce jointe : {fichierNom}</div>
+      ) : null}
       <Field label="Bureau destinataire">
         <SelectInput value={destinataire} onChange={(e) => setDestinataire(e.target.value)} autoFocus>
           <option value="">— Choisir un bureau —</option>

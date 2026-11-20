@@ -10,7 +10,7 @@ import { useRole } from "@/lib/role-context";
 import { fetchBureaux } from "@/lib/queries";
 import { useSession } from "@/lib/use-session";
 import { supabase } from "@/lib/supabase/client";
-import { estSecretariat as estSecretariatProfil, peutVoirCourriers as peutVoirCourriersProfil } from "@/lib/admin-perms";
+import { peutVoirCourriers as peutVoirCourriersProfil } from "@/lib/admin-perms";
 import type { Bureau } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
@@ -48,7 +48,6 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
   const { session } = useSession();
   // Les modules courriers sont réservés au Secrétariat, à l'IEF et au Super Admin.
   const emailSecretariat = session?.user?.email === "sepaiefgranddakar@education.sn";
-  const estSecretariat = estSecretariatProfil(profile) || emailSecretariat;
   const peutVoirCourriers = peutVoirCourriersProfil(role, profile) || emailSecretariat;
   const estRH = role === "rh" || profile.bureauId === 7;
   const peutVoirPersonnel = role === "super" || role === "chef" || estRH;

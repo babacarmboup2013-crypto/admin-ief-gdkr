@@ -153,6 +153,8 @@ export interface TransmissionRow {
   statut: string;
   date_transmission: string;
   date_reponse: string | null;
+  fichier_path: string | null;
+  fichier_nom: string | null;
   traite_par: string | null;
   created_at: string | null;
 }

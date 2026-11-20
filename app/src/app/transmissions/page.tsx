@@ -13,7 +13,7 @@ import {
   fmtDate,
   type TransmissionRow,
 } from "@/lib/admin-types";
-import { ArrowRightLeft, Check, CheckCheck, X } from "lucide-react";
+import { ArrowRightLeft, Check, CheckCheck, Download, X } from "lucide-react";
 
 type Onglet = "recues" | "envoyees" | "toutes";
 
@@ -26,6 +26,7 @@ export default function TransmissionsPage() {
   const [erreur, setErreur] = useState<string | null>(
     supabase ? null : "Supabase n'est pas configuré (voir .env.local)."
   );
+  const [downloadError, setDownloadError] = useState<string | null>(null);
   const [onglet, setOnglet] = useState<Onglet>("recues");
   const [tick, setTick] = useState(0);
 
@@ -95,6 +96,19 @@ export default function TransmissionsPage() {
     setTick((t) => t + 1);
   }
 
+  async function telecharger(row: TransmissionRow) {
+    if (!supabase || !row.fichier_path) return;
+    setDownloadError(null);
+    const { data, error } = await supabase.storage
+      .from("courriers")
+      .createSignedUrl(row.fichier_path, 60);
+    if (error) {
+      setDownloadError(error.message);
+      return;
+    }
+    window.open(data.signedUrl, "_blank", "noopener,noreferrer");
+  }
+
   const onglets: { id: Onglet; label: string }[] = [
     { id: "recues", label: "Reçues" },
     { id: "envoyees", label: "Envoyées" },
@@ -141,6 +155,12 @@ export default function TransmissionsPage() {
         </div>
       ) : null}
 
+      {downloadError ? (
+        <div className="mb-4 rounded-lg border border-red/30 bg-red-soft px-5 py-3 text-[13px] text-red">
+          {downloadError}
+        </div>
+      ) : null}
+
       <div className="overflow-hidden rounded-lg border border-border bg-card">
         {loading ? (
           <div className="px-5 py-10 text-center text-[13px] text-ink-soft">
@@ -159,6 +179,7 @@ export default function TransmissionsPage() {
                   <th className="px-4 py-2.5 font-medium text-ink-soft">Objet</th>
                   <th className="px-4 py-2.5 font-medium text-ink-soft">De</th>
                   <th className="px-4 py-2.5 font-medium text-ink-soft">Vers</th>
+                  <th className="px-4 py-2.5 font-medium text-ink-soft">Pièce jointe</th>
                   <th className="px-4 py-2.5 font-medium text-ink-soft">Note</th>
                   <th className="px-4 py-2.5 font-medium text-ink-soft">Statut</th>
                   <th className="px-4 py-2.5 font-medium text-ink-soft">Date</th>
@@ -193,6 +214,23 @@ export default function TransmissionsPage() {
                       <td className="px-4 py-2.5 text-ink-soft">{nomBureau(r.bureau_source_id)}</td>
                       <td className="px-4 py-2.5 font-medium text-ink">
                         {nomBureau(r.bureau_destinataire_id)}
+                      </td>
+                      <td className="px-4 py-2.5">
+                        {r.fichier_path ? (
+                          <button
+                            type="button"
+                            onClick={() => telecharger(r)}
+                            title={r.fichier_nom ?? "Télécharger la pièce jointe"}
+                            className="inline-flex items-center gap-1 text-primary hover:underline"
+                          >
+                            <Download className="size-3.5" />
+                            <span className="max-w-[130px] truncate">
+                              {r.fichier_nom ?? "Fichier"}
+                            </span>
+                          </button>
+                        ) : (
+                          <span className="text-ink-soft">?</span>
+                        )}
                       </td>
                       <td className="px-4 py-2.5 text-ink-soft">{r.note ?? "—"}</td>
                       <td className="px-4 py-2.5">

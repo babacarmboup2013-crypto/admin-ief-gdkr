@@ -257,7 +257,7 @@ export default function CourriersPage() {
     if (!supabase) return;
     if (
       !window.confirm(
-        `Supprimer le courrier n? ${row.numero_reference ?? row.id} ?`
+        `Supprimer le courrier n° ${row.numero_reference ?? row.id} ?`
       )
     )
       return;
@@ -271,13 +271,13 @@ export default function CourriersPage() {
       return;
     }
 
-    let message = "Courrier supprim?.";
+    let message = "Courrier supprimé.";
     if (row.fichier_path) {
       const { error: storageError } = await supabase.storage
         .from("courriers")
         .remove([row.fichier_path]);
       if (storageError) {
-        message = "Courrier supprim?. Le fichier joint n'a pas pu ?tre retir? du stockage.";
+        message = "Courrier supprimé. Le fichier joint n'a pas pu être retiré du stockage.";
       }
     }
     setSuccess(message);
@@ -298,7 +298,7 @@ export default function CourriersPage() {
       setError(e.message);
       return;
     }
-    setSuccess(archiver ? "Courrier archiv?." : "Courrier d?sarchiv?.");
+    setSuccess(archiver ? "Courrier archivé." : "Courrier désarchivé.");
     refresh();
   }
 
@@ -317,9 +317,9 @@ export default function CourriersPage() {
   if (!peutVoirCourriers(role, profile)) {
     return (
       <div className="rounded-lg border border-border bg-card p-8 text-center">
-        <h1 className="font-serif text-[20px] text-navy">Acc?s refus?</h1>
+        <h1 className="font-serif text-[20px] text-navy">Accès refusé</h1>
         <p className="mt-2 text-[13.5px] text-ink-soft">
-          Cette rubrique est r?serv?e au Secr?tariat, ? l&apos;IEF et au Super Admin.
+          Cette rubrique est réservée au Secrétariat, à l&apos;IEF et au Super Admin.
         </p>
       </div>
     );
@@ -628,12 +628,12 @@ export default function CourriersPage() {
                           <button
                             type="button"
                             onClick={() => setArchive(row, row.statut !== "archive")}
-                            title={row.statut === "archive" ? "D?sarchiver" : "Archiver"}
+                            title={row.statut === "archive" ? "Désarchiver" : "Archiver"}
                             className="inline-flex items-center gap-1 text-primary hover:underline"
                           >
                             {row.statut === "archive" ? (
                               <>
-                                <RotateCcw className="size-3.5" /> D?sarchiver
+                                <RotateCcw className="size-3.5" /> Désarchiver
                               </>
                             ) : (
                               <>
@@ -685,6 +685,8 @@ export default function CourriersPage() {
           objetRef={transmissionObjet.numero_reference}
           objetTitre={transmissionObjet.objet}
           bureauSourceId={transmissionObjet.bureau_id}
+          fichierPath={transmissionObjet.fichier_path}
+          fichierNom={transmissionObjet.fichier_nom}
           onSaved={refresh}
         />
       ) : null}

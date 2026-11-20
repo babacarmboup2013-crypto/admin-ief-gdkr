@@ -22,7 +22,7 @@ import {
   fmtDate,
   type CourrierRow,
 } from "@/lib/admin-types";
-import { Download, FileText, Search, X } from "lucide-react";
+import { Archive, Download, FileText, RotateCcw, Search, Trash2, X } from "lucide-react";
 
 const TYPE_OPTIONS = [
   { value: "tous", label: "Tous les types" },
@@ -161,6 +161,50 @@ export default function RechercheCourriersPage() {
     dateDu !== "",
     dateAu !== "",
   ].filter(Boolean).length;
+
+  async function remove(row: CourrierRow) {
+    if (!supabase) return;
+    if (
+      !window.confirm(
+        `Supprimer le courrier n° ${row.numero_reference ?? row.id} ?`
+      )
+    )
+      return;
+
+    const { error: e } = await supabase
+      .from("courriers")
+      .delete()
+      .eq("id", row.id);
+    if (e) {
+      setLoadError(e.message);
+      return;
+    }
+    if (row.fichier_path) {
+      await supabase.storage.from("courriers").remove([row.fichier_path]);
+    }
+    setLoadError(null);
+    setRows((prev) => prev.filter((r) => r.id !== row.id));
+  }
+
+  async function setArchive(row: CourrierRow, archiver: boolean) {
+    if (!supabase) return;
+    const nouveauStatut = archiver ? "archive" : "soumis";
+    const { error: e } = await supabase
+      .from("courriers")
+      .update({
+        statut: nouveauStatut,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", row.id);
+    if (e) {
+      setLoadError(e.message);
+      return;
+    }
+    setLoadError(null);
+    setRows((prev) =>
+      prev.map((r) => (r.id === row.id ? { ...r, statut: nouveauStatut } : r))
+    );
+  }
 
   async function download(row: CourrierRow) {
     if (!supabase || !row.fichier_path) return;
@@ -337,6 +381,7 @@ export default function RechercheCourriersPage() {
                   <th className="px-4 py-2.5 font-medium text-ink-soft">Transmission</th>
                   <th className="px-4 py-2.5 font-medium text-ink-soft">Statut</th>
                   <th className="px-4 py-2.5 font-medium text-ink-soft">Fichier</th>
+                  <th className="px-4 py-2.5 font-medium text-ink-soft">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -403,6 +448,34 @@ export default function RechercheCourriersPage() {
                         ) : (
                           <span className="text-ink-soft">—</span>
                         )}
+                      </td>
+                      <td className="px-4 py-2.5">
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setArchive(row, row.statut !== "archive")}
+                            title={row.statut === "archive" ? "Désarchiver" : "Archiver"}
+                            className="inline-flex items-center gap-1 text-primary hover:underline"
+                          >
+                            {row.statut === "archive" ? (
+                              <>
+                                <RotateCcw className="size-3.5" /> Désarchiver
+                              </>
+                            ) : (
+                              <>
+                                <Archive className="size-3.5" /> Archiver
+                              </>
+                            )}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => remove(row)}
+                            title="Supprimer"
+                            className="text-red hover:underline"
+                          >
+                            <Trash2 className="size-3.5" />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   );
